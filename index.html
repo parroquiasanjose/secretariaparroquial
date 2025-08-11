@@ -560,6 +560,7 @@
         // Import Firebase modules
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, collection, onSnapshot, doc, setDoc, addDoc, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         // Your web app's Firebase configuration
         const firebaseConfig = {
@@ -574,32 +575,19 @@
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        const db = getFirestore(app);
 
         // --- MAIN APP LOGIC ---
         document.addEventListener('DOMContentLoaded', () => {
             
             let recordToDelete = { type: null, id: null };
+            let currentUserId = null;
+            let unsubscribeListeners = [];
 
             const appState = {
-                notifications: [
-                    { id: 1, text: "Recordar reunión de Cáritas el próximo Jueves a las 18:00 hs.", priority: 'importante', dueDate: '2025-08-14' },
-                    { id: 2, text: "Confirmar asistencia de los ministros para la misa del Domingo.", priority: 'urgente', dueDate: '2025-08-10' },
-                    { id: 3, text: "Comprar nuevas velas para el altar.", priority: 'normal', dueDate: '' }
-                ],
-                ministros: [
-                    { id: 1, semana: 'Primero', sabado: 'Laura Alvez', dom08: 'Raúl Segovia', dom10: '', dom20: 'Jorge Giménez' },
-                    { id: 2, semana: 'Segundo', sabado: 'Estela Santia', dom08: '', dom10: 'Jorge Gimenez', dom20: 'Maritel Reyero' },
-                    { id: 3, semana: 'Tercero', sabado: 'Raul Segovia', dom08: '', dom10: '', dom20: 'Raul Segovia' },
-                    { id: 4, semana: 'Cuarto', sabado: 'Maritel Reyero', dom08: '', dom10: 'Raul Segovia', dom20: 'Estela Santia' },
-                    { id: 5, semana: 'Quinto', sabado: 'Jorge Giménez', dom08: '', dom10: '', dom20: 'Laura Alvez' }
-                ],
-                grupos: [
-                    { id: 1, semana: 'Primero', sabado: 'Legión de María', dom08: 'Nora y Silvana', dom10: 'Jardín Semillitas', dom20: 'Taller de oracion y vida' },
-                    { id: 2, semana: 'Segundo', sabado: 'Colegio San José (Secundario)', dom08: 'Polaqui y Rita', dom10: 'Instituto Niño Jesús', dom20: 'CAE' },
-                    { id: 3, semana: 'Tercero', sabado: 'Renovación Carismática', dom08: 'Estela Y Mónica', dom10: 'Catequesis', dom20: 'Hogares Nuevos' },
-                    { id: 4, semana: 'Cuarto', sabado: 'Cáritas', dom08: 'Liliana', dom10: 'Colegio San José (Primario)', dom20: 'Jesús Misericordioso' },
-                    { id: 5, semana: 'Quinto', sabado: 'Estela Santia', dom08: 'Paula', dom10: 'Catequesis', dom20: 'Apostolado de la Oración' }
-                ],
+                notifications: [],
+                ministros: [],
+                grupos: [],
                 bautismos: [],
                 confirmaciones: [],
                 bautismosSearchTerm: '',
@@ -727,7 +715,7 @@
                     if (!searchTerm) return true;
                     const searchIn = [r.nombre, r.fechaBautismo, r.fechaConfirmacion, r.padre, r.madre, r.padrino, r.madrina].join(' ').toLowerCase();
                     return searchIn.includes(searchTerm);
-                }).sort((a, b) => b.generatedAt - a.generatedAt);
+                });
 
                 const totalPages = Math.ceil(filteredRecords.length / appState.recordsPerPage);
                 if (currentPage > totalPages) currentPage = totalPages || 1;
@@ -790,7 +778,7 @@
             };
 
             const showEditModal = (table, id) => {
-                const rowData = appState[table].find(row => row.id === parseInt(id));
+                const rowData = appState[table].find(row => row.id === id);
                 if (!rowData) return;
                 dom.editModalTitle.innerText = `Modificar Fila de ${table === 'ministros' ? 'Ministros' : 'Grupos'}`;
                 dom.editForm.querySelector('#edit-id').value = rowData.id;
@@ -812,6 +800,7 @@
             const handleCertificateAction = async (type, format, existingData = null) => {
                 const form = type === 'bautismo' ? dom.baptismForm : dom.confirmationForm;
                 let formData;
+                let isNewRecord = false;
 
                 if (existingData) {
                     formData = existingData;
@@ -822,18 +811,22 @@
                     }
                     formData = Object.fromEntries(new FormData(form).entries());
                     
-                    const recordId = formData.id ? parseInt(formData.id) : null;
+                    const recordId = formData.id;
                     const recordArray = type === 'bautismo' ? appState.bautismos : appState.confirmaciones;
                     
-                    if (recordId && recordId !== 'null' && recordId !== '') { // Update existing record
+                    if (recordId) { // Update existing record
                         const index = recordArray.findIndex(r => r.id === recordId);
                         if (index !== -1) {
-                            recordArray[index] = { ...recordArray[index], ...formData, id: recordId };
+                            recordArray[index] = { ...recordArray[index], ...formData };
+                            await setDoc(doc(db, `users/${currentUserId}/${type}s`, recordId), formData);
                             showToast('Registro actualizado con éxito');
                         }
                     } else { // Create new record
-                        const newRecord = { ...formData, id: Date.now(), generatedAt: new Date() };
-                        recordArray.push(newRecord);
+                        isNewRecord = true;
+                        const newRecord = { ...formData, generatedAt: new Date().toISOString() };
+                        delete newRecord.id; // Firestore will generate an ID
+                        const docRef = await addDoc(collection(db, `users/${currentUserId}/${type}s`), newRecord);
+                        appState[type === 'bautismo' ? 'bautismos' : 'confirmaciones'].push({ ...newRecord, id: docRef.id });
                         showToast('Registro guardado con éxito');
                     }
                 }
@@ -863,9 +856,21 @@
                         pdf.save(`Certificado_${type}_${formData.nombre.replace(/ /g, '_')}.pdf`);
                         showToast('PDF generado con éxito');
                     } else {
-                        dom.printContainer.innerHTML = certificateHTML;
-                        window.print();
-                        dom.printContainer.innerHTML = '';
+                        const printWindow = window.open('', '_blank');
+                        printWindow.document.write('<html><head><title>Imprimir Certificado</title>');
+                        const styles = document.querySelectorAll('style');
+                        styles.forEach(style => {
+                            printWindow.document.write(style.outerHTML);
+                        });
+                        printWindow.document.write('</head><body>');
+                        printWindow.document.write(certificateHTML);
+                        printWindow.document.write('</body></html>');
+                        printWindow.document.close();
+                        printWindow.focus();
+                        setTimeout(() => {
+                            printWindow.print();
+                            printWindow.close();
+                        }, 250);
                     }
                 } catch (error) {
                     console.error("Error generating document:", error);
@@ -873,7 +878,7 @@
                 } finally {
                     hideSpinner();
                     document.body.removeChild(elementToRender);
-                    if (!existingData) {
+                    if (!existingData && isNewRecord) {
                         form.reset();
                          if (type === 'confirmacion') {
                             const today = new Date().toISOString().split('T')[0];
@@ -997,6 +1002,28 @@
                 showView(isBautismo ? 'bautismo-content' : 'confirmacion-content');
             };
 
+            const setupDataListeners = (userId) => {
+                const collections = ['bautismos', 'confirmaciones', 'notifications', 'ministros', 'grupos'];
+                unsubscribeListeners.forEach(unsub => unsub());
+                unsubscribeListeners = [];
+
+                collections.forEach(coll => {
+                    const q = query(collection(db, `users/${userId}/${coll}`));
+                    const unsub = onSnapshot(q, (querySnapshot) => {
+                        appState[coll] = [];
+                        querySnapshot.forEach((doc) => {
+                            appState[coll].push({ ...doc.data(), id: doc.id });
+                        });
+                        if (coll === 'bautismos' || coll === 'confirmaciones') {
+                            renderRecords(coll.slice(0, -1));
+                        } else {
+                            renderAll();
+                        }
+                    });
+                    unsubscribeListeners.push(unsub);
+                });
+            };
+
             document.body.addEventListener('click', (e) => {
                 const target = e.target.closest('[data-action]');
                 if (!target) return;
@@ -1008,19 +1035,15 @@
                     case 'close-edit-modal': closeEditModal(); break;
                     case 'close-custom-location-modal': closeCustomLocationModal(); break;
                     case 'add-row':
-                        const newId = Date.now();
-                        appState[table].push({ id: newId, semana: 'Nueva', sabado: '', dom08: '', dom10: '', dom20: '' });
-                        renderTable(table, table === 'ministros' ? dom.ministrosTableBody : dom.gruposTableBody);
-                        feather.replace();
+                        const newId = Date.now().toString();
+                        const newRowData = { id: newId, semana: 'Nueva', sabado: '', dom08: '', dom10: '', dom20: '' };
+                        setDoc(doc(db, `users/${currentUserId}/${table}`, newId), newRowData);
                         break;
                     case 'remove-row':
-                        appState[table] = appState[table].filter(row => row.id !== parseInt(id));
-                        renderTable(table, table === 'ministros' ? dom.ministrosTableBody : dom.gruposTableBody);
-                        feather.replace();
+                        deleteDoc(doc(db, `users/${currentUserId}/${table}`, id));
                         break;
                     case 'remove-notification':
-                        appState.notifications = appState.notifications.filter(n => n.id !== parseInt(id));
-                        renderNotifications();
+                        deleteDoc(doc(db, `users/${currentUserId}/notifications`, id));
                         showToast('Notificación eliminada');
                         break;
                     case 'generate-certificate':
@@ -1036,14 +1059,14 @@
                         renderRecords(type);
                         break;
                     case 'edit-record':
-                        populateFormWithRecord(type, parseInt(id));
+                        populateFormWithRecord(type, id);
                         break;
                     case 'download-record-pdf':
-                        const record = type === 'bautismo' ? appState.bautismos.find(r => r.id === parseInt(id)) : appState.confirmaciones.find(r => r.id === parseInt(id));
+                        const record = type === 'bautismo' ? appState.bautismos.find(r => r.id === id) : appState.confirmaciones.find(r => r.id === id);
                         if(record) handleCertificateAction(type, 'pdf', record);
                         break;
                     case 'delete-record':
-                        recordToDelete = { type, id: parseInt(id) };
+                        recordToDelete = { type, id };
                         dom.deleteConfirmModal.classList.remove('hidden');
                         break;
                     case 'cancel-delete':
@@ -1052,9 +1075,7 @@
                         break;
                     case 'confirm-delete':
                         if (recordToDelete.type && recordToDelete.id) {
-                            const recordArray = recordToDelete.type === 'bautismo' ? 'bautismos' : 'confirmaciones';
-                            appState[recordArray] = appState[recordArray].filter(r => r.id !== recordToDelete.id);
-                            renderRecords(recordToDelete.type);
+                            deleteDoc(doc(db, `users/${currentUserId}/${recordToDelete.type}s`, recordToDelete.id));
                             showToast('Registro eliminado con éxito');
                         }
                         dom.deleteConfirmModal.classList.add('hidden');
@@ -1075,35 +1096,30 @@
                 renderRecords('confirmacion');
             });
 
-            dom.notificationForm.addEventListener('submit', (e) => {
+            dom.notificationForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const text = dom.notificationForm.querySelector('#notification-text').value.trim();
                 const priority = dom.notificationForm.querySelector('#notification-priority').value;
                 const dueDate = dom.notificationForm.querySelector('#notification-due-date').value;
                 if (text) {
-                    appState.notifications.unshift({ id: Date.now(), text, priority, dueDate });
-                    renderNotifications();
+                    await addDoc(collection(db, `users/${currentUserId}/notifications`), { text, priority, dueDate });
                     dom.notificationForm.reset();
                     showToast('Notificación agregada');
                 }
             });
 
-            dom.editForm.addEventListener('submit', (e) => {
+            dom.editForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                const id = parseInt(dom.editForm.querySelector('#edit-id').value);
+                const id = dom.editForm.querySelector('#edit-id').value;
                 const table = dom.editForm.querySelector('#edit-table').value;
-                const rowIndex = appState[table].findIndex(row => row.id === id);
-                if (rowIndex === -1) return;
-                appState[table][rowIndex] = {
-                    id: id,
+                const updatedData = {
                     semana: dom.editForm.querySelector('#edit-semana').value,
                     sabado: dom.editForm.querySelector('#edit-sabado').value,
                     dom08: dom.editForm.querySelector('#edit-dom08').value,
                     dom10: dom.editForm.querySelector('#edit-dom10').value,
                     dom20: dom.editForm.querySelector('#edit-dom20').value,
                 };
-                renderTable(table, table === 'ministros' ? dom.ministrosTableBody : dom.gruposTableBody);
-                feather.replace();
+                await setDoc(doc(db, `users/${currentUserId}/${table}`, id), updatedData, { merge: true });
                 closeEditModal();
             });
 
@@ -1138,13 +1154,16 @@
             // --- AUTHENTICATION LOGIC ---
             onAuthStateChanged(auth, (user) => {
                 if (user) {
+                    currentUserId = user.uid;
                     dom.loginView.classList.add('hidden');
                     dom.appContainer.classList.remove('hidden');
+                    setupDataListeners(user.uid);
                     showView('secretaria-dashboard');
-                    renderAll();
                 } else {
+                    currentUserId = null;
                     dom.loginView.classList.remove('hidden');
                     dom.appContainer.classList.add('hidden');
+                    unsubscribeListeners.forEach(unsub => unsub());
                 }
             });
 
