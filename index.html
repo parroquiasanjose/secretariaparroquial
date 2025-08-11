@@ -814,20 +814,26 @@
                     const recordId = formData.id;
                     const recordArray = type === 'bautismo' ? appState.bautismos : appState.confirmaciones;
                     
-                    if (recordId) { // Update existing record
-                        const index = recordArray.findIndex(r => r.id === recordId);
-                        if (index !== -1) {
-                            recordArray[index] = { ...recordArray[index], ...formData };
-                            await setDoc(doc(db, `users/${currentUserId}/${type}s`, recordId), formData);
-                            showToast('Registro actualizado con éxito');
+                    try {
+                        if (recordId) { // Update existing record
+                            const index = recordArray.findIndex(r => r.id === recordId);
+                            if (index !== -1) {
+                                recordArray[index] = { ...recordArray[index], ...formData };
+                                await setDoc(doc(db, `users/${currentUserId}/${type}s`, recordId), formData);
+                                showToast('Registro actualizado con éxito');
+                            }
+                        } else { // Create new record
+                            isNewRecord = true;
+                            const newRecord = { ...formData, generatedAt: new Date().toISOString() };
+                            delete newRecord.id; // Firestore will generate an ID
+                            const docRef = await addDoc(collection(db, `users/${currentUserId}/${type}s`), newRecord);
+                            appState[type === 'bautismo' ? 'bautismos' : 'confirmaciones'].push({ ...newRecord, id: docRef.id });
+                            showToast('Registro guardado con éxito');
                         }
-                    } else { // Create new record
-                        isNewRecord = true;
-                        const newRecord = { ...formData, generatedAt: new Date().toISOString() };
-                        delete newRecord.id; // Firestore will generate an ID
-                        const docRef = await addDoc(collection(db, `users/${currentUserId}/${type}s`), newRecord);
-                        appState[type === 'bautismo' ? 'bautismos' : 'confirmaciones'].push({ ...newRecord, id: docRef.id });
-                        showToast('Registro guardado con éxito');
+                    } catch (error) {
+                        console.error("Firestore error:", error);
+                        showToast('Error al guardar: verifique los permisos de la base de datos', 'error');
+                        return; // Stop execution if saving fails
                     }
                 }
 
@@ -1019,6 +1025,9 @@
                         } else {
                             renderAll();
                         }
+                    }, (error) => {
+                        console.error(`Error listening to ${coll}:`, error);
+                        showToast(`Error al cargar ${coll}. Verifique los permisos.`, 'error');
                     });
                     unsubscribeListeners.push(unsub);
                 });
