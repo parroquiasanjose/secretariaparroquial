@@ -20,7 +20,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-    <style>
+    <style id="app-styles">
         body { font-family: 'Inter', sans-serif; }
         .card-hover-effect { transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out; }
         .card-hover-effect:hover { transform: translateY(-10px); box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1); }
@@ -160,10 +160,16 @@
 
         /* Print-specific styles */
         @media print {
-            body, body * { visibility: hidden; }
-            .printable-area, .printable-area * { visibility: visible; }
-            .printable-area { position: absolute; left: 0; top: 0; width: 100%; }
-            .no-print { display: none !important; }
+            body > *:not(.print-only) {
+                display: none !important;
+            }
+            .print-only {
+                display: block !important;
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -175,21 +181,19 @@
             <h2 class="text-3xl font-bold text-center mb-2">Secretaría Parroquial</h2>
             <p class="text-center text-gray-600 dark:text-gray-400 mb-8">Acceso</p>
             <form id="login-form" class="space-y-6">
-                <div>
-                    <label for="email" class="block text-sm font-medium">Correo</label>
-                    <input type="email" id="email" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700" required>
+                <div class="text-center">
+                    <input type="email" id="email" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-center" placeholder="Correo" required>
                 </div>
-                <div>
-                    <label for="password" class="block text-sm font-medium">Contraseña</label>
+                <div class="text-center">
                     <div class="relative">
-                        <input type="password" id="password" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700" required>
-                        <button type="button" id="toggle-password" class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-500">
+                        <input type="password" id="password" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-center" placeholder="Contraseña" required>
+                        <button type="button" id="toggle-password" class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-500 dark:text-gray-300">
                             <i data-feather="eye" class="icon-eye"></i>
                             <i data-feather="eye-off" class="icon-eye-off hidden"></i>
                         </button>
                     </div>
                 </div>
-                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg">Ingresar</button>
+                <button type="submit" class="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105">Ingresar</button>
             </form>
         </div>
     </section>
@@ -206,7 +210,7 @@
                             <i data-feather="bell" class="h-8 w-8 text-gray-600 dark:text-gray-300"></i>
                             <span id="notification-badge" class="hidden absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center"></span>
                         </div>
-                        <button id="logout-btn" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg">Cerrar Sesión</button>
+                        <button id="logout-btn" class="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105">Cerrar Sesión</button>
                     </div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -239,7 +243,7 @@
             <div class="container mx-auto px-6 py-12">
                 <div class="flex justify-between items-center mb-12">
                     <h2 class="text-3xl font-bold">Seleccionar Tipo de Certificado</h2>
-                    <button data-action="show-view" data-view-id="secretaria-dashboard" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg">Inicio</button>
+                    <button data-action="show-view" data-view-id="secretaria-dashboard" class="bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105">Inicio</button>
                 </div>
                 <div class="flex justify-center">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-10 w-full max-w-4xl">
@@ -287,7 +291,7 @@
             <div class="container mx-auto px-6 py-12">
                 <div class="flex justify-between items-center mb-8">
                     <h2 class="text-3xl font-bold">Gestión de Certificados de Bautismo</h2>
-                    <button data-action="show-view" data-view-id="certificate-choice-content" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg">Volver a Elegir</button>
+                    <button data-action="show-view" data-view-id="certificate-choice-content" class="bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105">Volver a Elegir</button>
                 </div>
                 <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8">
                     <form id="baptism-form" class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -306,16 +310,17 @@
                         <div><label for="b-madrina" class="block text-sm font-medium">Madrina</label><input name="madrina" type="text" id="b-madrina" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700" required></div>
                         <div class="md:col-span-2"><label for="b-notas" class="block text-sm font-medium">Notas Marginales</label><textarea name="notas" id="b-notas" rows="3" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700"></textarea></div>
                         <div class="md:col-span-2 flex justify-end space-x-4">
-                            <button type="button" data-action="generate-certificate" data-type="bautismo" data-format="pdf" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg flex items-center space-x-2">
-                                <i data-feather="download" class="h-4 w-4"></i>
-                                <span>Descargar PDF</span>
-                            </button>
-                            <button type="submit" data-action="generate-certificate" data-type="bautismo" data-format="print" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg flex items-center space-x-2">
-                                <i data-feather="printer" class="h-4 w-4"></i>
-                                <span>Generar e Imprimir</span>
-                            </button>
+                             <button type="submit" data-action="save-certificate" data-type="bautismo" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-2 px-6 rounded-lg flex items-center space-x-2 transition-all duration-300 ease-in-out transform hover:scale-105">
+                                 <i data-feather="save" class="h-4 w-4"></i>
+                                 <span>Guardar</span>
+                             </button>
                         </div>
                     </form>
+                    <div class="mt-8 border-t pt-6">
+                        <h3 class="text-xl font-bold mb-4">Registros Guardados</h3>
+                        <div id="bautismo-form-records-container" class="space-y-3"></div>
+                        <div id="bautismo-form-pagination-container" class="mt-4 flex justify-between items-center"></div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -325,7 +330,7 @@
             <div class="container mx-auto px-6 py-12">
                 <div class="flex justify-between items-center mb-8">
                     <h2 class="text-3xl font-bold">Gestión de Certificados de Confirmación</h2>
-                    <button data-action="show-view" data-view-id="certificate-choice-content" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg">Volver a Elegir</button>
+                    <button data-action="show-view" data-view-id="certificate-choice-content" class="bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105">Volver a Elegir</button>
                 </div>
                 <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8">
                     <form id="confirmation-form" class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
@@ -358,16 +363,17 @@
                         <div><label for="c-bautizado-folio" class="block text-sm font-medium">Folio (Bautismo)</label><input name="bautizadoFolio" type="text" id="c-bautizado-folio" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700" required></div>
 
                         <div class="md:col-span-2 flex justify-end space-x-4 mt-6">
-                            <button type="button" data-action="generate-certificate" data-type="confirmacion" data-format="pdf" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg flex items-center space-x-2">
-                                <i data-feather="download" class="h-4 w-4"></i>
-                                <span>Descargar PDF</span>
-                            </button>
-                            <button type="submit" data-action="generate-certificate" data-type="confirmacion" data-format="print" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg flex items-center space-x-2">
-                                <i data-feather="printer" class="h-4 w-4"></i>
-                                <span>Generar e Imprimir</span>
+                            <button type="submit" data-action="save-certificate" data-type="confirmacion" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-2 px-6 rounded-lg flex items-center space-x-2 transition-all duration-300 ease-in-out transform hover:scale-105">
+                                <i data-feather="save" class="h-4 w-4"></i>
+                                <span>Guardar</span>
                             </button>
                         </div>
                     </form>
+                    <div class="mt-8 border-t pt-6">
+                        <h3 class="text-xl font-bold mb-4">Registros Guardados</h3>
+                        <div id="confirmacion-form-records-container" class="space-y-3"></div>
+                        <div id="confirmacion-form-pagination-container" class="mt-4 flex justify-between items-center"></div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -378,8 +384,8 @@
                 <div class="flex justify-between items-center mb-8 no-print">
                     <h2 class="text-3xl font-bold">Organización de Misas y Ministros</h2>
                     <div>
-                        <button data-action="print-mass-org" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg mr-4">Imprimir</button>
-                        <button data-action="show-view" data-view-id="secretaria-dashboard" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg">Inicio</button>
+                        <button data-action="print-mass-org" class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold py-2 px-4 rounded-lg mr-4 transition-all duration-300 ease-in-out transform hover:scale-105">Imprimir</button>
+                        <button data-action="show-view" data-view-id="secretaria-dashboard" class="bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105">Inicio</button>
                     </div>
                 </div>
                 <div id="mass-org-print-area" class="space-y-12 printable-area">
@@ -401,7 +407,7 @@
                                 <tbody id="ministros-table-body" class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700"></tbody>
                             </table>
                         </div>
-                        <div class="mt-4 text-right no-print"><button data-action="add-row" data-table="ministros" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">Agregar Fila</button></div>
+                        <div class="mt-4 text-right no-print"><button data-action="add-row" data-table="ministros" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105">Agregar Fila</button></div>
                     </div>
 
                     <!-- Tabla de Organización de Misas -->
@@ -422,7 +428,7 @@
                                 <tbody id="grupos-table-body" class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700"></tbody>
                             </table>
                         </div>
-                        <div class="mt-4 text-right no-print"><button data-action="add-row" data-table="grupos" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">Agregar Fila</button></div>
+                        <div class="mt-4 text-right no-print"><button data-action="add-row" data-table="grupos" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105">Agregar Fila</button></div>
                     </div>
                 </div>
             </div>
@@ -433,7 +439,7 @@
            <div class="container mx-auto px-6 py-12">
                 <div class="flex justify-between items-center mb-8">
                     <h2 class="text-3xl font-bold">Notificaciones y Recordatorios</h2>
-                    <button data-action="show-view" data-view-id="secretaria-dashboard" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg">Inicio</button>
+                    <button data-action="show-view" data-view-id="secretaria-dashboard" class="bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105">Inicio</button>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                     <div class="md:col-span-1">
@@ -453,7 +459,7 @@
                                     <label for="notification-due-date" class="block text-sm font-medium">Fecha de Vencimiento</label>
                                     <input type="date" id="notification-due-date" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700">
                                 </div>
-                                <button type="submit" class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">Agregar</button>
+                                <button type="submit" class="mt-4 w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105">Agregar</button>
                             </form>
                         </div>
                     </div>
@@ -469,7 +475,7 @@
              <div class="container mx-auto px-6 py-12">
                 <div class="flex justify-between items-center mb-8">
                     <h2 class="text-3xl font-bold">Cliente de Correo</h2>
-                    <button data-action="show-view" data-view-id="secretaria-dashboard" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg">Inicio</button>
+                    <button data-action="show-view" data-view-id="secretaria-dashboard" class="bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105">Inicio</button>
                 </div>
                 <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8">
                     <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded-r-lg" role="alert">
@@ -479,7 +485,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
                         <div><label for="email-address" class="block text-sm font-medium">Correo de Gmail</label><input type="email" id="email-address" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700" placeholder="ejemplo@gmail.com"></div>
                         <div><label for="email-password" class="block text-sm font-medium">Contraseña</label><input type="password" id="email-password" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700"></div>
-                        <div><button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">Conectar (Simulación)</button></div>
+                        <div><button class="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105">Conectar (Simulación)</button></div>
                     </div>
                     <div class="mt-8 border-t pt-8">
                         <h3 class="text-xl font-bold mb-4">Bandeja de Entrada (Simulación)</h3>
@@ -508,8 +514,8 @@
                     <div><label for="edit-dom20" class="block text-sm font-medium">Domingo 20:00 H</label><input type="text" id="edit-dom20" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700"></div>
                 </div>
                 <div class="mt-8 flex justify-end space-x-4">
-                    <button type="button" data-action="close-edit-modal" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg">Cancelar</button>
-                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">Guardar Cambios</button>
+                    <button type="button" data-action="close-edit-modal" class="bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105">Cancelar</button>
+                    <button type="submit" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105">Guardar Cambios</button>
                 </div>
             </form>
         </div>
@@ -527,8 +533,8 @@
                     </div>
                 </div>
                 <div class="mt-8 flex justify-end space-x-4">
-                    <button type="button" data-action="close-custom-location-modal" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg">Volver</button>
-                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">Confirmar</button>
+                    <button type="button" data-action="close-custom-location-modal" class="bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105">Volver</button>
+                    <button type="submit" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105">Confirmar</button>
                 </div>
             </form>
         </div>
@@ -540,8 +546,8 @@
             <h3 class="text-xl font-bold mb-4">Confirmar Eliminación</h3>
             <p>¿Estás seguro de que deseas eliminar este registro? Esta acción no se puede deshacer.</p>
             <div class="mt-8 flex justify-end space-x-4">
-                <button type="button" data-action="cancel-delete" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg">Cancelar</button>
-                <button type="button" data-action="confirm-delete" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg">Eliminar</button>
+                <button type="button" data-action="cancel-delete" class="bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105">Cancelar</button>
+                <button type="button" data-action="confirm-delete" class="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105">Eliminar</button>
             </div>
         </div>
     </div>
@@ -554,7 +560,8 @@
     <!-- Toast Container -->
     <div id="toast-container" class="fixed bottom-4 right-4 z-50 space-y-2"></div>
 
-    <div id="print-container" class="hidden printable-area"></div>
+    <!-- Print Area -->
+    <div id="print-area" class="print-only hidden"></div>
 
     <script type="module">
         // Import Firebase modules
@@ -594,7 +601,7 @@
                 bautismosCurrentPage: 1,
                 confirmacionesSearchTerm: '',
                 confirmacionesCurrentPage: 1,
-                recordsPerPage: 3,
+                recordsPerPage: 5,
             };
 
             const dom = {
@@ -604,7 +611,7 @@
                 logoutBtn: document.getElementById('logout-btn'),
                 togglePasswordBtn: document.getElementById('toggle-password'),
                 views: document.querySelectorAll('[data-view]'),
-                printContainer: document.getElementById('print-container'),
+                printArea: document.getElementById('print-area'),
                 notificationsList: document.getElementById('notifications-list'),
                 notificationForm: document.getElementById('notification-form'),
                 ministrosTableBody: document.getElementById('ministros-table-body'),
@@ -624,6 +631,10 @@
                 confirmacionRecordsContainer: document.getElementById('confirmacion-records-container'),
                 confirmacionPaginationContainer: document.getElementById('confirmacion-pagination-container'),
                 confirmacionSearchInput: document.getElementById('confirmacion-search'),
+                bautismoFormRecordsContainer: document.getElementById('bautismo-form-records-container'),
+                bautismoFormPaginationContainer: document.getElementById('bautismo-form-pagination-container'),
+                confirmacionFormRecordsContainer: document.getElementById('confirmacion-form-records-container'),
+                confirmacionFormPaginationContainer: document.getElementById('confirmacion-form-pagination-container'),
                 deleteConfirmModal: document.getElementById('delete-confirm-modal'),
                 notificationBadge: document.getElementById('notification-badge'),
                 loadingSpinner: document.getElementById('loading-spinner'),
@@ -703,23 +714,27 @@
                 `).join('');
             };
 
-            const renderRecords = (type) => {
+            const renderRecords = (type, container, paginationContainer, searchTerm, currentPageKey) => {
+                if (!container || !paginationContainer) return;
                 const isBautismo = type === 'bautismo';
                 const records = isBautismo ? appState.bautismos : appState.confirmaciones;
-                const searchTerm = (isBautismo ? appState.bautismosSearchTerm : appState.confirmacionesSearchTerm).toLowerCase();
-                const container = isBautismo ? dom.bautismoRecordsContainer : dom.confirmacionRecordsContainer;
-                const paginationContainer = isBautismo ? dom.bautismoPaginationContainer : dom.confirmacionPaginationContainer;
-                let currentPage = isBautismo ? appState.bautismosCurrentPage : appState.confirmacionesCurrentPage;
-
+                
                 const filteredRecords = records.filter(r => {
                     if (!searchTerm) return true;
                     const searchIn = [r.nombre, r.fechaBautismo, r.fechaConfirmacion, r.padre, r.madre, r.padrino, r.madrina].join(' ').toLowerCase();
-                    return searchIn.includes(searchTerm);
+                    return searchIn.includes(searchTerm.toLowerCase());
+                }).sort((a, b) => {
+                    const dateA = new Date(isBautismo ? a.fechaBautismo : a.fechaConfirmacion);
+                    const dateB = new Date(isBautismo ? b.fechaBautismo : b.fechaConfirmacion);
+                    if (isNaN(dateA)) return 1;
+                    if (isNaN(dateB)) return -1;
+                    return dateB - dateA;
                 });
 
                 const totalPages = Math.ceil(filteredRecords.length / appState.recordsPerPage);
+                let currentPage = appState[currentPageKey];
                 if (currentPage > totalPages) currentPage = totalPages || 1;
-                if (isBautismo) appState.bautismosCurrentPage = currentPage; else appState.confirmacionesCurrentPage = currentPage;
+                appState[currentPageKey] = currentPage;
 
                 const start = (currentPage - 1) * appState.recordsPerPage;
                 const end = start + appState.recordsPerPage;
@@ -755,24 +770,28 @@
                 renderNotifications();
                 renderTable('ministros', dom.ministrosTableBody);
                 renderTable('grupos', dom.gruposTableBody);
-                renderRecords('bautismo');
-                renderRecords('confirmacion');
+                renderRecords('bautismo', dom.bautismoRecordsContainer, dom.bautismoPaginationContainer, appState.bautismosSearchTerm, 'bautismosCurrentPage');
+                renderRecords('confirmacion', dom.confirmacionRecordsContainer, dom.confirmacionPaginationContainer, appState.confirmacionesSearchTerm, 'confirmacionesCurrentPage');
+                renderRecords('bautismo', dom.bautismoFormRecordsContainer, dom.bautismoFormPaginationContainer, '', 'bautismosCurrentPage');
+                renderRecords('confirmacion', dom.confirmacionFormRecordsContainer, dom.confirmacionFormPaginationContainer, '', 'confirmacionesCurrentPage');
                 feather.replace();
             };
 
-            const showView = (viewId) => {
+            const showView = (viewId, isEdit = false) => {
                 dom.views.forEach(view => {
                     view.classList.toggle('hidden', view.dataset.view !== viewId);
                 });
-                if (viewId === 'bautismo-content') dom.baptismForm.reset();
-                if (viewId === 'confirmacion-content') {
+                if (viewId === 'bautismo-content' && !isEdit) dom.baptismForm.reset();
+                if (viewId === 'confirmacion-content' && !isEdit) {
                     dom.confirmationForm.reset();
                     const today = new Date().toISOString().split('T')[0];
                     document.getElementById('c-fecha-expedicion').value = today;
                 }
-                if (viewId === 'certificate-choice-content') {
-                    renderRecords('bautismo');
-                    renderRecords('confirmacion');
+                if (viewId === 'certificate-choice-content' || viewId === 'bautismo-content' || viewId === 'confirmacion-content') {
+                    renderRecords('bautismo', dom.bautismoRecordsContainer, dom.bautismoPaginationContainer, appState.bautismosSearchTerm, 'bautismosCurrentPage');
+                    renderRecords('confirmacion', dom.confirmacionRecordsContainer, dom.confirmacionPaginationContainer, appState.confirmacionesSearchTerm, 'confirmacionesCurrentPage');
+                    renderRecords('bautismo', dom.bautismoFormRecordsContainer, dom.bautismoFormPaginationContainer, '', 'bautismosCurrentPage');
+                    renderRecords('confirmacion', dom.confirmacionFormRecordsContainer, dom.confirmacionFormPaginationContainer, '', 'confirmacionesCurrentPage');
                 }
                 feather.replace();
             };
@@ -798,43 +817,10 @@
             };
 
             const handleCertificateAction = async (type, format, existingData = null) => {
-                const form = type === 'bautismo' ? dom.baptismForm : dom.confirmationForm;
-                let formData;
-                let isNewRecord = false;
-
-                if (existingData) {
-                    formData = existingData;
-                } else {
-                    if (!form.checkValidity()) {
-                        form.reportValidity();
-                        return;
-                    }
-                    formData = Object.fromEntries(new FormData(form).entries());
-                    
-                    const recordId = formData.id;
-                    const recordArray = type === 'bautismo' ? appState.bautismos : appState.confirmaciones;
-                    
-                    try {
-                        if (recordId) { // Update existing record
-                            const index = recordArray.findIndex(r => r.id === recordId);
-                            if (index !== -1) {
-                                recordArray[index] = { ...recordArray[index], ...formData };
-                                await setDoc(doc(db, `users/${currentUserId}/${type}s`, recordId), formData);
-                                showToast('Registro actualizado con éxito');
-                            }
-                        } else { // Create new record
-                            isNewRecord = true;
-                            const newRecord = { ...formData, generatedAt: new Date().toISOString() };
-                            delete newRecord.id; // Firestore will generate an ID
-                            const docRef = await addDoc(collection(db, `users/${currentUserId}/${type}s`), newRecord);
-                            appState[type === 'bautismo' ? 'bautismos' : 'confirmaciones'].push({ ...newRecord, id: docRef.id });
-                            showToast('Registro guardado con éxito');
-                        }
-                    } catch (error) {
-                        console.error("Firestore error:", error);
-                        showToast('Error al guardar: verifique los permisos de la base de datos', 'error');
-                        return; // Stop execution if saving fails
-                    }
+                let formData = existingData;
+                if (!formData) {
+                    showToast('No hay datos para esta acción.', 'error');
+                    return;
                 }
 
                 showSpinner();
@@ -845,54 +831,59 @@
                     return;
                 }
 
-                const certNode = document.createElement('div');
-                certNode.innerHTML = certificateHTML;
-                const elementToRender = certNode.firstChild;
-                elementToRender.style.position = 'absolute';
-                elementToRender.style.left = '-9999px';
-                document.body.appendChild(elementToRender);
-
                 try {
                     if (format === 'pdf') {
+                        const elementToRender = document.createElement('div');
+                        elementToRender.innerHTML = certificateHTML;
+                        document.body.appendChild(elementToRender);
                         const { jsPDF } = window.jspdf;
-                        const canvas = await html2canvas(elementToRender, { scale: 3 });
+                        const canvas = await html2canvas(elementToRender.firstChild, { scale: 3 });
                         const imgData = canvas.toDataURL('image/png');
                         const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
                         pdf.addImage(imgData, 'PNG', 0, 0, 210, 297);
                         pdf.save(`Certificado_${type}_${formData.nombre.replace(/ /g, '_')}.pdf`);
+                        document.body.removeChild(elementToRender);
                         showToast('PDF generado con éxito');
-                    } else {
-                        const printWindow = window.open('', '_blank');
-                        printWindow.document.write('<html><head><title>Imprimir Certificado</title>');
-                        const styles = document.querySelectorAll('style');
-                        styles.forEach(style => {
-                            printWindow.document.write(style.outerHTML);
-                        });
-                        printWindow.document.write('</head><body>');
-                        printWindow.document.write(certificateHTML);
-                        printWindow.document.write('</body></html>');
-                        printWindow.document.close();
-                        printWindow.focus();
-                        setTimeout(() => {
-                            printWindow.print();
-                            printWindow.close();
-                        }, 250);
                     }
                 } catch (error) {
                     console.error("Error generating document:", error);
                     showToast('Error al generar el documento', 'error');
                 } finally {
                     hideSpinner();
-                    document.body.removeChild(elementToRender);
-                    if (!existingData && isNewRecord) {
-                        form.reset();
-                         if (type === 'confirmacion') {
-                            const today = new Date().toISOString().split('T')[0];
-                            document.getElementById('c-fecha-expedicion').value = today;
-                            document.getElementById('c-lugar-expedicion-hidden').value = "Paso de los Libres, Corrientes";
-                            document.getElementById('c-lugar-select').value = "Paso de los Libres, Corrientes";
+                }
+            };
+            
+            const saveCertificate = async (type) => {
+                const form = type === 'bautismo' ? dom.baptismForm : dom.confirmationForm;
+                if (!form.checkValidity()) {
+                    form.reportValidity();
+                    return;
+                }
+                const formData = Object.fromEntries(new FormData(form).entries());
+                const recordId = formData.id;
+                const recordArray = type === 'bautismo' ? appState.bautismos : appState.confirmaciones;
+
+                try {
+                    if (recordId) { // Update
+                        const index = recordArray.findIndex(r => r.id === recordId);
+                        if (index !== -1) {
+                            await setDoc(doc(db, `users/${currentUserId}/${type}s`, recordId), formData, { merge: true });
+                            showToast('Registro actualizado con éxito');
                         }
+                    } else { // Create
+                        const newRecord = { ...formData, generatedAt: new Date().toISOString() };
+                        delete newRecord.id;
+                        await addDoc(collection(db, `users/${currentUserId}/${type}s`), newRecord);
+                        showToast('Registro guardado con éxito');
                     }
+                    form.reset();
+                    if (type === 'confirmacion') {
+                        const today = new Date().toISOString().split('T')[0];
+                        document.getElementById('c-fecha-expedicion').value = today;
+                    }
+                } catch (error) {
+                    console.error("Firestore error:", error);
+                    showToast('Error al guardar: verifique los permisos de la base de datos', 'error');
                 }
             };
 
@@ -934,7 +925,7 @@
                             </div>
                             <div class="certificate-modern-body">
                                 <p>Certifico que: <strong>${(data.nombre || '').toUpperCase()}</strong></p>
-                                <p>hijo(a) de <span class="field">${data.padre || ''}</span> y de <span class="field">${data.madre || ''}</span> 
+                                <p>hijo(a) de <span class="field">${data.padre || ''}</span> y de <span class="field">${data.madre || ''}</span> 
                                 ha recibido solemnemente el Sacramento de la Confirmación en esta parroquia el día ${formatDate(data.fechaConfirmacion, 'long')}.</p>
                                 <p>Registrado en el Libro Parroquial de Confirmaciones, página <span class="field">${data.pagina || ''}</span>, acta Nº <span class="field">${data.acta || ''}</span>.</p>
                                 <p>En <span class="field">${data.lugarExpedicion || ''}</span>, ${formatDate(data.fechaExpedicion, 'long_parts')}.</p>
@@ -1005,7 +996,7 @@
                         input.value = record[key];
                     }
                 });
-                showView(isBautismo ? 'bautismo-content' : 'confirmacion-content');
+                showView(isBautismo ? 'bautismo-content' : 'confirmacion-content', true);
             };
 
             const setupDataListeners = (userId) => {
@@ -1021,7 +1012,10 @@
                             appState[coll].push({ ...doc.data(), id: doc.id });
                         });
                         if (coll === 'bautismos' || coll === 'confirmaciones') {
-                            renderRecords(coll.slice(0, -1));
+                            renderRecords('bautismo', dom.bautismoRecordsContainer, dom.bautismoPaginationContainer, appState.bautismosSearchTerm, 'bautismosCurrentPage');
+                            renderRecords('confirmacion', dom.confirmacionRecordsContainer, dom.confirmacionPaginationContainer, appState.confirmacionesSearchTerm, 'confirmacionesCurrentPage');
+                            renderRecords('bautismo', dom.bautismoFormRecordsContainer, dom.bautismoFormPaginationContainer, '', 'bautismosCurrentPage');
+                            renderRecords('confirmacion', dom.confirmacionFormRecordsContainer, dom.confirmacionFormPaginationContainer, '', 'confirmacionesCurrentPage');
                         } else {
                             renderAll();
                         }
@@ -1055,17 +1049,13 @@
                         deleteDoc(doc(db, `users/${currentUserId}/notifications`, id));
                         showToast('Notificación eliminada');
                         break;
-                    case 'generate-certificate':
-                        e.preventDefault();
-                        handleCertificateAction(type, format);
-                        break;
                     case 'paginate':
                         if (type === 'bautismo') {
                             appState.bautismosCurrentPage += direction === 'next' ? 1 : -1;
                         } else {
                             appState.confirmacionesCurrentPage += direction === 'next' ? 1 : -1;
                         }
-                        renderRecords(type);
+                        renderRecords(type, type === 'bautismo' ? dom.bautismoRecordsContainer : dom.confirmacionRecordsContainer, type === 'bautismo' ? dom.bautismoPaginationContainer : dom.confirmacionPaginationContainer, appState[`${type}sSearchTerm`], `${type}sCurrentPage`);
                         break;
                     case 'edit-record':
                         populateFormWithRecord(type, id);
@@ -1093,16 +1083,26 @@
                 }
             });
 
+            dom.baptismForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                saveCertificate('bautismo');
+            });
+
+            dom.confirmationForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                saveCertificate('confirmacion');
+            });
+
             dom.bautismoSearchInput.addEventListener('input', (e) => {
                 appState.bautismosSearchTerm = e.target.value;
                 appState.bautismosCurrentPage = 1;
-                renderRecords('bautismo');
+                renderRecords('bautismo', dom.bautismoRecordsContainer, dom.bautismoPaginationContainer, appState.bautismosSearchTerm, 'bautismosCurrentPage');
             });
 
             dom.confirmacionSearchInput.addEventListener('input', (e) => {
                 appState.confirmacionesSearchTerm = e.target.value;
                 appState.confirmacionesCurrentPage = 1;
-                renderRecords('confirmacion');
+                renderRecords('confirmacion', dom.confirmacionRecordsContainer, dom.confirmacionPaginationContainer, appState.confirmacionesSearchTerm, 'confirmacionesCurrentPage');
             });
 
             dom.notificationForm.addEventListener('submit', async (e) => {
@@ -1183,7 +1183,11 @@
                 showSpinner();
                 try {
                     await signInWithEmailAndPassword(auth, email, password);
-                    showToast('Inicio de sesión exitoso');
+                    if (email.toLowerCase() === 'parroquiasanjose11@hotmail.com') {
+                        showToast('Bienvenida Camila');
+                    } else {
+                        showToast('Inicio de sesión exitoso');
+                    }
                 } catch (error) {
                     console.error("Login error:", error.code);
                     showToast('Correo o contraseña incorrectos', 'error');
