@@ -175,24 +175,11 @@
 </head>
 <body class="bg-gray-100 dark:bg-slate-900 text-gray-800 dark:text-gray-200">
 
-    <!-- LOGIN VIEW -->
+    <!-- LOGIN VIEW (Simplified for auto-login) -->
     <section id="login-view" class="min-h-screen flex items-center justify-center">
-        <div class="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg w-full max-w-md">
-            <h2 class="text-3xl font-bold text-center mb-2">Secretaría Parroquial</h2>
-            <p class="text-center text-gray-600 dark:text-gray-400 mb-8">Acceso</p>
-            <form id="login-form" class="space-y-6">
-                <div>
-                    <input type="email" id="email" placeholder="Correo" class="block w-full rounded-lg py-3 px-4 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-center" required>
-                </div>
-                <div class="relative">
-                    <input type="password" id="password" placeholder="Contraseña" class="block w-full rounded-lg py-3 px-4 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-center" required>
-                    <button type="button" id="toggle-password" class="absolute inset-y-0 right-0 px-4 flex items-center text-gray-500 dark:text-gray-300">
-                        <i data-feather="eye" class="icon-eye"></i>
-                        <i data-feather="eye-off" class="icon-eye-off hidden"></i>
-                    </button>
-                </div>
-                <button type="submit" class="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105">Ingresar</button>
-            </form>
+        <div class="text-center">
+            <div class="spinner h-16 w-16 border-4 rounded-full border-blue-500 border-t-transparent mx-auto"></div>
+            <p class="mt-4 text-lg">Autenticando...</p>
         </div>
     </section>
 
@@ -562,31 +549,17 @@
     <div id="print-area" class="print-only hidden"></div>
 
     <script type="module">
-        // Import Firebase modules
+        // Import Firebase modules from a recent, stable version
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, collection, onSnapshot, doc, setDoc, addDoc, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-        // Your web app's Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyD7Exbyew-eGESZHdfetzkFDt5BJxLgPlE",
-            authDomain: "secretariaparroquial-c8c72.firebaseapp.com",
-            projectId: "secretariaparroquial-c8c72",
-            storageBucket: "secretariaparroquial-c8c72.appspot.com",
-            messagingSenderId: "850332198124",
-            appId: "1:850332198124:web:7eb4e148087d336dbfb1c9"
-        };
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, collection, onSnapshot, doc, setDoc, addDoc, deleteDoc, query, orderBy, setLogLevel } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         // --- MAIN APP LOGIC ---
         document.addEventListener('DOMContentLoaded', () => {
             
             let recordToDelete = { type: null, id: null };
             let unsubscribeListeners = [];
+            let db, auth; // Firebase services
 
             const appState = {
                 notifications: [],
@@ -604,9 +577,7 @@
             const dom = {
                 loginView: document.getElementById('login-view'),
                 appContainer: document.getElementById('app-container'),
-                loginForm: document.getElementById('login-form'),
                 logoutBtn: document.getElementById('logout-btn'),
-                togglePasswordBtn: document.getElementById('toggle-password'),
                 views: document.querySelectorAll('[data-view]'),
                 printArea: document.getElementById('print-area'),
                 notificationsList: document.getElementById('notifications-list'),
@@ -652,6 +623,25 @@
                 }, 3500);
             };
 
+            // Helper function to get correct collection name
+            const getCollectionName = (type) => {
+                const names = {
+                    bautismo: 'bautismos',
+                    confirmacion: 'confirmaciones',
+                    notification: 'notifications',
+                    ministro: 'ministros',
+                    grupo: 'grupos'
+                };
+                // This allows passing plural forms too
+                return names[type] || type;
+            };
+            
+            // Helper to get full Firestore path
+            const getCollectionPath = (type) => {
+                const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+                return `artifacts/${appId}/public/data/${getCollectionName(type)}`;
+            }
+
             const updateNotificationBell = () => {
                 const alertCount = appState.notifications.filter(n => n.priority === 'importante' || n.priority === 'urgente').length;
                 if (alertCount > 0) {
@@ -684,7 +674,7 @@
                         </div>
                         ${n.dueDate ? `<p class="text-sm mt-2 ${dateColor}">Vence: ${formatDate(n.dueDate)}</p>` : ''}
                     </div>
-                `}).join('');
+                    `}).join('');
                 feather.replace();
                 updateNotificationBell();
             };
@@ -778,9 +768,13 @@
                 dom.views.forEach(view => {
                     view.classList.toggle('hidden', view.dataset.view !== viewId);
                 });
-                if (viewId === 'bautismo-content' && !isEdit) dom.baptismForm.reset();
+                if (viewId === 'bautismo-content' && !isEdit) {
+                    dom.baptismForm.reset();
+                    document.getElementById('b-id').value = '';
+                }
                 if (viewId === 'confirmacion-content' && !isEdit) {
                     dom.confirmationForm.reset();
+                    document.getElementById('c-id').value = '';
                     const today = new Date().toISOString().split('T')[0];
                     document.getElementById('c-fecha-expedicion').value = today;
                 }
@@ -858,18 +852,23 @@
                 }
                 const formData = Object.fromEntries(new FormData(form).entries());
                 const recordId = formData.id;
+                const collectionPath = getCollectionPath(type);
                 
                 try {
                     if (recordId) { // Update
-                        await setDoc(doc(db, `parroquia/shared-data/${type}s`, recordId), formData, { merge: true });
+                        await setDoc(doc(db, collectionPath, recordId), formData, { merge: true });
                         showToast('Registro actualizado con éxito');
                     } else { // Create
                         const newRecord = { ...formData, generatedAt: new Date().toISOString() };
                         delete newRecord.id;
-                        await addDoc(collection(db, `parroquia/shared-data/${type}s`), newRecord);
+                        await addDoc(collection(db, collectionPath), newRecord);
                         showToast('Registro guardado con éxito');
                     }
                     form.reset();
+                    // Reset hidden ID fields after saving
+                    document.getElementById('b-id').value = '';
+                    document.getElementById('c-id').value = '';
+
                     if (type === 'confirmacion') {
                         const today = new Date().toISOString().split('T')[0];
                         document.getElementById('c-fecha-expedicion').value = today;
@@ -993,28 +992,25 @@
             };
 
             const setupDataListeners = () => {
-                const collections = ['bautismos', 'confirmaciones', 'notifications', 'ministros', 'grupos'];
+                const collectionsToListen = ['bautismos', 'confirmaciones', 'notifications', 'ministros', 'grupos'];
                 unsubscribeListeners.forEach(unsub => unsub());
                 unsubscribeListeners = [];
 
-                collections.forEach(coll => {
-                    const q = query(collection(db, `parroquia/shared-data/${coll}`));
+                collectionsToListen.forEach(collKey => {
+                    const collectionPath = getCollectionPath(collKey);
+                    const q = query(collection(db, collectionPath));
                     const unsub = onSnapshot(q, (querySnapshot) => {
-                        appState[coll] = [];
+                        appState[collKey] = [];
                         querySnapshot.forEach((doc) => {
-                            appState[coll].push({ ...doc.data(), id: doc.id });
+                            appState[collKey].push({ ...doc.data(), id: doc.id });
                         });
-                        if (coll === 'bautismos' || coll === 'confirmaciones') {
-                            renderRecords('bautismo', dom.bautismoRecordsContainer, dom.bautismoPaginationContainer, appState.bautismosSearchTerm, 'bautismosCurrentPage');
-                            renderRecords('confirmacion', dom.confirmacionRecordsContainer, dom.confirmacionPaginationContainer, appState.confirmacionesSearchTerm, 'confirmacionesCurrentPage');
-                            renderRecords('bautismo', dom.bautismoFormRecordsContainer, dom.bautismoFormPaginationContainer, '', 'bautismosCurrentPage');
-                            renderRecords('confirmacion', dom.confirmacionFormRecordsContainer, dom.confirmacionFormPaginationContainer, '', 'confirmacionesCurrentPage');
-                        } else {
-                            renderAll();
-                        }
+                        
+                        // This ensures the entire UI is updated once data arrives
+                        renderAll();
+
                     }, (error) => {
-                        console.error(`Error listening to ${coll}:`, error);
-                        showToast(`Error al cargar ${coll}. Verifique los permisos.`, 'error');
+                        console.error(`Error listening to ${collKey}:`, error);
+                        showToast(`Error al cargar ${collKey}. Verifique los permisos de la base de datos y las reglas de seguridad.`, 'error');
                     });
                     unsubscribeListeners.push(unsub);
                 });
@@ -1033,13 +1029,13 @@
                     case 'add-row':
                         const newId = Date.now().toString();
                         const newRowData = { id: newId, semana: 'Nueva', sabado: '', dom08: '', dom10: '', dom20: '' };
-                        setDoc(doc(db, `parroquia/shared-data/${table}`, newId), newRowData);
+                        setDoc(doc(db, getCollectionPath(table), newId), newRowData);
                         break;
                     case 'remove-row':
-                        deleteDoc(doc(db, `parroquia/shared-data/${table}`, id));
+                        deleteDoc(doc(db, getCollectionPath(table), id));
                         break;
                     case 'remove-notification':
-                        deleteDoc(doc(db, `parroquia/shared-data/notifications`, id));
+                        deleteDoc(doc(db, getCollectionPath('notifications'), id));
                         showToast('Notificación eliminada');
                         break;
                     case 'paginate':
@@ -1067,7 +1063,7 @@
                         break;
                     case 'confirm-delete':
                         if (recordToDelete.type && recordToDelete.id) {
-                            deleteDoc(doc(db, `parroquia/shared-data/${recordToDelete.type}s`, recordToDelete.id));
+                            deleteDoc(doc(db, getCollectionPath(recordToDelete.type), recordToDelete.id));
                             showToast('Registro eliminado con éxito');
                         }
                         dom.deleteConfirmModal.classList.add('hidden');
@@ -1104,7 +1100,7 @@
                 const priority = dom.notificationForm.querySelector('#notification-priority').value;
                 const dueDate = dom.notificationForm.querySelector('#notification-due-date').value;
                 if (text) {
-                    await addDoc(collection(db, `parroquia/shared-data/notifications`), { text, priority, dueDate });
+                    await addDoc(collection(db, getCollectionPath('notifications')), { text, priority, dueDate });
                     dom.notificationForm.reset();
                     showToast('Notificación agregada');
                 }
@@ -1121,7 +1117,7 @@
                     dom10: dom.editForm.querySelector('#edit-dom10').value,
                     dom20: dom.editForm.querySelector('#edit-dom20').value,
                 };
-                await setDoc(doc(db, `parroquia/shared-data/${table}`, id), updatedData, { merge: true });
+                await setDoc(doc(db, getCollectionPath(table), id), updatedData, { merge: true });
                 closeEditModal();
             });
 
@@ -1153,55 +1149,73 @@
                 }
             });
 
-            // --- AUTHENTICATION LOGIC ---
-            onAuthStateChanged(auth, (user) => {
-                if (user) {
-                    dom.loginView.classList.add('hidden');
-                    dom.appContainer.classList.remove('hidden');
-                    setupDataListeners();
-                    showView('secretaria-dashboard');
-                } else {
-                    dom.loginView.classList.remove('hidden');
-                    dom.appContainer.classList.add('hidden');
-                    unsubscribeListeners.forEach(unsub => unsub());
-                }
-            });
-
-            dom.loginForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const email = dom.loginForm.querySelector('#email').value;
-                const password = dom.loginForm.querySelector('#password').value;
-                showSpinner();
-                try {
-                    await signInWithEmailAndPassword(auth, email, password);
-                    showToast('Inicio de sesión exitoso');
-                } catch (error) {
-                    console.error("Login error:", error.code);
-                    showToast('Correo o contraseña incorrectos', 'error');
-                } finally {
-                    hideSpinner();
-                }
-            });
-
             dom.logoutBtn.addEventListener('click', async () => {
                 await signOut(auth);
                 showToast('Sesión cerrada');
             });
 
-            dom.togglePasswordBtn.addEventListener('click', () => {
-                const passwordInput = document.getElementById('password');
-                const iconEye = dom.togglePasswordBtn.querySelector('.icon-eye');
-                const iconEyeOff = dom.togglePasswordBtn.querySelector('.icon-eye-off');
-                if (passwordInput.type === 'password') {
-                    passwordInput.type = 'text';
-                    iconEye.classList.add('hidden');
-                    iconEyeOff.classList.remove('hidden');
-                } else {
-                    passwordInput.type = 'password';
-                    iconEye.classList.remove('hidden');
-                    iconEyeOff.classList.add('hidden');
+            // --- INITIALIZATION AND AUTH ---
+            const initializeAndAuth = async () => {
+                try {
+                    // Use environment variables for Firebase config
+                    const firebaseConfig = typeof __firebase_config !== 'undefined' 
+                        ? JSON.parse(__firebase_config)
+                        : null;
+
+                    if (!firebaseConfig) {
+                        dom.loginView.innerHTML = `<p class="text-red-500">Error: Configuración de Firebase no encontrada.</p>`;
+                        return;
+                    }
+
+                    const app = initializeApp(firebaseConfig);
+                    db = getFirestore(app);
+                    auth = getAuth(app);
+                    
+                    // Optional: Enable detailed logging for debugging
+                    setLogLevel('debug');
+
+                    onAuthStateChanged(auth, (user) => {
+                        if (user) {
+                            console.log("User is authenticated:", user.uid);
+                            dom.loginView.classList.add('hidden');
+                            dom.appContainer.classList.remove('hidden');
+                            setupDataListeners();
+                            showView('secretaria-dashboard');
+                        } else {
+                            console.log("User is not authenticated.");
+                            dom.loginView.classList.remove('hidden');
+                            dom.appContainer.classList.add('hidden');
+                            unsubscribeListeners.forEach(unsub => unsub());
+                            // Attempt to sign in automatically
+                            signIn();
+                        }
+                    });
+
+                } catch (error) {
+                    console.error("Firebase initialization failed:", error);
+                    dom.loginView.innerHTML = `<p class="text-red-500">Error crítico al inicializar la aplicación. Revise la consola.</p>`;
                 }
-            });
+            };
+
+            const signIn = async () => {
+                try {
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        console.log("Attempting to sign in with custom token...");
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                        showToast('Autenticación exitosa');
+                    } else {
+                        console.log("No custom token found, signing in anonymously...");
+                        await signInAnonymously(auth);
+                        showToast('Sesión anónima iniciada');
+                    }
+                } catch (error) {
+                    console.error("Authentication error:", error);
+                    showToast(`Error de autenticación: ${error.message}`, 'error');
+                    dom.loginView.innerHTML = `<p class="text-red-500">Fallo en la autenticación. Por favor, recargue la página.</p>`;
+                }
+            };
+
+            initializeAndAuth();
         });
     </script>
 </body>
