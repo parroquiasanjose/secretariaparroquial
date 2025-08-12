@@ -181,12 +181,14 @@
             <h2 class="text-3xl font-bold text-center mb-2">Secretaría Parroquial</h2>
             <p class="text-center text-gray-600 dark:text-gray-400 mb-8">Acceso</p>
             <form id="login-form" class="space-y-6">
-                <div class="text-center">
-                    <input type="email" id="email" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-center" placeholder="Correo" required>
+                <div>
+                    <label for="email" class="block text-sm font-medium text-center">Correo</label>
+                    <input type="email" id="email" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700" required>
                 </div>
-                <div class="text-center">
+                <div>
+                    <label for="password" class="block text-sm font-medium text-center">Contraseña</label>
                     <div class="relative">
-                        <input type="password" id="password" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-center" placeholder="Contraseña" required>
+                        <input type="password" id="password" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700" required>
                         <button type="button" id="toggle-password" class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-500 dark:text-gray-300">
                             <i data-feather="eye" class="icon-eye"></i>
                             <i data-feather="eye-off" class="icon-eye-off hidden"></i>
@@ -277,7 +279,7 @@
                         <h3 class="text-2xl font-bold mb-4">Últimos Registros de Confirmación</h3>
                         <div class="mb-4 relative">
                             <input type="search" id="confirmacion-search" placeholder="Buscar por nombre, fecha..." class="w-full rounded-md p-2 pl-10 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:ring-indigo-500 focus:border-indigo-500">
-                             <i data-feather="search" class="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400"></i>
+                                <i data-feather="search" class="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400"></i>
                         </div>
                         <div id="confirmacion-records-container" class="space-y-3"></div>
                         <div id="confirmacion-pagination-container" class="mt-4 flex justify-between items-center"></div>
@@ -310,10 +312,10 @@
                         <div><label for="b-madrina" class="block text-sm font-medium">Madrina</label><input name="madrina" type="text" id="b-madrina" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700" required></div>
                         <div class="md:col-span-2"><label for="b-notas" class="block text-sm font-medium">Notas Marginales</label><textarea name="notas" id="b-notas" rows="3" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700"></textarea></div>
                         <div class="md:col-span-2 flex justify-end space-x-4">
-                             <button type="submit" data-action="save-certificate" data-type="bautismo" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-2 px-6 rounded-lg flex items-center space-x-2 transition-all duration-300 ease-in-out transform hover:scale-105">
-                                 <i data-feather="save" class="h-4 w-4"></i>
-                                 <span>Guardar</span>
-                             </button>
+                            <button type="submit" data-action="save-certificate" data-type="bautismo" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-2 px-6 rounded-lg flex items-center space-x-2 transition-all duration-300 ease-in-out transform hover:scale-105">
+                                <i data-feather="save" class="h-4 w-4"></i>
+                                <span>Guardar</span>
+                            </button>
                         </div>
                     </form>
                     <div class="mt-8 border-t pt-6">
@@ -588,7 +590,6 @@
         document.addEventListener('DOMContentLoaded', () => {
             
             let recordToDelete = { type: null, id: null };
-            let currentUserId = null;
             let unsubscribeListeners = [];
 
             const appState = {
@@ -861,19 +862,15 @@
                 }
                 const formData = Object.fromEntries(new FormData(form).entries());
                 const recordId = formData.id;
-                const recordArray = type === 'bautismo' ? appState.bautismos : appState.confirmaciones;
-
+                
                 try {
                     if (recordId) { // Update
-                        const index = recordArray.findIndex(r => r.id === recordId);
-                        if (index !== -1) {
-                            await setDoc(doc(db, `users/${currentUserId}/${type}s`, recordId), formData, { merge: true });
-                            showToast('Registro actualizado con éxito');
-                        }
+                        await setDoc(doc(db, `parroquia/shared-data/${type}s`, recordId), formData, { merge: true });
+                        showToast('Registro actualizado con éxito');
                     } else { // Create
                         const newRecord = { ...formData, generatedAt: new Date().toISOString() };
                         delete newRecord.id;
-                        await addDoc(collection(db, `users/${currentUserId}/${type}s`), newRecord);
+                        await addDoc(collection(db, `parroquia/shared-data/${type}s`), newRecord);
                         showToast('Registro guardado con éxito');
                     }
                     form.reset();
@@ -925,7 +922,7 @@
                             </div>
                             <div class="certificate-modern-body">
                                 <p>Certifico que: <strong>${(data.nombre || '').toUpperCase()}</strong></p>
-                                <p>hijo(a) de <span class="field">${data.padre || ''}</span> y de <span class="field">${data.madre || ''}</span> 
+                                <p>hijo(a) de <span class="field">${data.padre || ''}</span> y de <span class="field">${data.madre || ''}</span>&nbsp;
                                 ha recibido solemnemente el Sacramento de la Confirmación en esta parroquia el día ${formatDate(data.fechaConfirmacion, 'long')}.</p>
                                 <p>Registrado en el Libro Parroquial de Confirmaciones, página <span class="field">${data.pagina || ''}</span>, acta Nº <span class="field">${data.acta || ''}</span>.</p>
                                 <p>En <span class="field">${data.lugarExpedicion || ''}</span>, ${formatDate(data.fechaExpedicion, 'long_parts')}.</p>
@@ -999,13 +996,13 @@
                 showView(isBautismo ? 'bautismo-content' : 'confirmacion-content', true);
             };
 
-            const setupDataListeners = (userId) => {
+            const setupDataListeners = () => {
                 const collections = ['bautismos', 'confirmaciones', 'notifications', 'ministros', 'grupos'];
                 unsubscribeListeners.forEach(unsub => unsub());
                 unsubscribeListeners = [];
 
                 collections.forEach(coll => {
-                    const q = query(collection(db, `users/${userId}/${coll}`));
+                    const q = query(collection(db, `parroquia/shared-data/${coll}`));
                     const unsub = onSnapshot(q, (querySnapshot) => {
                         appState[coll] = [];
                         querySnapshot.forEach((doc) => {
@@ -1040,13 +1037,13 @@
                     case 'add-row':
                         const newId = Date.now().toString();
                         const newRowData = { id: newId, semana: 'Nueva', sabado: '', dom08: '', dom10: '', dom20: '' };
-                        setDoc(doc(db, `users/${currentUserId}/${table}`, newId), newRowData);
+                        setDoc(doc(db, `parroquia/shared-data/${table}`, newId), newRowData);
                         break;
                     case 'remove-row':
-                        deleteDoc(doc(db, `users/${currentUserId}/${table}`, id));
+                        deleteDoc(doc(db, `parroquia/shared-data/${table}`, id));
                         break;
                     case 'remove-notification':
-                        deleteDoc(doc(db, `users/${currentUserId}/notifications`, id));
+                        deleteDoc(doc(db, `parroquia/shared-data/notifications`, id));
                         showToast('Notificación eliminada');
                         break;
                     case 'paginate':
@@ -1074,7 +1071,7 @@
                         break;
                     case 'confirm-delete':
                         if (recordToDelete.type && recordToDelete.id) {
-                            deleteDoc(doc(db, `users/${currentUserId}/${recordToDelete.type}s`, recordToDelete.id));
+                            deleteDoc(doc(db, `parroquia/shared-data/${recordToDelete.type}s`, recordToDelete.id));
                             showToast('Registro eliminado con éxito');
                         }
                         dom.deleteConfirmModal.classList.add('hidden');
@@ -1111,7 +1108,7 @@
                 const priority = dom.notificationForm.querySelector('#notification-priority').value;
                 const dueDate = dom.notificationForm.querySelector('#notification-due-date').value;
                 if (text) {
-                    await addDoc(collection(db, `users/${currentUserId}/notifications`), { text, priority, dueDate });
+                    await addDoc(collection(db, `parroquia/shared-data/notifications`), { text, priority, dueDate });
                     dom.notificationForm.reset();
                     showToast('Notificación agregada');
                 }
@@ -1128,7 +1125,7 @@
                     dom10: dom.editForm.querySelector('#edit-dom10').value,
                     dom20: dom.editForm.querySelector('#edit-dom20').value,
                 };
-                await setDoc(doc(db, `users/${currentUserId}/${table}`, id), updatedData, { merge: true });
+                await setDoc(doc(db, `parroquia/shared-data/${table}`, id), updatedData, { merge: true });
                 closeEditModal();
             });
 
@@ -1163,13 +1160,11 @@
             // --- AUTHENTICATION LOGIC ---
             onAuthStateChanged(auth, (user) => {
                 if (user) {
-                    currentUserId = user.uid;
                     dom.loginView.classList.add('hidden');
                     dom.appContainer.classList.remove('hidden');
-                    setupDataListeners(user.uid);
+                    setupDataListeners();
                     showView('secretaria-dashboard');
                 } else {
-                    currentUserId = null;
                     dom.loginView.classList.remove('hidden');
                     dom.appContainer.classList.add('hidden');
                     unsubscribeListeners.forEach(unsub => unsub());
@@ -1183,11 +1178,7 @@
                 showSpinner();
                 try {
                     await signInWithEmailAndPassword(auth, email, password);
-                    if (email.toLowerCase() === 'parroquiasanjose11@hotmail.com') {
-                        showToast('Bienvenida Camila');
-                    } else {
-                        showToast('Inicio de sesión exitoso');
-                    }
+                    showToast('Inicio de sesión exitoso');
                 } catch (error) {
                     console.error("Login error:", error.code);
                     showToast('Correo o contraseña incorrectos', 'error');
