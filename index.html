@@ -182,18 +182,14 @@
             <p class="text-center text-gray-600 dark:text-gray-400 mb-8">Acceso</p>
             <form id="login-form" class="space-y-6">
                 <div>
-                    <label for="email" class="block text-sm font-medium text-center">Correo</label>
-                    <input type="email" id="email" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700" required>
+                    <input type="email" id="email" placeholder="Correo" class="block w-full rounded-lg py-3 px-4 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-center" required>
                 </div>
-                <div>
-                    <label for="password" class="block text-sm font-medium text-center">Contraseña</label>
-                    <div class="relative">
-                        <input type="password" id="password" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700" required>
-                        <button type="button" id="toggle-password" class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-500 dark:text-gray-300">
-                            <i data-feather="eye" class="icon-eye"></i>
-                            <i data-feather="eye-off" class="icon-eye-off hidden"></i>
-                        </button>
-                    </div>
+                <div class="relative">
+                    <input type="password" id="password" placeholder="Contraseña" class="block w-full rounded-lg py-3 px-4 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-center" required>
+                    <button type="button" id="toggle-password" class="absolute inset-y-0 right-0 px-4 flex items-center text-gray-500 dark:text-gray-300">
+                        <i data-feather="eye" class="icon-eye"></i>
+                        <i data-feather="eye-off" class="icon-eye-off hidden"></i>
+                    </button>
                 </div>
                 <button type="submit" class="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105">Ingresar</button>
             </form>
