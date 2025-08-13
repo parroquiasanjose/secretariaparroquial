@@ -131,7 +131,6 @@
             font-style: italic;
         }
         
-        /* MODIFICACIÓN: Estilo para campos editables */
         .editable-field {
             padding: 2px 6px;
             border-radius: 4px;
@@ -471,7 +470,7 @@
                                         <button data-action="save-horarios" class="bg-blue-500 hover:bg-blue-600 text-white text-xs font-bold py-1 px-3 rounded-md transition-all">Guardar</button>
                                     </div>
                                 </div>
-                                </div>
+                            </div>
                         
                             <div>
                                 <h4 class="text-xl font-semibold mb-4">Adoración de Martes a Viernes</h4>
@@ -498,7 +497,7 @@
                                         <button data-action="save-horarios" class="bg-blue-500 hover:bg-blue-600 text-white text-xs font-bold py-1 px-3 rounded-md transition-all">Guardar</button>
                                     </div>
                                 </div>
-                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -658,7 +657,7 @@
                 grupos: [],
                 adoracionJueves: [],
                 adoracionSemanal: [],
-                horariosAdoracion: {}, // MODIFICACIÓN: Nuevo estado para horarios
+                horariosAdoracion: {},
                 bautismos: [],
                 confirmaciones: [],
                 bautismosSearchTerm: '',
@@ -682,7 +681,6 @@
                 gruposTableBody: document.getElementById('grupos-table-body'),
                 adoracionJuevesTableBody: document.getElementById('adoracion-jueves-table-body'),
                 adoracionSemanalTableBody: document.getElementById('adoracion-semanal-table-body'),
-                // MODIFICACIÓN: Nuevos elementos del DOM
                 adoracionJuevesHorarios: document.getElementById('adoracion-jueves-horarios'),
                 adoracionSemanalHorarios: document.getElementById('adoracion-semanal-horarios'),
                 baptismForm: document.getElementById('baptism-form'),
@@ -726,7 +724,6 @@
                 }, 3500);
             };
             
-            // MODIFICACIÓN: Nueva función para renderizar horarios editables
             const renderHorariosAdoracion = () => {
                 if (!dom.adoracionJuevesHorarios || !dom.adoracionSemanalHorarios) return;
                 
@@ -739,7 +736,6 @@
                 dom.adoracionSemanalHorarios.querySelector('[data-key="semanalReserva"]').textContent = data.semanalReserva || '12:00';
             };
 
-            // MODIFICACIÓN: Nueva función para guardar horarios editables
             const handleSaveHorarios = async () => {
                 showSpinner();
                 try {
@@ -912,7 +908,7 @@
                     renderStandardTable('grupos', dom.gruposTableBody);
                     renderAdoracionTable('adoracionJueves', dom.adoracionJuevesTableBody);
                     renderAdoracionTable('adoracionSemanal', dom.adoracionSemanalTableBody);
-                    renderHorariosAdoracion(); // Cargar horarios editables
+                    renderHorariosAdoracion();
                 }
                 if (viewId === 'certificate-choice-content' || viewId === 'bautismo-content' || viewId === 'confirmacion-content') {
                     renderRecords('bautismo', dom.bautismoRecordsContainer, dom.bautismoPaginationContainer, appState.bautismosSearchTerm, 'bautismosCurrentPage');
@@ -1187,7 +1183,6 @@
                 }
             };
             
-            // MODIFICACIÓN: Nueva función para crear horarios si no existen
             const setupInitialHorarios = async () => {
                 const horariosDocRef = doc(db, 'parroquia/shared-data/configuracion', 'horariosAdoracion');
                 const initialHorarios = {
@@ -1201,6 +1196,7 @@
                 renderHorariosAdoracion();
             };
 
+            // INICIO: FUNCIÓN AJUSTADA PARA MÁXIMA LEGIBILIDAD
             const downloadMassOrgPdf = async () => {
                 showSpinner();
                 const { jsPDF } = window.jspdf;
@@ -1209,24 +1205,26 @@
                 const originalPrintAreaClass = printArea.className;
                 const cardElements = printArea.querySelectorAll('.bg-white.dark\\:bg-gray-800');
                 const originalCardClasses = Array.from(cardElements).map(el => el.className);
-                const textElements = printArea.querySelectorAll('.dark\\:text-gray-200, .dark\\:text-gray-400');
+                const textElements = printArea.querySelectorAll('.dark\\:text-gray-200, .dark\\:text-gray-400, .dark\\:text-gray-300');
                 const originalTextClasses = Array.from(textElements).map(el => el.className);
 
                 try {
+                    // Aplicar estilos temporales para una impresión limpia
                     printArea.className = 'p-8 bg-white';
                     cardElements.forEach(el => {
                         el.className = 'bg-white p-8';
                     });
                     textElements.forEach(el => {
-                        el.classList.remove('dark:text-gray-200', 'dark:text-gray-400');
+                        el.classList.remove('dark:text-gray-200', 'dark:text-gray-400', 'dark:text-gray-300');
                         el.classList.add('text-gray-800');
                     });
                     
                     feather.replace();
-                    await new Promise(resolve => setTimeout(resolve, 50));
+                    // Pequeña espera para asegurar que el navegador aplique los estilos antes de la captura
+                    await new Promise(resolve => setTimeout(resolve, 100));
                     
                     const canvas = await html2canvas(printArea, {
-                        scale: 2,
+                        scale: 3, // <- CAMBIO CLAVE: Aumentado a 3 para máxima nitidez
                         useCORS: true,
                         backgroundColor: '#ffffff',
                     });
@@ -1261,6 +1259,7 @@
                     console.error('Error al generar el PDF:', error);
                     showToast('Hubo un error al generar el PDF.', 'error');
                 } finally {
+                    // Restaurar clases originales para no afectar la vista del usuario
                     printArea.className = originalPrintAreaClass;
                     cardElements.forEach((el, index) => {
                         el.className = originalCardClasses[index];
@@ -1272,6 +1271,7 @@
                     hideSpinner();
                 }
             };
+            // FIN: FUNCIÓN AJUSTADA
 
             const setupDataListeners = () => {
                 const collections = ['bautismos', 'confirmaciones', 'notifications', 'ministros', 'grupos', 'adoracionJueves', 'adoracionSemanal'];
@@ -1319,7 +1319,6 @@
                     unsubscribeListeners.push(unsub);
                 });
                 
-                // MODIFICACIÓN: Listener para el documento de configuración de horarios
                 const horariosDocRef = doc(db, 'parroquia/shared-data/configuracion', 'horariosAdoracion');
                 const unsubHorarios = onSnapshot(horariosDocRef, (docSnap) => {
                     if (docSnap.exists()) {
@@ -1348,7 +1347,7 @@
                     case 'show-edit-adoracion-modal': showEditAdoracionModal(table, id); break;
                     case 'close-edit-adoracion-modal': closeEditAdoracionModal(); break;
                     case 'close-custom-location-modal': closeCustomLocationModal(); break;
-                    case 'save-horarios': handleSaveHorarios(); break; // MODIFICACIÓN: Nueva acción
+                    case 'save-horarios': handleSaveHorarios(); break;
                     case 'add-row':
                         const newId = Date.now().toString();
                         let newRowData;
@@ -1495,7 +1494,7 @@
                 if (user) {
                     dom.loginView.classList.add('hidden');
                     dom.appContainer.classList.remove('hidden');
-                    setupInitialData(); // Populate data if needed
+                    setupInitialData();
                     setupDataListeners();
                     showView('secretaria-dashboard');
                 } else {
