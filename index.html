@@ -5,14 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Módulo de Secretaría - Parroquia San José</title>
     
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
+    <!-- Google Fonts: Inter & Noto Serif for certificates -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Serif:wght@400;700&display=swap" rel="stylesheet">
     
+    <!-- Feather Icons -->
     <script src="https://unpkg.com/feather-icons"></script>
 
+    <!-- PDF Generation Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
@@ -171,42 +175,30 @@
 </head>
 <body class="bg-gray-100 dark:bg-slate-900 text-gray-800 dark:text-gray-200">
 
+    <!-- LOGIN VIEW -->
     <section id="login-view" class="min-h-screen flex items-center justify-center">
-        <div class="max-w-md w-full bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 space-y-6">
-            <div class="text-center">
-                <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Iniciar Sesión</h2>
-                <p class="mt-2 text-gray-600 dark:text-gray-400">Módulo de Secretaría - Parroquia San José</p>
-            </div>
+        <div class="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg w-full max-w-md">
+            <h2 class="text-3xl font-bold text-center mb-2">Secretaría Parroquial</h2>
+            <p class="text-center text-gray-600 dark:text-gray-400 mb-8">Acceso</p>
             <form id="login-form" class="space-y-6">
                 <div>
-                    <label for="login-email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Correo Electrónico</label>
-                    <div class="mt-1 relative">
-                        <input id="login-email" name="email" type="email" autocomplete="email" required class="w-full rounded-md p-3 border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 focus:ring-indigo-500 focus:border-indigo-500" placeholder="usuario@ejemplo.com">
-                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                            <i data-feather="mail" class="h-5 w-5 text-gray-400"></i>
-                        </div>
-                    </div>
+                    <input type="email" id="email" placeholder="Correo" class="block w-full rounded-lg py-3 px-4 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-center" required>
                 </div>
-                <div>
-                    <label for="login-password" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Contraseña</label>
-                     <div class="mt-1 relative">
-                        <input id="login-password" name="password" type="password" autocomplete="current-password" required class="w-full rounded-md p-3 border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 focus:ring-indigo-500 focus:border-indigo-500" placeholder="••••••••">
-                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                             <i data-feather="lock" class="h-5 w-5 text-gray-400"></i>
-                        </div>
-                    </div>
-                </div>
-                <div>
-                    <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 ease-in-out transform hover:scale-105">
-                        Acceder
+                <div class="relative">
+                    <input type="password" id="password" placeholder="Contraseña" class="block w-full rounded-lg py-3 px-4 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-center" required>
+                    <button type="button" id="toggle-password" class="absolute inset-y-0 right-0 px-4 flex items-center text-gray-500 dark:text-gray-300">
+                        <i data-feather="eye" class="icon-eye"></i>
+                        <i data-feather="eye-off" class="icon-eye-off hidden"></i>
                     </button>
                 </div>
-                <p id="login-error" class="text-center text-red-500 text-sm h-4"></p>
+                <button type="submit" class="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105">Ingresar</button>
             </form>
         </div>
     </section>
 
+    <!-- Main App Container (hidden by default) -->
     <main id="app-container" class="hidden">
+        <!-- DASHBOARD DE SECRETARÍA -->
         <section id="secretaria-dashboard" data-view="secretaria-dashboard" class="min-h-screen">
             <div class="container mx-auto px-6 py-20">
                 <div class="flex justify-between items-center mb-12">
@@ -244,6 +236,7 @@
             </div>
         </section>
 
+        <!-- PANTALLA DE ELECCIÓN DE CERTIFICADO -->
         <section id="certificate-choice-content" data-view="certificate-choice-content" class="hidden min-h-screen">
             <div class="container mx-auto px-6 py-12">
                 <div class="flex justify-between items-center mb-12">
@@ -265,7 +258,9 @@
                     </div>
                 </div>
 
+                <!-- REGISTROS -->
                 <div class="mt-16 grid grid-cols-1 lg:grid-cols-2 gap-12">
+                    <!-- Registros de Bautismo -->
                     <div>
                         <h3 class="text-2xl font-bold mb-4">Últimos Registros de Bautismo</h3>
                         <div class="mb-4 relative">
@@ -275,6 +270,7 @@
                         <div id="bautismo-records-container" class="space-y-3"></div>
                         <div id="bautismo-pagination-container" class="mt-4 flex justify-between items-center"></div>
                     </div>
+                    <!-- Registros de Confirmación -->
                     <div>
                         <h3 class="text-2xl font-bold mb-4">Últimos Registros de Confirmación</h3>
                         <div class="mb-4 relative">
@@ -288,6 +284,7 @@
             </div>
         </section>
 
+        <!-- MÓDULO DE CERTIFICADOS DE BAUTISMO -->
         <section id="bautismo-content" data-view="bautismo-content" class="hidden min-h-screen">
             <div class="container mx-auto px-6 py-12">
                 <div class="flex justify-between items-center mb-8">
@@ -326,6 +323,7 @@
             </div>
         </section>
 
+        <!-- MÓDULO DE CERTIFICADOS DE CONFIRMACIÓN (RESTRUCTURED) -->
         <section id="confirmacion-content" data-view="confirmacion-content" class="hidden min-h-screen">
             <div class="container mx-auto px-6 py-12">
                 <div class="flex justify-between items-center mb-8">
@@ -378,6 +376,7 @@
             </div>
         </section>
         
+        <!-- MÓDULO ORGANIZACIÓN DE MISAS -->
         <section id="mass-org-content" data-view="mass-org-content" class="hidden min-h-screen">
             <div class="container mx-auto px-6 py-12">
                 <div class="flex justify-between items-center mb-8 no-print">
@@ -388,6 +387,7 @@
                     </div>
                 </div>
                 <div id="mass-org-print-area" class="space-y-12 printable-area">
+                    <!-- Tabla de Ministros -->
                     <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8">
                         <h3 class="text-2xl font-bold mb-4">Organización para el servicio litúrgico (Ministros)</h3>
                         <div class="overflow-x-auto">
@@ -408,6 +408,7 @@
                         <div class="mt-4 text-right no-print"><button data-action="add-row" data-table="ministros" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105">Agregar Fila</button></div>
                     </div>
 
+                    <!-- Tabla de Organización de Misas -->
                     <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8">
                         <h3 class="text-2xl font-bold mb-4">Organización de las Misas (Grupos)</h3>
                         <div class="overflow-x-auto">
@@ -431,6 +432,7 @@
             </div>
         </section>
 
+        <!-- MÓDULO DE NOTIFICACIONES -->
         <section id="notifications-content" data-view="notifications-content" class="hidden min-h-screen">
            <div class="container mx-auto px-6 py-12">
                 <div class="flex justify-between items-center mb-8">
@@ -466,6 +468,7 @@
            </div>
         </section>
 
+        <!-- MÓDULO DE CORREO -->
         <section id="email-content" data-view="email-content" class="hidden min-h-screen">
              <div class="container mx-auto px-6 py-12">
                 <div class="flex justify-between items-center mb-8">
@@ -494,6 +497,7 @@
         </section>
     </main>
 
+    <!-- Edit Row Modal -->
     <div id="edit-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 no-print z-50">
         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 w-full max-w-lg">
             <h3 id="edit-modal-title" class="text-2xl font-bold mb-6">Modificar Fila</h3>
@@ -515,6 +519,7 @@
         </div>
     </div>
 
+    <!-- Custom Location Modal -->
     <div id="custom-location-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 no-print z-50">
         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 w-full max-w-md">
             <h3 class="text-2xl font-bold mb-6">Ingresar Lugar de Expedición</h3>
@@ -533,6 +538,7 @@
         </div>
     </div>
 
+    <!-- Delete Confirmation Modal -->
     <div id="delete-confirm-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 no-print z-50">
         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 w-full max-w-md">
             <h3 class="text-xl font-bold mb-4">Confirmar Eliminación</h3>
@@ -544,12 +550,15 @@
         </div>
     </div>
 
+    <!-- Loading Spinner -->
     <div id="loading-spinner" class="hidden fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50">
         <div class="spinner h-16 w-16 border-4 rounded-full"></div>
     </div>
 
+    <!-- Toast Container -->
     <div id="toast-container" class="fixed bottom-4 right-4 z-50 space-y-2"></div>
 
+    <!-- Print Area -->
     <div id="print-area" class="print-only hidden"></div>
 
     <script type="module">
@@ -558,12 +567,26 @@
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
         import { getFirestore, collection, onSnapshot, doc, setDoc, addDoc, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD7Exbyew-eGESZHdfetzkFDt5BJxLgPlE",
+            authDomain: "secretariaparroquial-c8c72.firebaseapp.com",
+            projectId: "secretariaparroquial-c8c72",
+            storageBucket: "secretariaparroquial-c8c72.appspot.com",
+            messagingSenderId: "850332198124",
+            appId: "1:850332198124:web:7eb4e148087d336dbfb1c9"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
         // --- MAIN APP LOGIC ---
         document.addEventListener('DOMContentLoaded', () => {
             
             let recordToDelete = { type: null, id: null };
             let unsubscribeListeners = [];
-            let db, auth; // Firebase services
 
             const appState = {
                 notifications: [],
@@ -580,12 +603,10 @@
 
             const dom = {
                 loginView: document.getElementById('login-view'),
-                loginForm: document.getElementById('login-form'),
-                loginEmailInput: document.getElementById('login-email'),
-                loginPasswordInput: document.getElementById('login-password'),
-                loginError: document.getElementById('login-error'),
                 appContainer: document.getElementById('app-container'),
+                loginForm: document.getElementById('login-form'),
                 logoutBtn: document.getElementById('logout-btn'),
+                togglePasswordBtn: document.getElementById('toggle-password'),
                 views: document.querySelectorAll('[data-view]'),
                 printArea: document.getElementById('print-area'),
                 notificationsList: document.getElementById('notifications-list'),
@@ -631,24 +652,6 @@
                 }, 3500);
             };
 
-            // Helper function to get correct collection name
-            const getCollectionName = (type) => {
-                const names = {
-                    bautismo: 'bautismos',
-                    confirmacion: 'confirmaciones',
-                    notification: 'notifications',
-                    ministro: 'ministros',
-                    grupo: 'grupos'
-                };
-                return names[type] || type;
-            };
-            
-            // Helper to get full Firestore path
-            const getCollectionPath = (type) => {
-                const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-                return `artifacts/${appId}/public/data/${getCollectionName(type)}`;
-            }
-
             const updateNotificationBell = () => {
                 const alertCount = appState.notifications.filter(n => n.priority === 'importante' || n.priority === 'urgente').length;
                 if (alertCount > 0) {
@@ -681,7 +684,7 @@
                         </div>
                         ${n.dueDate ? `<p class="text-sm mt-2 ${dateColor}">Vence: ${formatDate(n.dueDate)}</p>` : ''}
                     </div>
-                    `}).join('');
+                `}).join('');
                 feather.replace();
                 updateNotificationBell();
             };
@@ -775,13 +778,9 @@
                 dom.views.forEach(view => {
                     view.classList.toggle('hidden', view.dataset.view !== viewId);
                 });
-                if (viewId === 'bautismo-content' && !isEdit) {
-                    dom.baptismForm.reset();
-                    document.getElementById('b-id').value = '';
-                }
+                if (viewId === 'bautismo-content' && !isEdit) dom.baptismForm.reset();
                 if (viewId === 'confirmacion-content' && !isEdit) {
                     dom.confirmationForm.reset();
-                    document.getElementById('c-id').value = '';
                     const today = new Date().toISOString().split('T')[0];
                     document.getElementById('c-fecha-expedicion').value = today;
                 }
@@ -859,8 +858,11 @@
                 }
                 const formData = Object.fromEntries(new FormData(form).entries());
                 const recordId = formData.id;
-                const collectionPath = getCollectionPath(type);
                 
+                // CORRECTED: Use the correct collection name 'confirmaciones' instead of 'confirmacions'
+                const collectionName = type === 'confirmacion' ? 'confirmaciones' : `${type}s`;
+                const collectionPath = `parroquia/shared-data/${collectionName}`;
+
                 try {
                     if (recordId) { // Update
                         await setDoc(doc(db, collectionPath, recordId), formData, { merge: true });
@@ -872,10 +874,6 @@
                         showToast('Registro guardado con éxito');
                     }
                     form.reset();
-                    // Reset hidden ID fields after saving
-                    document.getElementById('b-id').value = '';
-                    document.getElementById('c-id').value = '';
-
                     if (type === 'confirmacion') {
                         const today = new Date().toISOString().split('T')[0];
                         document.getElementById('c-fecha-expedicion').value = today;
@@ -915,14 +913,14 @@
                 
                 if (type === 'confirmacion') {
                     const mainCert = `
-                        <div class="certificate-modern" style="height: 140mm; flex-grow: 0;">
+                        <div class="certificate-modern" style="height: 140mm; display: flex; flex-direction: column;">
                             <div class="certificate-modern-header">
                                 <h3>CERTIFICADO DE CONFIRMACIÓN</h3>
                                 <p>DIOCESIS DE SANTO TOME CORRIENTES</p>
                                 <p><b>Parroquia:</b> San José</p>
                                 <p><b>Localidad:</b> Paso de los Libres, Corrientes</p>
                             </div>
-                            <div class="certificate-modern-body">
+                            <div class="certificate-modern-body" style="flex-grow: 1;">
                                 <p>Certifico que: <strong>${(data.nombre || '').toUpperCase()}</strong></p>
                                 <p>hijo(a) de <span class="field">${data.padre || ''}</span> y de <span class="field">${data.madre || ''}</span>&nbsp;
                                 ha recibido solemnemente el Sacramento de la Confirmación en esta parroquia el día ${formatDate(data.fechaConfirmacion, 'long')}.</p>
@@ -977,7 +975,7 @@
                             <p class="footer-note">PARA INSCRIBIR EN EL LIBRO PARROQUIAL DE CONFIRMACIONES</p>
                         </div>`;
 
-                    return `<div class="pdf-page-container">${mainCert}<div class="notification-container">${notificationBox}${fichaBox}</div></div>`;
+                    return `<div class="pdf-page-container" style="display: block;">${mainCert}<div class="notification-container" style="flex-grow: 0;">${notificationBox}${fichaBox}</div></div>`;
                 }
                 return '';
             };
@@ -999,25 +997,28 @@
             };
 
             const setupDataListeners = () => {
-                const collectionsToListen = ['bautismos', 'confirmaciones', 'notifications', 'ministros', 'grupos'];
+                const collections = ['bautismos', 'confirmaciones', 'notifications', 'ministros', 'grupos'];
                 unsubscribeListeners.forEach(unsub => unsub());
                 unsubscribeListeners = [];
 
-                collectionsToListen.forEach(collKey => {
-                    const collectionPath = getCollectionPath(collKey);
-                    const q = query(collection(db, collectionPath));
+                collections.forEach(coll => {
+                    const q = query(collection(db, `parroquia/shared-data/${coll}`));
                     const unsub = onSnapshot(q, (querySnapshot) => {
-                        appState[collKey] = [];
+                        appState[coll] = [];
                         querySnapshot.forEach((doc) => {
-                            appState[collKey].push({ ...doc.data(), id: doc.id });
+                            appState[coll].push({ ...doc.data(), id: doc.id });
                         });
-                        
-                        // This ensures the entire UI is updated once data arrives
-                        renderAll();
-
+                        if (coll === 'bautismos' || coll === 'confirmaciones') {
+                            renderRecords('bautismo', dom.bautismoRecordsContainer, dom.bautismoPaginationContainer, appState.bautismosSearchTerm, 'bautismosCurrentPage');
+                            renderRecords('confirmacion', dom.confirmacionRecordsContainer, dom.confirmacionPaginationContainer, appState.confirmacionesSearchTerm, 'confirmacionesCurrentPage');
+                            renderRecords('bautismo', dom.bautismoFormRecordsContainer, dom.bautismoFormPaginationContainer, '', 'bautismosCurrentPage');
+                            renderRecords('confirmacion', dom.confirmacionFormRecordsContainer, dom.confirmacionFormPaginationContainer, '', 'confirmacionesCurrentPage');
+                        } else {
+                            renderAll();
+                        }
                     }, (error) => {
-                        console.error(`Error listening to ${collKey}:`, error);
-                        showToast(`Error al cargar ${collKey}. Verifique los permisos de la base de datos y las reglas de seguridad.`, 'error');
+                        console.error(`Error listening to ${coll}:`, error);
+                        showToast(`Error al cargar ${coll}. Verifique los permisos.`, 'error');
                     });
                     unsubscribeListeners.push(unsub);
                 });
@@ -1036,13 +1037,13 @@
                     case 'add-row':
                         const newId = Date.now().toString();
                         const newRowData = { id: newId, semana: 'Nueva', sabado: '', dom08: '', dom10: '', dom20: '' };
-                        setDoc(doc(db, getCollectionPath(table), newId), newRowData);
+                        setDoc(doc(db, `parroquia/shared-data/${table}`, newId), newRowData);
                         break;
                     case 'remove-row':
-                        deleteDoc(doc(db, getCollectionPath(table), id));
+                        deleteDoc(doc(db, `parroquia/shared-data/${table}`, id));
                         break;
                     case 'remove-notification':
-                        deleteDoc(doc(db, getCollectionPath('notifications'), id));
+                        deleteDoc(doc(db, `parroquia/shared-data/notifications`, id));
                         showToast('Notificación eliminada');
                         break;
                     case 'paginate':
@@ -1070,7 +1071,9 @@
                         break;
                     case 'confirm-delete':
                         if (recordToDelete.type && recordToDelete.id) {
-                            deleteDoc(doc(db, getCollectionPath(recordToDelete.type), recordToDelete.id));
+                            // CORRECTED: Use the correct collection name for deletion
+                            const collectionName = recordToDelete.type === 'confirmacion' ? 'confirmaciones' : `${recordToDelete.type}s`;
+                            deleteDoc(doc(db, `parroquia/shared-data/${collectionName}`, recordToDelete.id));
                             showToast('Registro eliminado con éxito');
                         }
                         dom.deleteConfirmModal.classList.add('hidden');
@@ -1107,7 +1110,7 @@
                 const priority = dom.notificationForm.querySelector('#notification-priority').value;
                 const dueDate = dom.notificationForm.querySelector('#notification-due-date').value;
                 if (text) {
-                    await addDoc(collection(db, getCollectionPath('notifications')), { text, priority, dueDate });
+                    await addDoc(collection(db, `parroquia/shared-data/notifications`), { text, priority, dueDate });
                     dom.notificationForm.reset();
                     showToast('Notificación agregada');
                 }
@@ -1124,7 +1127,7 @@
                     dom10: dom.editForm.querySelector('#edit-dom10').value,
                     dom20: dom.editForm.querySelector('#edit-dom20').value,
                 };
-                await setDoc(doc(db, getCollectionPath(table), id), updatedData, { merge: true });
+                await setDoc(doc(db, `parroquia/shared-data/${table}`, id), updatedData, { merge: true });
                 closeEditModal();
             });
 
@@ -1156,78 +1159,55 @@
                 }
             });
 
+            // --- AUTHENTICATION LOGIC ---
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    dom.loginView.classList.add('hidden');
+                    dom.appContainer.classList.remove('hidden');
+                    setupDataListeners();
+                    showView('secretaria-dashboard');
+                } else {
+                    dom.loginView.classList.remove('hidden');
+                    dom.appContainer.classList.add('hidden');
+                    unsubscribeListeners.forEach(unsub => unsub());
+                }
+            });
+
+            dom.loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = dom.loginForm.querySelector('#email').value;
+                const password = dom.loginForm.querySelector('#password').value;
+                showSpinner();
+                try {
+                    await signInWithEmailAndPassword(auth, email, password);
+                    showToast('Inicio de sesión exitoso');
+                } catch (error) {
+                    console.error("Login error:", error.code);
+                    showToast('Correo o contraseña incorrectos', 'error');
+                } finally {
+                    hideSpinner();
+                }
+            });
+
             dom.logoutBtn.addEventListener('click', async () => {
                 await signOut(auth);
                 showToast('Sesión cerrada');
             });
 
-            // --- EVENT LISTENER FOR LOGIN FORM ---
-            dom.loginForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const email = dom.loginEmailInput.value;
-                const password = dom.loginPasswordInput.value;
-                dom.loginError.textContent = ''; // Clear previous errors
-                showSpinner();
-
-                try {
-                    await signInWithEmailAndPassword(auth, email, password);
-                    // onAuthStateChanged will handle hiding the spinner and showing the app
-                } catch (error) {
-                    console.error("Login failed:", error.code, error.message);
-                    let errorMessage = 'Error al iniciar sesión. Intente de nuevo.';
-                    if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
-                        errorMessage = 'Correo electrónico o contraseña incorrectos.';
-                    } else if (error.code === 'auth/invalid-email') {
-                        errorMessage = 'El formato del correo electrónico es inválido.';
-                    }
-                    dom.loginError.textContent = errorMessage;
-                    hideSpinner();
+            dom.togglePasswordBtn.addEventListener('click', () => {
+                const passwordInput = document.getElementById('password');
+                const iconEye = dom.togglePasswordBtn.querySelector('.icon-eye');
+                const iconEyeOff = dom.togglePasswordBtn.querySelector('.icon-eye-off');
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    iconEye.classList.add('hidden');
+                    iconEyeOff.classList.remove('hidden');
+                } else {
+                    passwordInput.type = 'password';
+                    iconEye.classList.remove('hidden');
+                    iconEyeOff.classList.add('hidden');
                 }
             });
-
-            // --- INITIALIZATION AND AUTH ---
-            const initializeAndAuth = async () => {
-                try {
-                    const firebaseConfig = typeof __firebase_config !== 'undefined' 
-                        ? JSON.parse(__firebase_config)
-                        : null;
-
-                    if (!firebaseConfig) {
-                        dom.loginView.innerHTML = `<p class="text-red-500">Error: Configuración de Firebase no encontrada.</p>`;
-                        return;
-                    }
-
-                    const app = initializeApp(firebaseConfig);
-                    db = getFirestore(app);
-                    auth = getAuth(app);
-                    
-                    onAuthStateChanged(auth, (user) => {
-                        if (user) {
-                            console.log("User is authenticated:", user.uid);
-                            hideSpinner();
-                            dom.loginView.classList.add('hidden');
-                            dom.appContainer.classList.remove('hidden');
-                            setupDataListeners();
-                            showView('secretaria-dashboard');
-                        } else {
-                            console.log("User is not authenticated. Showing login screen.");
-                            hideSpinner();
-                            dom.loginView.classList.remove('hidden');
-                            dom.appContainer.classList.add('hidden');
-                            feather.replace(); // Render icons on login screen
-                            unsubscribeListeners.forEach(unsub => unsub());
-                            unsubscribeListeners = [];
-                        }
-                    });
-
-                } catch (error) {
-                    console.error("Firebase initialization failed:", error);
-                    dom.loginView.innerHTML = `<p class="text-red-500">Error crítico al inicializar la aplicación. Revise la consola.</p>`;
-                    hideSpinner();
-                }
-            };
-
-            initializeAndAuth();
         });
     </script>
 </body>
