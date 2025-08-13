@@ -160,6 +160,10 @@
 
         /* Print-specific styles */
         @media print {
+            body {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
             body > *:not(.print-only) {
                 display: none !important;
             }
@@ -169,6 +173,9 @@
                 top: 0;
                 left: 0;
                 width: 100%;
+            }
+            .no-print {
+                display: none !important;
             }
         }
     </style>
@@ -381,34 +388,39 @@
             <div class="container mx-auto px-6 py-12">
                 <div class="flex justify-between items-center mb-8 no-print">
                     <h2 class="text-3xl font-bold">Organización de Misas y Ministros</h2>
-                    <div>
-                        <button data-action="print-mass-org" class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold py-2 px-4 rounded-lg mr-4 transition-all duration-300 ease-in-out transform hover:scale-105">Imprimir</button>
+                    <div class="flex items-center space-x-4">
+                        <button data-action="download-mass-org-pdf" class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105 flex items-center space-x-2">
+                            <i data-feather="download" class="h-4 w-4"></i>
+                            <span>Descargar PDF</span>
+                        </button>
                         <button data-action="show-view" data-view-id="secretaria-dashboard" class="bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105">Inicio</button>
                     </div>
                 </div>
-                <div id="mass-org-print-area" class="space-y-12 printable-area">
-                    <!-- Tabla de Ministros -->
+                <div id="mass-org-print-area" class="space-y-12 printable-area bg-white dark:bg-slate-900 p-8 rounded-lg">
+                    <!-- Tabla de Ministros (DINÁMICA) -->
                     <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8">
                         <h3 class="text-2xl font-bold mb-4">Organización para el servicio litúrgico (Ministros)</h3>
                         <div class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                                 <thead class="bg-gray-50 dark:bg-gray-700">
                                     <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium uppercase">Semanas</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium uppercase">Sábado 19:30 H</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium uppercase">Domingo 08:00 H</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium uppercase">Domingo 10:30 H</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium uppercase">Domingo 20:00 H</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Semanas</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Sábado 19:30 H</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Domingo 08:00 H</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Domingo 10:30 H</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Domingo 20:00 H</th>
                                         <th class="px-6 py-3 text-center text-xs font-medium uppercase no-print">Acciones</th>
                                     </tr>
                                 </thead>
-                                <tbody id="ministros-table-body" class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700"></tbody>
+                                <tbody id="ministros-table-body" class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                                    <!-- Contenido generado por JS -->
+                                </tbody>
                             </table>
                         </div>
-                        <div class="mt-4 text-right no-print"><button data-action="add-row" data-table="ministros" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105">Agregar Fila</button></div>
+                         <div class="mt-4 text-right no-print"><button data-action="add-row" data-table="ministros" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105">Agregar Fila</button></div>
                     </div>
 
-                    <!-- Tabla de Organización de Misas -->
+                    <!-- Tabla de Organización de Misas (DINÁMICA) -->
                     <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8">
                         <h3 class="text-2xl font-bold mb-4">Organización de las Misas (Grupos)</h3>
                         <div class="overflow-x-auto">
@@ -428,6 +440,64 @@
                         </div>
                         <div class="mt-4 text-right no-print"><button data-action="add-row" data-table="grupos" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105">Agregar Fila</button></div>
                     </div>
+
+                    <!-- SECCIÓN DE ADORACIÓN (DINÁMICA) -->
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8">
+                        <h3 class="text-2xl font-bold mb-6">Organización de la Adoración</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
+                            
+                            <!-- Adoración de los Jueves -->
+                            <div>
+                                <h4 class="text-xl font-semibold mb-4">Adoración de los Jueves</h4>
+                                <div class="overflow-x-auto">
+                                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                                        <thead class="bg-gray-50 dark:bg-gray-700">
+                                            <tr>
+                                                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Semanas</th>
+                                                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Ministro</th>
+                                                <th class="px-6 py-3 text-center text-xs font-medium uppercase no-print">Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="adoracion-jueves-table-body" class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                                            <!-- Contenido generado por JS -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="mt-4 text-right no-print"><button data-action="add-row" data-table="adoracionJueves" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105">Agregar Fila</button></div>
+                                <div class="mt-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                                    <h5 class="font-bold">Horarios de la Adoración (Jueves)</h5>
+                                    <p>Exposición: 18:30</p>
+                                    <p>Reserva: 19:15</p>
+                                </div>
+                            </div>
+                    
+                            <!-- Adoración de Martes a Viernes -->
+                            <div>
+                                <h4 class="text-xl font-semibold mb-4">Adoración de Martes a Viernes</h4>
+                                <div class="overflow-x-auto">
+                                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                                        <thead class="bg-gray-50 dark:bg-gray-700">
+                                            <tr>
+                                                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Días</th>
+                                                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Ministro</th>
+                                                <th class="px-6 py-3 text-center text-xs font-medium uppercase no-print">Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="adoracion-semanal-table-body" class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                                            <!-- Contenido generado por JS -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="mt-4 text-right no-print"><button data-action="add-row" data-table="adoracionSemanal" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105">Agregar Fila</button></div>
+                                 <div class="mt-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                                    <h5 class="font-bold">Horarios de la Adoración (Semanal)</h5>
+                                    <p>Exposición: 08:00</p>
+                                    <p>Reserva: 12:00</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </section>
@@ -497,7 +567,7 @@
         </section>
     </main>
 
-    <!-- Edit Row Modal -->
+    <!-- Edit Row Modal (For Ministros & Grupos) -->
     <div id="edit-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 no-print z-50">
         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 w-full max-w-lg">
             <h3 id="edit-modal-title" class="text-2xl font-bold mb-6">Modificar Fila</h3>
@@ -509,7 +579,7 @@
                     <div><label for="edit-sabado" class="block text-sm font-medium">Sábado 19:30 H</label><input type="text" id="edit-sabado" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700"></div>
                     <div><label for="edit-dom08" class="block text-sm font-medium">Domingo 08:00 H</label><input type="text" id="edit-dom08" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700"></div>
                     <div><label for="edit-dom10" class="block text-sm font-medium">Domingo 10:30 H</label><input type="text" id="edit-dom10" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700"></div>
-                    <div><label for="edit-dom20" class="block text-sm font-medium">Domingo 20:00 H</label><input type="text" id="edit-dom20" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700"></div>
+                    <div><label for="edit-dom20" class="block text-sm font-medium">Domingo 19:30 H / 20:00 H</label><input type="text" id="edit-dom20" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700"></div>
                 </div>
                 <div class="mt-8 flex justify-end space-x-4">
                     <button type="button" data-action="close-edit-modal" class="bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105">Cancelar</button>
@@ -518,6 +588,32 @@
             </form>
         </div>
     </div>
+    
+    <!-- Edit Adoracion Modal -->
+    <div id="edit-adoracion-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 no-print z-50">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 w-full max-w-md">
+            <h3 id="edit-adoracion-modal-title" class="text-2xl font-bold mb-6">Modificar Fila de Adoración</h3>
+            <form id="edit-adoracion-form">
+                <input type="hidden" id="edit-adoracion-id">
+                <input type="hidden" id="edit-adoracion-table">
+                <div class="space-y-4">
+                    <div>
+                        <label id="edit-adoracion-label1" for="edit-adoracion-col1" class="block text-sm font-medium">Semanas/Día</label>
+                        <input type="text" id="edit-adoracion-col1" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700">
+                    </div>
+                     <div>
+                        <label for="edit-adoracion-col2" class="block text-sm font-medium">Ministro</label>
+                        <input type="text" id="edit-adoracion-col2" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700">
+                    </div>
+                </div>
+                <div class="mt-8 flex justify-end space-x-4">
+                    <button type="button" data-action="close-edit-adoracion-modal" class="bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-bold py-2 px-4 rounded-lg">Cancelar</button>
+                    <button type="submit" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-2 px-4 rounded-lg">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
 
     <!-- Custom Location Modal -->
     <div id="custom-location-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 no-print z-50">
@@ -565,7 +661,7 @@
         // Import Firebase modules
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, collection, onSnapshot, doc, setDoc, addDoc, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, doc, setDoc, addDoc, deleteDoc, query, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         // Your web app's Firebase configuration
         const firebaseConfig = {
@@ -590,8 +686,10 @@
 
             const appState = {
                 notifications: [],
-                ministros: [],
+                ministros: [], 
                 grupos: [],
+                adoracionJueves: [],
+                adoracionSemanal: [],
                 bautismos: [],
                 confirmaciones: [],
                 bautismosSearchTerm: '',
@@ -613,11 +711,15 @@
                 notificationForm: document.getElementById('notification-form'),
                 ministrosTableBody: document.getElementById('ministros-table-body'),
                 gruposTableBody: document.getElementById('grupos-table-body'),
+                adoracionJuevesTableBody: document.getElementById('adoracion-jueves-table-body'),
+                adoracionSemanalTableBody: document.getElementById('adoracion-semanal-table-body'),
                 baptismForm: document.getElementById('baptism-form'),
                 confirmationForm: document.getElementById('confirmation-form'),
                 editModal: document.getElementById('edit-modal'),
                 editModalTitle: document.getElementById('edit-modal-title'),
                 editForm: document.getElementById('edit-form'),
+                editAdoracionModal: document.getElementById('edit-adoracion-modal'),
+                editAdoracionForm: document.getElementById('edit-adoracion-form'),
                 customLocationModal: document.getElementById('custom-location-modal'),
                 customLocationForm: document.getElementById('custom-location-form'),
                 lugarSelect: document.getElementById('c-lugar-select'),
@@ -689,27 +791,51 @@
                 updateNotificationBell();
             };
 
-            const renderTable = (tableKey, tbodyElement) => {
+            const renderStandardTable = (tableKey, tbodyElement) => {
+                if (!tbodyElement) return;
                 tbodyElement.innerHTML = appState[tableKey].map(row => `
                     <tr data-id="${row.id}">
-                        <td class="px-6 py-4">${row.semana}</td>
-                        <td class="px-6 py-4">${row.sabado}</td>
-                        <td class="px-6 py-4">${row.dom08}</td>
-                        <td class="px-6 py-4">${row.dom10}</td>
-                        <td class="px-6 py-4">${row.dom20}</td>
+                        <td class="px-6 py-4">${row.semana || ''}</td>
+                        <td class="px-6 py-4">${row.sabado || ''}</td>
+                        <td class="px-6 py-4">${row.dom08 || ''}</td>
+                        <td class="px-6 py-4">${row.dom10 || ''}</td>
+                        <td class="px-6 py-4">${row.dom20 || ''}</td>
                         <td class="px-6 py-4 text-center no-print">
                             <div class="flex justify-center items-center space-x-2">
-                                <button data-action="show-edit-modal" data-table="${tableKey}" data-id="${row.id}" class="text-blue-500 hover:text-blue-700 p-1">
+                                <button data-action="show-edit-modal" data-table="${tableKey}" data-id="${row.id}" class="text-blue-500 hover:text-blue-700 p-1" title="Editar">
                                     <i data-feather="edit" class="h-4 w-4"></i>
                                 </button>
-                                <button data-action="remove-row" data-table="${tableKey}" data-id="${row.id}" class="text-red-500 hover:text-red-700 p-1">
+                                <button data-action="remove-row" data-table="${tableKey}" data-id="${row.id}" class="text-red-500 hover:text-red-700 p-1" title="Eliminar">
                                     <i data-feather="trash-2" class="h-4 w-4"></i>
                                 </button>
                             </div>
                         </td>
                     </tr>
                 `).join('');
+                feather.replace();
             };
+
+            const renderAdoracionTable = (tableKey, tbodyElement) => {
+                if (!tbodyElement) return;
+                tbodyElement.innerHTML = appState[tableKey].map(row => `
+                     <tr data-id="${row.id}">
+                        <td class="px-6 py-4">${row.col1 || ''}</td>
+                        <td class="px-6 py-4">${row.col2 || ''}</td>
+                        <td class="px-6 py-4 text-center no-print">
+                            <div class="flex justify-center items-center space-x-2">
+                                <button data-action="show-edit-adoracion-modal" data-table="${tableKey}" data-id="${row.id}" class="text-blue-500 hover:text-blue-700 p-1" title="Editar">
+                                    <i data-feather="edit" class="h-4 w-4"></i>
+                                </button>
+                                <button data-action="remove-row" data-table="${tableKey}" data-id="${row.id}" class="text-red-500 hover:text-red-700 p-1" title="Eliminar">
+                                    <i data-feather="trash-2" class="h-4 w-4"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+                feather.replace();
+            };
+
 
             const renderRecords = (type, container, paginationContainer, searchTerm, currentPageKey) => {
                 if (!container || !paginationContainer) return;
@@ -763,17 +889,6 @@
                 feather.replace();
             };
             
-            const renderAll = () => {
-                renderNotifications();
-                renderTable('ministros', dom.ministrosTableBody);
-                renderTable('grupos', dom.gruposTableBody);
-                renderRecords('bautismo', dom.bautismoRecordsContainer, dom.bautismoPaginationContainer, appState.bautismosSearchTerm, 'bautismosCurrentPage');
-                renderRecords('confirmacion', dom.confirmacionRecordsContainer, dom.confirmacionPaginationContainer, appState.confirmacionesSearchTerm, 'confirmacionesCurrentPage');
-                renderRecords('bautismo', dom.bautismoFormRecordsContainer, dom.bautismoFormPaginationContainer, '', 'bautismosCurrentPage');
-                renderRecords('confirmacion', dom.confirmacionFormRecordsContainer, dom.confirmacionFormPaginationContainer, '', 'confirmacionesCurrentPage');
-                feather.replace();
-            };
-
             const showView = (viewId, isEdit = false) => {
                 dom.views.forEach(view => {
                     view.classList.toggle('hidden', view.dataset.view !== viewId);
@@ -783,6 +898,12 @@
                     dom.confirmationForm.reset();
                     const today = new Date().toISOString().split('T')[0];
                     document.getElementById('c-fecha-expedicion').value = today;
+                }
+                if (viewId === 'mass-org-content') {
+                    renderStandardTable('ministros', dom.ministrosTableBody);
+                    renderStandardTable('grupos', dom.gruposTableBody);
+                    renderAdoracionTable('adoracionJueves', dom.adoracionJuevesTableBody);
+                    renderAdoracionTable('adoracionSemanal', dom.adoracionSemanalTableBody);
                 }
                 if (viewId === 'certificate-choice-content' || viewId === 'bautismo-content' || viewId === 'confirmacion-content') {
                     renderRecords('bautismo', dom.bautismoRecordsContainer, dom.bautismoPaginationContainer, appState.bautismosSearchTerm, 'bautismosCurrentPage');
@@ -799,15 +920,29 @@
                 dom.editModalTitle.innerText = `Modificar Fila de ${table === 'ministros' ? 'Ministros' : 'Grupos'}`;
                 dom.editForm.querySelector('#edit-id').value = rowData.id;
                 dom.editForm.querySelector('#edit-table').value = table;
-                dom.editForm.querySelector('#edit-semana').value = rowData.semana;
-                dom.editForm.querySelector('#edit-sabado').value = rowData.sabado;
-                dom.editForm.querySelector('#edit-dom08').value = rowData.dom08;
-                dom.editForm.querySelector('#edit-dom10').value = rowData.dom10;
-                dom.editForm.querySelector('#edit-dom20').value = rowData.dom20;
+                dom.editForm.querySelector('#edit-semana').value = rowData.semana || '';
+                dom.editForm.querySelector('#edit-sabado').value = rowData.sabado || '';
+                dom.editForm.querySelector('#edit-dom08').value = rowData.dom08 || '';
+                dom.editForm.querySelector('#edit-dom10').value = rowData.dom10 || '';
+                dom.editForm.querySelector('#edit-dom20').value = rowData.dom20 || '';
                 dom.editModal.classList.remove('hidden');
             };
 
+            const showEditAdoracionModal = (table, id) => {
+                const rowData = appState[table].find(row => row.id === id);
+                if (!rowData) return;
+                const isJueves = table === 'adoracionJueves';
+                dom.editAdoracionModal.querySelector('#edit-adoracion-modal-title').innerText = `Modificar Fila de Adoración`;
+                dom.editAdoracionModal.querySelector('#edit-adoracion-id').value = id;
+                dom.editAdoracionModal.querySelector('#edit-adoracion-table').value = table;
+                dom.editAdoracionModal.querySelector('#edit-adoracion-label1').innerText = isJueves ? 'Semanas' : 'Día';
+                dom.editAdoracionModal.querySelector('#edit-adoracion-col1').value = rowData.col1 || '';
+                dom.editAdoracionModal.querySelector('#edit-adoracion-col2').value = rowData.col2 || '';
+                dom.editAdoracionModal.classList.remove('hidden');
+            };
+
             const closeEditModal = () => dom.editModal.classList.add('hidden');
+            const closeEditAdoracionModal = () => dom.editAdoracionModal.classList.add('hidden');
             const closeCustomLocationModal = () => {
                 dom.customLocationModal.classList.add('hidden');
                 dom.lugarSelect.value = dom.hiddenLugarInput.value;
@@ -859,7 +994,6 @@
                 const formData = Object.fromEntries(new FormData(form).entries());
                 const recordId = formData.id;
                 
-                // CORRECTED: Use the correct collection name 'confirmaciones' instead of 'confirmacions'
                 const collectionName = type === 'confirmacion' ? 'confirmaciones' : `${type}s`;
                 const collectionPath = `parroquia/shared-data/${collectionName}`;
 
@@ -996,8 +1130,102 @@
                 showView(isBautismo ? 'bautismo-content' : 'confirmacion-content', true);
             };
 
+            const initialData = {
+                ministros: [
+                    { semana: 'Primero', sabado: 'Laura Alvez', dom08: 'Raúl Segovia', dom10: '', dom20: 'Jorge Giménez' },
+                    { semana: 'Segundo', sabado: 'Estela Santia', dom08: '', dom10: 'Jorge Gimenez', dom20: 'Maritel Reyero' },
+                    { semana: 'Tercero', sabado: 'Raul Segovia', dom08: '', dom10: '', dom20: 'Raul Segovia' },
+                    { semana: 'Cuarto', sabado: 'Maritel Reyero', dom08: '', dom10: 'Raul Segovia', dom20: 'Estela Santia' },
+                    { semana: 'Quinto', sabado: 'Jorge Giménez', dom08: '', dom10: '', dom20: 'Laura Alvez' }
+                ],
+                grupos: [
+                    { semana: 'Primero', sabado: 'Legión de María', dom08: 'Nora y Silvana', dom10: 'Jardín Semillitas', dom20: 'Taller de oracion y vida' },
+                    { semana: 'Segundo', sabado: 'Colegio San José ( Secundario)', dom08: 'Polaqui y Rita', dom10: 'Instituto Niño Jesús', dom20: 'CAE' },
+                    { semana: 'Tercero', sabado: 'Renovación Carismática', dom08: 'Estela Y Mónica', dom10: 'Catequesis', dom20: 'Hogares Nuevos' },
+                    { semana: 'Cuarto', sabado: 'Cáritas', dom08: 'Liliana', dom10: 'Colegio San José (Primario)', dom20: 'Jesús Misericordioso' },
+                    { semana: 'Quinto', sabado: 'Estela Santia', dom08: 'Paula', dom10: 'Catequesis', dom20: 'Apostolado de la Oración' }
+                ],
+                adoracionJueves: [
+                    { col1: 'Primera', col2: 'Laura Alvez' },
+                    { col1: 'Segunda', col2: 'Catalina Gonzales' },
+                    { col1: 'Tercera', col2: 'Raul Segovia' },
+                    { col1: 'Cuarta', col2: 'Maritel Reyero' },
+                    { col1: 'Quinta', col2: 'Estela Santia' }
+                ],
+                adoracionSemanal: [
+                    { col1: 'Martes', col2: 'Jorge Giménez' },
+                    { col1: 'Miércoles', col2: 'Raul Segovia' },
+                    { col1: 'Jueves', col2: 'Maritel Reyero' },
+                    { col1: 'Viernes', col2: 'Estela Santia' }
+                ]
+            };
+
+
+            const setupInitialData = async () => {
+                for (const collectionName in initialData) {
+                    const collectionRef = collection(db, `parroquia/shared-data/${collectionName}`);
+                    const snapshot = await getDocs(collectionRef);
+                    if (snapshot.empty) {
+                        console.log(`Populating initial data for ${collectionName}...`);
+                        const batch = writeBatch(db);
+                        initialData[collectionName].forEach(item => {
+                            const docRef = doc(collectionRef);
+                            batch.set(docRef, item);
+                        });
+                        await batch.commit();
+                        console.log(`Initial data for ${collectionName} populated.`);
+                    }
+                }
+            };
+
+            const downloadMassOrgPdf = async () => {
+                showSpinner();
+                const { jsPDF } = window.jspdf;
+                const printArea = document.getElementById('mass-org-print-area');
+                
+                try {
+                    const canvas = await html2canvas(printArea, {
+                        scale: 2,
+                        useCORS: true,
+                        backgroundColor: document.documentElement.classList.contains('dark') ? '#0f172a' : '#ffffff',
+                    });
+                    
+                    const imgData = canvas.toDataURL('image/png');
+                    const pdf = new jsPDF({
+                        orientation: 'p',
+                        unit: 'mm',
+                        format: 'a4'
+                    });
+
+                    const imgProps = pdf.getImageProperties(imgData);
+                    const pdfWidth = pdf.internal.pageSize.getWidth();
+                    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+                    let heightLeft = pdfHeight;
+                    let position = 0;
+                    
+                    pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
+                    heightLeft -= pdf.internal.pageSize.getHeight();
+
+                    while (heightLeft > 0) {
+                        position = heightLeft - pdfHeight;
+                        pdf.addPage();
+                        pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
+                        heightLeft -= pdf.internal.pageSize.getHeight();
+                    }
+
+                    pdf.save('Organizacion_Misas_y_Ministros.pdf');
+                    showToast('PDF descargado con éxito.');
+
+                } catch (error) {
+                    console.error('Error al generar el PDF:', error);
+                    showToast('Hubo un error al generar el PDF.', 'error');
+                } finally {
+                    hideSpinner();
+                }
+            };
+
             const setupDataListeners = () => {
-                const collections = ['bautismos', 'confirmaciones', 'notifications', 'ministros', 'grupos'];
+                const collections = ['bautismos', 'confirmaciones', 'notifications', 'ministros', 'grupos', 'adoracionJueves', 'adoracionSemanal'];
                 unsubscribeListeners.forEach(unsub => unsub());
                 unsubscribeListeners = [];
 
@@ -1008,14 +1236,33 @@
                         querySnapshot.forEach((doc) => {
                             appState[coll].push({ ...doc.data(), id: doc.id });
                         });
-                        if (coll === 'bautismos' || coll === 'confirmaciones') {
-                            renderRecords('bautismo', dom.bautismoRecordsContainer, dom.bautismoPaginationContainer, appState.bautismosSearchTerm, 'bautismosCurrentPage');
-                            renderRecords('confirmacion', dom.confirmacionRecordsContainer, dom.confirmacionPaginationContainer, appState.confirmacionesSearchTerm, 'confirmacionesCurrentPage');
-                            renderRecords('bautismo', dom.bautismoFormRecordsContainer, dom.bautismoFormPaginationContainer, '', 'bautismosCurrentPage');
-                            renderRecords('confirmacion', dom.confirmacionFormRecordsContainer, dom.confirmacionFormPaginationContainer, '', 'confirmacionesCurrentPage');
-                        } else {
-                            renderAll();
+
+                        switch (coll) {
+                            case 'bautismos':
+                                renderRecords('bautismo', dom.bautismoRecordsContainer, dom.bautismoPaginationContainer, appState.bautismosSearchTerm, 'bautismosCurrentPage');
+                                renderRecords('bautismo', dom.bautismoFormRecordsContainer, dom.bautismoFormPaginationContainer, '', 'bautismosCurrentPage');
+                                break;
+                            case 'confirmaciones':
+                                renderRecords('confirmacion', dom.confirmacionRecordsContainer, dom.confirmacionPaginationContainer, appState.confirmacionesSearchTerm, 'confirmacionesCurrentPage');
+                                renderRecords('confirmacion', dom.confirmacionFormRecordsContainer, dom.confirmacionFormPaginationContainer, '', 'confirmacionesCurrentPage');
+                                break;
+                            case 'notifications':
+                                renderNotifications();
+                                break;
+                            case 'ministros':
+                                renderStandardTable('ministros', dom.ministrosTableBody);
+                                break;
+                            case 'grupos':
+                                renderStandardTable('grupos', dom.gruposTableBody);
+                                break;
+                            case 'adoracionJueves':
+                                renderAdoracionTable('adoracionJueves', dom.adoracionJuevesTableBody);
+                                break;
+                            case 'adoracionSemanal':
+                                renderAdoracionTable('adoracionSemanal', dom.adoracionSemanalTableBody);
+                                break;
                         }
+
                     }, (error) => {
                         console.error(`Error listening to ${coll}:`, error);
                         showToast(`Error al cargar ${coll}. Verifique los permisos.`, 'error');
@@ -1030,13 +1277,20 @@
                 const { action, viewId, table, id, type, format, direction } = target.dataset;
                 switch (action) {
                     case 'show-view': showView(viewId); break;
-                    case 'print-mass-org': window.print(); break;
+                    case 'download-mass-org-pdf': downloadMassOrgPdf(); break;
                     case 'show-edit-modal': showEditModal(table, id); break;
                     case 'close-edit-modal': closeEditModal(); break;
+                    case 'show-edit-adoracion-modal': showEditAdoracionModal(table, id); break;
+                    case 'close-edit-adoracion-modal': closeEditAdoracionModal(); break;
                     case 'close-custom-location-modal': closeCustomLocationModal(); break;
                     case 'add-row':
                         const newId = Date.now().toString();
-                        const newRowData = { id: newId, semana: 'Nueva', sabado: '', dom08: '', dom10: '', dom20: '' };
+                        let newRowData;
+                        if (table === 'adoracionJueves' || table === 'adoracionSemanal') {
+                           newRowData = { id: newId, col1: 'Nuevo', col2: '' };
+                        } else {
+                           newRowData = { id: newId, semana: 'Nueva', sabado: '', dom08: '', dom10: '', dom20: '' };
+                        }
                         setDoc(doc(db, `parroquia/shared-data/${table}`, newId), newRowData);
                         break;
                     case 'remove-row':
@@ -1071,7 +1325,6 @@
                         break;
                     case 'confirm-delete':
                         if (recordToDelete.type && recordToDelete.id) {
-                            // CORRECTED: Use the correct collection name for deletion
                             const collectionName = recordToDelete.type === 'confirmacion' ? 'confirmaciones' : `${recordToDelete.type}s`;
                             deleteDoc(doc(db, `parroquia/shared-data/${collectionName}`, recordToDelete.id));
                             showToast('Registro eliminado con éxito');
@@ -1131,6 +1384,18 @@
                 closeEditModal();
             });
 
+            dom.editAdoracionForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const id = dom.editAdoracionForm.querySelector('#edit-adoracion-id').value;
+                const table = dom.editAdoracionForm.querySelector('#edit-adoracion-table').value;
+                const updatedData = {
+                    col1: dom.editAdoracionForm.querySelector('#edit-adoracion-col1').value,
+                    col2: dom.editAdoracionForm.querySelector('#edit-adoracion-col2').value,
+                };
+                await setDoc(doc(db, `parroquia/shared-data/${table}`, id), updatedData, { merge: true });
+                closeEditAdoracionModal();
+            });
+
             dom.lugarSelect.addEventListener('change', () => {
                 if (dom.lugarSelect.value === 'otro') {
                     dom.customLocationModal.classList.remove('hidden');
@@ -1164,6 +1429,7 @@
                 if (user) {
                     dom.loginView.classList.add('hidden');
                     dom.appContainer.classList.remove('hidden');
+                    setupInitialData(); // Populate data if needed
                     setupDataListeners();
                     showView('secretaria-dashboard');
                 } else {
