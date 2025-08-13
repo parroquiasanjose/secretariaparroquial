@@ -5,18 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Módulo de Secretaría - Parroquia San José</title>
     
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Google Fonts: Inter & Noto Serif for certificates -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Serif:wght@400;700&display=swap" rel="stylesheet">
     
-    <!-- Feather Icons -->
     <script src="https://unpkg.com/feather-icons"></script>
 
-    <!-- PDF Generation Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
@@ -175,17 +171,42 @@
 </head>
 <body class="bg-gray-100 dark:bg-slate-900 text-gray-800 dark:text-gray-200">
 
-    <!-- LOGIN VIEW (Simplified for auto-login) -->
     <section id="login-view" class="min-h-screen flex items-center justify-center">
-        <div class="text-center">
-            <div class="spinner h-16 w-16 border-4 rounded-full border-blue-500 border-t-transparent mx-auto"></div>
-            <p class="mt-4 text-lg">Autenticando...</p>
+        <div class="max-w-md w-full bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 space-y-6">
+            <div class="text-center">
+                <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Iniciar Sesión</h2>
+                <p class="mt-2 text-gray-600 dark:text-gray-400">Módulo de Secretaría - Parroquia San José</p>
+            </div>
+            <form id="login-form" class="space-y-6">
+                <div>
+                    <label for="login-email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Correo Electrónico</label>
+                    <div class="mt-1 relative">
+                        <input id="login-email" name="email" type="email" autocomplete="email" required class="w-full rounded-md p-3 border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 focus:ring-indigo-500 focus:border-indigo-500" placeholder="usuario@ejemplo.com">
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                            <i data-feather="mail" class="h-5 w-5 text-gray-400"></i>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <label for="login-password" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Contraseña</label>
+                     <div class="mt-1 relative">
+                        <input id="login-password" name="password" type="password" autocomplete="current-password" required class="w-full rounded-md p-3 border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 focus:ring-indigo-500 focus:border-indigo-500" placeholder="••••••••">
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                             <i data-feather="lock" class="h-5 w-5 text-gray-400"></i>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 ease-in-out transform hover:scale-105">
+                        Acceder
+                    </button>
+                </div>
+                <p id="login-error" class="text-center text-red-500 text-sm h-4"></p>
+            </form>
         </div>
     </section>
 
-    <!-- Main App Container (hidden by default) -->
     <main id="app-container" class="hidden">
-        <!-- DASHBOARD DE SECRETARÍA -->
         <section id="secretaria-dashboard" data-view="secretaria-dashboard" class="min-h-screen">
             <div class="container mx-auto px-6 py-20">
                 <div class="flex justify-between items-center mb-12">
@@ -223,7 +244,6 @@
             </div>
         </section>
 
-        <!-- PANTALLA DE ELECCIÓN DE CERTIFICADO -->
         <section id="certificate-choice-content" data-view="certificate-choice-content" class="hidden min-h-screen">
             <div class="container mx-auto px-6 py-12">
                 <div class="flex justify-between items-center mb-12">
@@ -245,9 +265,7 @@
                     </div>
                 </div>
 
-                <!-- REGISTROS -->
                 <div class="mt-16 grid grid-cols-1 lg:grid-cols-2 gap-12">
-                    <!-- Registros de Bautismo -->
                     <div>
                         <h3 class="text-2xl font-bold mb-4">Últimos Registros de Bautismo</h3>
                         <div class="mb-4 relative">
@@ -257,7 +275,6 @@
                         <div id="bautismo-records-container" class="space-y-3"></div>
                         <div id="bautismo-pagination-container" class="mt-4 flex justify-between items-center"></div>
                     </div>
-                    <!-- Registros de Confirmación -->
                     <div>
                         <h3 class="text-2xl font-bold mb-4">Últimos Registros de Confirmación</h3>
                         <div class="mb-4 relative">
@@ -271,7 +288,6 @@
             </div>
         </section>
 
-        <!-- MÓDULO DE CERTIFICADOS DE BAUTISMO -->
         <section id="bautismo-content" data-view="bautismo-content" class="hidden min-h-screen">
             <div class="container mx-auto px-6 py-12">
                 <div class="flex justify-between items-center mb-8">
@@ -310,7 +326,6 @@
             </div>
         </section>
 
-        <!-- MÓDULO DE CERTIFICADOS DE CONFIRMACIÓN (RESTRUCTURED) -->
         <section id="confirmacion-content" data-view="confirmacion-content" class="hidden min-h-screen">
             <div class="container mx-auto px-6 py-12">
                 <div class="flex justify-between items-center mb-8">
@@ -363,7 +378,6 @@
             </div>
         </section>
         
-        <!-- MÓDULO ORGANIZACIÓN DE MISAS -->
         <section id="mass-org-content" data-view="mass-org-content" class="hidden min-h-screen">
             <div class="container mx-auto px-6 py-12">
                 <div class="flex justify-between items-center mb-8 no-print">
@@ -374,7 +388,6 @@
                     </div>
                 </div>
                 <div id="mass-org-print-area" class="space-y-12 printable-area">
-                    <!-- Tabla de Ministros -->
                     <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8">
                         <h3 class="text-2xl font-bold mb-4">Organización para el servicio litúrgico (Ministros)</h3>
                         <div class="overflow-x-auto">
@@ -395,7 +408,6 @@
                         <div class="mt-4 text-right no-print"><button data-action="add-row" data-table="ministros" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105">Agregar Fila</button></div>
                     </div>
 
-                    <!-- Tabla de Organización de Misas -->
                     <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8">
                         <h3 class="text-2xl font-bold mb-4">Organización de las Misas (Grupos)</h3>
                         <div class="overflow-x-auto">
@@ -419,7 +431,6 @@
             </div>
         </section>
 
-        <!-- MÓDULO DE NOTIFICACIONES -->
         <section id="notifications-content" data-view="notifications-content" class="hidden min-h-screen">
            <div class="container mx-auto px-6 py-12">
                 <div class="flex justify-between items-center mb-8">
@@ -455,7 +466,6 @@
            </div>
         </section>
 
-        <!-- MÓDULO DE CORREO -->
         <section id="email-content" data-view="email-content" class="hidden min-h-screen">
              <div class="container mx-auto px-6 py-12">
                 <div class="flex justify-between items-center mb-8">
@@ -484,7 +494,6 @@
         </section>
     </main>
 
-    <!-- Edit Row Modal -->
     <div id="edit-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 no-print z-50">
         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 w-full max-w-lg">
             <h3 id="edit-modal-title" class="text-2xl font-bold mb-6">Modificar Fila</h3>
@@ -506,7 +515,6 @@
         </div>
     </div>
 
-    <!-- Custom Location Modal -->
     <div id="custom-location-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 no-print z-50">
         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 w-full max-w-md">
             <h3 class="text-2xl font-bold mb-6">Ingresar Lugar de Expedición</h3>
@@ -525,7 +533,6 @@
         </div>
     </div>
 
-    <!-- Delete Confirmation Modal -->
     <div id="delete-confirm-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 no-print z-50">
         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 w-full max-w-md">
             <h3 class="text-xl font-bold mb-4">Confirmar Eliminación</h3>
@@ -537,22 +544,19 @@
         </div>
     </div>
 
-    <!-- Loading Spinner -->
     <div id="loading-spinner" class="hidden fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50">
         <div class="spinner h-16 w-16 border-4 rounded-full"></div>
     </div>
 
-    <!-- Toast Container -->
     <div id="toast-container" class="fixed bottom-4 right-4 z-50 space-y-2"></div>
 
-    <!-- Print Area -->
     <div id="print-area" class="print-only hidden"></div>
 
     <script type="module">
-        // Import Firebase modules from a recent, stable version
+        // Import Firebase modules
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, collection, onSnapshot, doc, setDoc, addDoc, deleteDoc, query, orderBy, setLogLevel } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, collection, onSnapshot, doc, setDoc, addDoc, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         // --- MAIN APP LOGIC ---
         document.addEventListener('DOMContentLoaded', () => {
@@ -576,6 +580,10 @@
 
             const dom = {
                 loginView: document.getElementById('login-view'),
+                loginForm: document.getElementById('login-form'),
+                loginEmailInput: document.getElementById('login-email'),
+                loginPasswordInput: document.getElementById('login-password'),
+                loginError: document.getElementById('login-error'),
                 appContainer: document.getElementById('app-container'),
                 logoutBtn: document.getElementById('logout-btn'),
                 views: document.querySelectorAll('[data-view]'),
@@ -632,7 +640,6 @@
                     ministro: 'ministros',
                     grupo: 'grupos'
                 };
-                // This allows passing plural forms too
                 return names[type] || type;
             };
             
@@ -1154,10 +1161,33 @@
                 showToast('Sesión cerrada');
             });
 
+            // --- EVENT LISTENER FOR LOGIN FORM ---
+            dom.loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = dom.loginEmailInput.value;
+                const password = dom.loginPasswordInput.value;
+                dom.loginError.textContent = ''; // Clear previous errors
+                showSpinner();
+
+                try {
+                    await signInWithEmailAndPassword(auth, email, password);
+                    // onAuthStateChanged will handle hiding the spinner and showing the app
+                } catch (error) {
+                    console.error("Login failed:", error.code, error.message);
+                    let errorMessage = 'Error al iniciar sesión. Intente de nuevo.';
+                    if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+                        errorMessage = 'Correo electrónico o contraseña incorrectos.';
+                    } else if (error.code === 'auth/invalid-email') {
+                        errorMessage = 'El formato del correo electrónico es inválido.';
+                    }
+                    dom.loginError.textContent = errorMessage;
+                    hideSpinner();
+                }
+            });
+
             // --- INITIALIZATION AND AUTH ---
             const initializeAndAuth = async () => {
                 try {
-                    // Use environment variables for Firebase config
                     const firebaseConfig = typeof __firebase_config !== 'undefined' 
                         ? JSON.parse(__firebase_config)
                         : null;
@@ -1171,47 +1201,29 @@
                     db = getFirestore(app);
                     auth = getAuth(app);
                     
-                    // Optional: Enable detailed logging for debugging
-                    setLogLevel('debug');
-
                     onAuthStateChanged(auth, (user) => {
                         if (user) {
                             console.log("User is authenticated:", user.uid);
+                            hideSpinner();
                             dom.loginView.classList.add('hidden');
                             dom.appContainer.classList.remove('hidden');
                             setupDataListeners();
                             showView('secretaria-dashboard');
                         } else {
-                            console.log("User is not authenticated.");
+                            console.log("User is not authenticated. Showing login screen.");
+                            hideSpinner();
                             dom.loginView.classList.remove('hidden');
                             dom.appContainer.classList.add('hidden');
+                            feather.replace(); // Render icons on login screen
                             unsubscribeListeners.forEach(unsub => unsub());
-                            // Attempt to sign in automatically
-                            signIn();
+                            unsubscribeListeners = [];
                         }
                     });
 
                 } catch (error) {
                     console.error("Firebase initialization failed:", error);
                     dom.loginView.innerHTML = `<p class="text-red-500">Error crítico al inicializar la aplicación. Revise la consola.</p>`;
-                }
-            };
-
-            const signIn = async () => {
-                try {
-                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                        console.log("Attempting to sign in with custom token...");
-                        await signInWithCustomToken(auth, __initial_auth_token);
-                        showToast('Autenticación exitosa');
-                    } else {
-                        console.log("No custom token found, signing in anonymously...");
-                        await signInAnonymously(auth);
-                        showToast('Sesión anónima iniciada');
-                    }
-                } catch (error) {
-                    console.error("Authentication error:", error);
-                    showToast(`Error de autenticación: ${error.message}`, 'error');
-                    dom.loginView.innerHTML = `<p class="text-red-500">Fallo en la autenticación. Por favor, recargue la página.</p>`;
+                    hideSpinner();
                 }
             };
 
