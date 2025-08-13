@@ -34,6 +34,21 @@
             font-family: 'Noto Serif', serif;
             color: #333;
         }
+        
+        /* Half-page container for Receipt PDF */
+        .receipt-pdf-container {
+            width: 210mm;
+            height: 148.5mm; /* Half of A4 height */
+            padding: 15mm;
+            box-sizing: border-box;
+            background-color: #fff;
+            display: flex;
+            flex-direction: column;
+            font-family: 'Noto Serif', serif;
+            color: #333;
+            border-bottom: 1px dashed #ccc; /* Optional: visual separator */
+        }
+
 
         /* Certificate Styles */
         .certificate-modern {
@@ -235,6 +250,12 @@
                         <h3 class="text-2xl font-bold mb-2">Certificados</h3>
                         <p class="text-gray-600 dark:text-gray-400">Generar certificados de Bautismo y Confirmación.</p>
                     </div>
+                    <!-- NEW MODULE: Caja de Secretaría -->
+                    <div data-action="show-view" data-view-id="caja-content" class="card-hover-effect bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 flex flex-col items-center text-center cursor-pointer">
+                        <div class="bg-green-100 dark:bg-green-900/30 p-4 rounded-full mb-6"><i data-feather="dollar-sign" class="h-10 w-10 text-green-600 dark:text-green-400"></i></div>
+                        <h3 class="text-2xl font-bold mb-2">Caja de Secretaría</h3>
+                        <p class="text-gray-600 dark:text-gray-400">Ingresos e Egresos.</p>
+                    </div>
                     <div data-action="show-view" data-view-id="mass-org-content" class="card-hover-effect bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 flex flex-col items-center text-center cursor-pointer">
                         <div class="bg-teal-100 dark:bg-teal-900/30 p-4 rounded-full mb-6"><i data-feather="calendar" class="h-10 w-10 text-teal-600 dark:text-teal-400"></i></div>
                         <h3 class="text-2xl font-bold mb-2">Organización de Misas</h3>
@@ -244,6 +265,31 @@
                         <div class="bg-amber-100 dark:bg-amber-900/30 p-4 rounded-full mb-6"><i data-feather="bell" class="h-10 w-10 text-amber-600 dark:text-amber-400"></i></div>
                         <h3 class="text-2xl font-bold mb-2">Notificaciones</h3>
                         <p class="text-gray-600 dark:text-gray-400">Crear y ver recordatorios y anuncios internos.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- NEW SECTION: Caja de Secretaría -->
+        <section id="caja-content" data-view="caja-content" class="hidden min-h-screen">
+            <div class="container mx-auto px-6 py-12">
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="text-3xl font-bold">Caja de Secretaría</h2>
+                    <button data-action="show-view" data-view-id="secretaria-dashboard" class="bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105">Inicio</button>
+                </div>
+                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8">
+                    <h3 class="text-2xl font-bold mb-2">Bienvenido al Módulo de Caja</h3>
+                    <p class="text-gray-600 dark:text-gray-400 mb-6">Aquí puede gestionar los ingresos y egresos de la secretaría.</p>
+                    <button data-action="open-receipt-date-modal" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105 flex items-center space-x-2">
+                        <i data-feather="file-plus" class="h-5 w-5"></i>
+                        <span>Generar Nuevo Recibo</span>
+                    </button>
+
+                    <div class="mt-12 border-t pt-8">
+                        <h3 class="text-xl font-bold mb-4">Historial de Recibos</h3>
+                        <div id="receipts-history-container" class="space-y-3">
+                            <!-- Receipt records will be rendered here -->
+                        </div>
                     </div>
                 </div>
             </div>
@@ -545,6 +591,47 @@
         </section>
     </main>
 
+    <!-- NEW MODAL: Receipt Date -->
+    <div id="receipt-date-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 no-print z-50">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 w-full max-w-sm">
+            <h3 class="text-2xl font-bold mb-6 text-center">Fecha del Recibo</h3>
+            <form id="receipt-date-form">
+                <input type="date" id="receipt-date-input" class="block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700" required>
+                <div class="mt-8 flex justify-between space-x-4">
+                    <button type="button" data-action="close-receipt-date-modal" class="w-full bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-bold py-2 px-4 rounded-lg">Volver</button>
+                    <button type="submit" class="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-2 px-4 rounded-lg">Confirmar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- NEW MODAL: Receipt Data -->
+    <div id="receipt-data-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 no-print z-50">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 w-full max-w-lg">
+            <h3 class="text-2xl font-bold mb-6">Datos del Recibo</h3>
+            <form id="receipt-data-form" class="space-y-4">
+                <input type="hidden" id="receipt-id">
+                <div>
+                    <label for="receipt-recibiDe" class="block text-sm font-medium">Recibí de:</label>
+                    <input type="text" id="receipt-recibiDe" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700" required>
+                </div>
+                <div>
+                    <label for="receipt-concepto" class="block text-sm font-medium">En concepto de:</label>
+                    <input type="text" id="receipt-concepto" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700" required>
+                </div>
+                <div>
+                    <label for="receipt-importe" class="block text-sm font-medium">Importe ($):</label>
+                    <input type="number" step="1" id="receipt-importe" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700" required>
+                </div>
+                <div class="mt-8 flex justify-end space-x-4">
+                    <button type="button" data-action="close-receipt-data-modal" class="bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-bold py-2 px-4 rounded-lg">Volver</button>
+                    <button type="submit" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-2 px-4 rounded-lg">Confirmar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
     <div id="edit-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 no-print z-50">
         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 w-full max-w-lg">
             <h3 id="edit-modal-title" class="text-2xl font-bold mb-6">Modificar Fila</h3>
@@ -654,6 +741,7 @@
             
             let recordToDelete = { type: null, id: null };
             let unsubscribeListeners = [];
+            let tempReceiptDate = null; // To hold date between modals
 
             const appState = {
                 notifications: [],
@@ -661,9 +749,10 @@
                 grupos: [],
                 adoracionJueves: [],
                 adoracionSemanal: [],
-                horariosAdoracion: {}, // MODIFICACIÓN: Nuevo estado para horarios
+                horariosAdoracion: {}, 
                 bautismos: [],
                 confirmaciones: [],
+                recibos: [], // New state for receipts
                 bautismosSearchTerm: '',
                 bautismosCurrentPage: 1,
                 confirmacionesSearchTerm: '',
@@ -685,7 +774,6 @@
                 gruposTableBody: document.getElementById('grupos-table-body'),
                 adoracionJuevesTableBody: document.getElementById('adoracion-jueves-table-body'),
                 adoracionSemanalTableBody: document.getElementById('adoracion-semanal-table-body'),
-                // MODIFICACIÓN: Nuevos elementos del DOM
                 adoracionJuevesHorarios: document.getElementById('adoracion-jueves-horarios'),
                 adoracionSemanalHorarios: document.getElementById('adoracion-semanal-horarios'),
                 baptismForm: document.getElementById('baptism-form'),
@@ -713,6 +801,12 @@
                 notificationBadge: document.getElementById('notification-badge'),
                 loadingSpinner: document.getElementById('loading-spinner'),
                 toastContainer: document.getElementById('toast-container'),
+                // New DOM elements for Caja module
+                receiptDateModal: document.getElementById('receipt-date-modal'),
+                receiptDateForm: document.getElementById('receipt-date-form'),
+                receiptDataModal: document.getElementById('receipt-data-modal'),
+                receiptDataForm: document.getElementById('receipt-data-form'),
+                receiptsHistoryContainer: document.getElementById('receipts-history-container'),
             };
 
             const showSpinner = () => dom.loadingSpinner.classList.remove('hidden');
@@ -729,7 +823,6 @@
                 }, 3500);
             };
             
-            // MODIFICACIÓN: Nueva función para renderizar horarios editables
             const renderHorariosAdoracion = () => {
                 if (!dom.adoracionJuevesHorarios || !dom.adoracionSemanalHorarios) return;
                 
@@ -742,7 +835,6 @@
                 dom.adoracionSemanalHorarios.querySelector('[data-key="semanalReserva"]').textContent = data.semanalReserva || '12:00';
             };
 
-            // MODIFICACIÓN: Nueva función para guardar horarios editables
             const handleSaveHorarios = async () => {
                 showSpinner();
                 try {
@@ -916,6 +1008,9 @@
                     renderAdoracionTable('adoracionJueves', dom.adoracionJuevesTableBody);
                     renderAdoracionTable('adoracionSemanal', dom.adoracionSemanalTableBody);
                     renderHorariosAdoracion(); // Cargar horarios editables
+                }
+                 if (viewId === 'caja-content') {
+                    renderReceipts();
                 }
                 if (viewId === 'certificate-choice-content' || viewId === 'bautismo-content' || viewId === 'confirmacion-content') {
                     renderRecords('bautismo', dom.bautismoRecordsContainer, dom.bautismoPaginationContainer, appState.bautismosSearchTerm, 'bautismosCurrentPage');
@@ -1188,7 +1283,6 @@
                 }
             };
             
-            // MODIFICACIÓN: Nueva función para crear horarios si no existen
             const setupInitialHorarios = async () => {
                 const horariosDocRef = doc(db, 'parroquia/shared-data/configuracion', 'horariosAdoracion');
                 const initialHorarios = {
@@ -1294,7 +1388,7 @@
             };
 
             const setupDataListeners = () => {
-                const collections = ['bautismos', 'confirmaciones', 'notifications', 'ministros', 'grupos', 'adoracionJueves', 'adoracionSemanal'];
+                const collections = ['bautismos', 'confirmaciones', 'notifications', 'ministros', 'grupos', 'adoracionJueves', 'adoracionSemanal', 'recibos'];
                 const weekOrder = { 'Primero': 1, 'Primera': 1, 'Segundo': 2, 'Segunda': 2, 'Tercero': 3, 'Tercera': 3, 'Cuarto': 4, 'Cuarta': 4, 'Quinto': 5, 'Quinta': 5 };
                 const dayOrder = { 'Martes': 1, 'Miércoles': 2, 'Jueves': 3, 'Viernes': 4 };
 
@@ -1316,6 +1410,8 @@
                             data.sort((a, b) => (weekOrder[a.col1] || 99) - (weekOrder[b.col1] || 99));
                         } else if (coll === 'adoracionSemanal') {
                             data.sort((a, b) => (dayOrder[a.col1] || 99) - (dayOrder[b.col1] || 99));
+                        } else if (coll === 'recibos') {
+                            data.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
                         }
                         
                         appState[coll] = data;
@@ -1343,6 +1439,9 @@
                                 break;
                             case 'adoracionSemanal':
                                 renderAdoracionTable('adoracionSemanal', dom.adoracionSemanalTableBody);
+                                break;
+                            case 'recibos':
+                                renderReceipts();
                                 break;
                         }
 
@@ -1427,12 +1526,36 @@
                         break;
                     case 'confirm-delete':
                         if (recordToDelete.type && recordToDelete.id) {
-                            const collectionName = recordToDelete.type === 'confirmacion' ? 'confirmaciones' : `${recordToDelete.type}s`;
+                            let collectionName = '';
+                            if (recordToDelete.type === 'recibo') {
+                                collectionName = 'recibos';
+                            } else {
+                                collectionName = recordToDelete.type === 'confirmacion' ? 'confirmaciones' : `${recordToDelete.type}s`;
+                            }
                             deleteDoc(doc(db, `parroquia/shared-data/${collectionName}`, recordToDelete.id));
                             showToast('Registro eliminado con éxito');
                         }
                         dom.deleteConfirmModal.classList.add('hidden');
                         recordToDelete = { type: null, id: null };
+                        break;
+                    // New actions for Caja module
+                    case 'open-receipt-date-modal':
+                        dom.receiptDateForm.reset();
+                        dom.receiptDateModal.querySelector('#receipt-date-input').value = new Date().toISOString().split('T')[0];
+                        dom.receiptDateModal.classList.remove('hidden');
+                        break;
+                    case 'close-receipt-date-modal':
+                        dom.receiptDateModal.classList.add('hidden');
+                        break;
+                    case 'close-receipt-data-modal':
+                        dom.receiptDataModal.classList.add('hidden');
+                        break;
+                    case 'edit-receipt':
+                        populateReceiptForm(id);
+                        break;
+                    case 'download-receipt-pdf':
+                        const receiptData = appState.recibos.find(r => r.id === id);
+                        if (receiptData) generateReceiptPDF(receiptData);
                         break;
                 }
             });
@@ -1576,6 +1699,165 @@
                     iconEyeOff.classList.add('hidden');
                 }
             });
+
+            // --- NEW FUNCTIONS FOR CAJA MODULE ---
+
+            const formatCurrency = (number) => {
+                if (isNaN(number)) return number;
+                return new Intl.NumberFormat('es-AR').format(number);
+            };
+
+            const renderReceipts = () => {
+                if (!dom.receiptsHistoryContainer) return;
+                const sortedReceipts = [...appState.recibos].sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+
+                if (sortedReceipts.length === 0) {
+                    dom.receiptsHistoryContainer.innerHTML = `<p class="text-gray-500 dark:text-gray-400 italic">No hay recibos registrados.</p>`;
+                    return;
+                }
+
+                dom.receiptsHistoryContainer.innerHTML = sortedReceipts.map(r => `
+                    <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3 flex justify-between items-center">
+                        <div>
+                            <p class="font-bold">Recibí de: ${r.recibiDe}</p>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Fecha: ${formatDate(r.fecha)} - Importe: $${formatCurrency(r.importe)}</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button data-action="edit-receipt" data-id="${r.id}" class="text-blue-500 hover:text-blue-700 p-1" title="Modificar"><i data-feather="edit" class="h-4 w-4"></i></button>
+                            <button data-action="download-receipt-pdf" data-id="${r.id}" class="text-green-500 hover:text-green-700 p-1" title="Descargar PDF"><i data-feather="download" class="h-4 w-4"></i></button>
+                            <button data-action="delete-record" data-type="recibo" data-id="${r.id}" class="text-red-500 hover:text-red-700 p-1" title="Eliminar"><i data-feather="trash-2" class="h-4 w-4"></i></button>
+                        </div>
+                    </div>
+                `).join('');
+                feather.replace();
+            };
+
+            const populateReceiptForm = (id) => {
+                const receipt = appState.recibos.find(r => r.id === id);
+                if (!receipt) return;
+                tempReceiptDate = receipt.fecha; // Store date for saving
+                dom.receiptDataForm.querySelector('#receipt-id').value = receipt.id;
+                dom.receiptDataForm.querySelector('#receipt-recibiDe').value = receipt.recibiDe;
+                dom.receiptDataForm.querySelector('#receipt-concepto').value = receipt.concepto;
+                dom.receiptDataForm.querySelector('#receipt-importe').value = receipt.importe;
+                dom.receiptDataModal.classList.remove('hidden');
+            };
+
+            const saveReceipt = async () => {
+                if (!dom.receiptDataForm.checkValidity()) {
+                    dom.receiptDataForm.reportValidity();
+                    return;
+                }
+                
+                const id = dom.receiptDataForm.querySelector('#receipt-id').value;
+                const receiptData = {
+                    fecha: tempReceiptDate,
+                    recibiDe: dom.receiptDataForm.querySelector('#receipt-recibiDe').value,
+                    concepto: dom.receiptDataForm.querySelector('#receipt-concepto').value,
+                    importe: dom.receiptDataForm.querySelector('#receipt-importe').value,
+                };
+
+                showSpinner();
+                try {
+                    const collectionPath = 'parroquia/shared-data/recibos';
+                    if (id) { // Update
+                        await setDoc(doc(db, collectionPath, id), receiptData, { merge: true });
+                        showToast('Recibo actualizado con éxito');
+                    } else { // Create
+                        await addDoc(collection(db, collectionPath), receiptData);
+                        showToast('Recibo guardado con éxito');
+                    }
+                    dom.receiptDataForm.reset();
+                    dom.receiptDataModal.classList.add('hidden');
+                } catch (error) {
+                    console.error("Error saving receipt:", error);
+                    showToast('Error al guardar el recibo.', 'error');
+                } finally {
+                    hideSpinner();
+                    tempReceiptDate = null; // Clear temp date
+                }
+            };
+
+            const getReceiptHTML = (data) => {
+                return `
+                    <div class="receipt-pdf-container" style="display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <div style="text-align: center; border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 15mm;">
+                                <h3 style="font-size: 24pt; font-weight: 700; margin: 0;">Recibo</h3>
+                                <p style="font-size: 9pt; margin: 2px 0; line-height: 1.5;">Diócesis de Santo Tomé - Paso de los Libres – Corrientes<br>Dirección: Bartolomé Mitre 940<br>WhatsApp (3772) 651931</p>
+                            </div>
+                            <div style="font-size: 12pt; line-height: 2.5;">
+                                <p><strong>Fecha:</strong> ${formatDate(data.fecha, 'long')}</p>
+                                <p><strong>Recibí de:</strong> ${data.recibiDe || ''}</p>
+                                <p><strong>En concepto de:</strong> ${data.concepto || ''}</p>
+                                <p><strong>Importe:</strong> $${formatCurrency(data.importe)}</p>
+                            </div>
+                        </div>
+                        <div style="text-align: center; padding-top: 20mm;">
+                            <div style="border-top: 1px solid #555; width: 70mm; margin: 0 auto; padding-top: 5px; font-size: 10pt;">
+                                Sello Parroquial
+                            </div>
+                        </div>
+                    </div>
+                `;
+            };
+
+            const generateReceiptPDF = async (data) => {
+                showSpinner();
+                const receiptHTML = getReceiptHTML(data);
+                const elementToRender = document.createElement('div');
+                elementToRender.style.position = 'absolute';
+                elementToRender.style.left = '-9999px';
+                elementToRender.style.width = '210mm';
+                elementToRender.innerHTML = receiptHTML;
+                document.body.appendChild(elementToRender);
+
+                const contentToCapture = elementToRender.querySelector('.receipt-pdf-container');
+                if (!contentToCapture) {
+                    console.error("Could not find .receipt-pdf-container to capture.");
+                    showToast('Error interno al generar el PDF.', 'error');
+                    hideSpinner();
+                    document.body.removeChild(elementToRender);
+                    return;
+                }
+
+                try {
+                    const { jsPDF } = window.jspdf;
+                    const canvas = await html2canvas(contentToCapture, { 
+                        scale: 3,
+                        useCORS: true,
+                        backgroundColor: '#ffffff'
+                    });
+                    const imgData = canvas.toDataURL('image/png');
+                    const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+                    
+                    pdf.addImage(imgData, 'PNG', 0, 0, 210, 148.5); 
+                    
+                    pdf.save(`Recibo_${data.recibiDe.replace(/ /g, '_')}.pdf`);
+                    showToast('PDF del recibo generado con éxito');
+                } catch (error) {
+                    console.error("Error generating receipt PDF:", error);
+                    showToast('Error al generar el PDF del recibo', 'error');
+                } finally {
+                    document.body.removeChild(elementToRender);
+                    hideSpinner();
+                }
+            };
+
+            dom.receiptDateForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                tempReceiptDate = dom.receiptDateForm.querySelector('#receipt-date-input').value;
+                dom.receiptDateModal.classList.add('hidden');
+                dom.receiptDataForm.reset();
+                dom.receiptDataForm.querySelector('#receipt-id').value = ''; // Ensure ID is cleared for new receipt
+                dom.receiptDataModal.classList.remove('hidden');
+            });
+
+            dom.receiptDataForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                saveReceipt();
+            });
+
         });
     </script>
 </body>
