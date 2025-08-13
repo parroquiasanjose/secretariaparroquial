@@ -826,20 +826,20 @@
             const renderAdoracionTable = (tableKey, tbodyElement) => {
                 if (!tbodyElement) return;
                 tbodyElement.innerHTML = appState[tableKey].map(row => `
-                       <tr data-id="${row.id}">
-                            <td class="px-6 py-4">${row.col1 || ''}</td>
-                            <td class="px-6 py-4">${row.col2 || ''}</td>
-                            <td class="px-6 py-4 text-center no-print">
-                                <div class="flex justify-center items-center space-x-2">
-                                    <button data-action="show-edit-adoracion-modal" data-table="${tableKey}" data-id="${row.id}" class="text-blue-500 hover:text-blue-700 p-1" title="Editar">
-                                        <i data-feather="edit" class="h-4 w-4"></i>
-                                    </button>
-                                    <button data-action="remove-row" data-table="${tableKey}" data-id="${row.id}" class="text-red-500 hover:text-red-700 p-1" title="Eliminar">
-                                        <i data-feather="trash-2" class="h-4 w-4"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
+                            <tr data-id="${row.id}">
+                                <td class="px-6 py-4">${row.col1 || ''}</td>
+                                <td class="px-6 py-4">${row.col2 || ''}</td>
+                                <td class="px-6 py-4 text-center no-print">
+                                    <div class="flex justify-center items-center space-x-2">
+                                        <button data-action="show-edit-adoracion-modal" data-table="${tableKey}" data-id="${row.id}" class="text-blue-500 hover:text-blue-700 p-1" title="Editar">
+                                            <i data-feather="edit" class="h-4 w-4"></i>
+                                        </button>
+                                        <button data-action="remove-row" data-table="${tableKey}" data-id="${row.id}" class="text-red-500 hover:text-red-700 p-1" title="Eliminar">
+                                            <i data-feather="trash-2" class="h-4 w-4"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
                 `).join('');
                 feather.replace();
             };
