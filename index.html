@@ -1698,7 +1698,9 @@
                     case 'confirm-delete':
                         if (recordToDelete.type && recordToDelete.id) {
                             let collectionName = '';
-                            if (['recibo', 'rendicion', 'socio'].includes(recordToDelete.type)) {
+                            if (recordToDelete.type === 'rendicion') {
+                                collectionName = 'rendiciones';
+                            } else if (['recibo', 'socio'].includes(recordToDelete.type)) {
                                 collectionName = `${recordToDelete.type}s`;
                             } else {
                                 collectionName = recordToDelete.type === 'confirmacion' ? 'confirmaciones' : `${recordToDelete.type}s`;
