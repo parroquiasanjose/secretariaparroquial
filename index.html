@@ -175,6 +175,19 @@
             opacity: 1;
             transform: translateY(0);
         }
+        
+        @keyframes marquee {
+            0% { transform: translateX(0%); }
+            10% { transform: translateX(0%); } /* Pause at start */
+            90% { transform: translateX(-100%); } /* Scroll */
+            100% { transform: translateX(-100%); } /* Pause at end */
+        }
+
+        .marquee span {
+            display: inline-block;
+            padding-left: 100%;
+            animation: marquee 10s linear infinite;
+        }
 
 
         /* Print-specific styles */
@@ -232,7 +245,7 @@
                            <span class="text-gray-500">Sin alertas pendientes.</span>
                         </div>
                         <!-- Notification Bell -->
-                        <div class="relative">
+                        <div id="notification-wrapper" class="relative">
                             <div id="notification-bell-container" class="cursor-pointer">
                                 <i data-feather="bell" class="h-8 w-8 text-gray-600"></i>
                                 <span id="notification-badge" class="hidden absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center"></span>
@@ -915,7 +928,7 @@
                 confirmacionFormPaginationContainer: document.getElementById('confirmacion-form-pagination-container'),
                 deleteConfirmModal: document.getElementById('delete-confirm-modal'),
                 notificationBadge: document.getElementById('notification-badge'),
-                notificationBell: document.getElementById('notification-bell-container'),
+                notificationWrapper: document.getElementById('notification-wrapper'),
                 notificationPanel: document.getElementById('notification-panel'),
                 notificationPanelList: document.getElementById('notification-panel-list'),
                 alertTicker: document.getElementById('alert-ticker'),
@@ -1070,10 +1083,20 @@
                     dom.alertTicker.classList.add('bg-amber-100');
                     
                     pendingAlerts.forEach((alert) => {
-                        const item = document.createElement('span');
+                        const item = document.createElement('div');
                         item.className = 'alert-ticker-item text-amber-800 font-medium';
-                        item.textContent = alert.text;
+                        const textSpan = document.createElement('span');
+                        textSpan.textContent = alert.text;
+                        item.appendChild(textSpan);
                         dom.alertTicker.appendChild(item);
+
+                        // Check for overflow and apply marquee if needed
+                        const containerWidth = dom.alertTicker.clientWidth;
+                        if (textSpan.scrollWidth > containerWidth) {
+                            item.classList.add('marquee');
+                            const duration = textSpan.scrollWidth / 40; // Adjust speed here (pixels per second)
+                            textSpan.style.animationDuration = `${duration}s`;
+                        }
                     });
 
                     let currentIndex = 0;
@@ -1676,6 +1699,11 @@
             };
 
             document.body.addEventListener('click', (e) => {
+                // Close notification panel if click is outside
+                if (!dom.notificationWrapper.contains(e.target)) {
+                    dom.notificationPanel.classList.add('hidden');
+                }
+
                 const target = e.target.closest('[data-action]');
                 if (!target) return;
                 const { action, viewId, table, id, type, direction, modalId, name } = target.dataset;
@@ -1881,7 +1909,8 @@
             });
             
             // Toggle notification panel
-            dom.notificationBell.addEventListener('click', () => {
+            dom.notificationWrapper.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent click from bubbling up to the body
                 dom.notificationPanel.classList.toggle('hidden');
             });
 
