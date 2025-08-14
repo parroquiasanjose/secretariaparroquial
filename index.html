@@ -34,6 +34,20 @@
             font-family: 'Noto Serif', serif;
             color: #333;
         }
+
+        /* MODIFICACIÓN: Contenedor de media página A4 para certificados */
+        .pdf-half-page-container {
+            width: 210mm;
+            height: 148.5mm; /* Mitad de la altura de A4 */
+            padding: 15mm;
+            box-sizing: border-box;
+            background-color: #fff;
+            display: flex;
+            flex-direction: column;
+            font-family: 'Noto Serif', serif;
+            color: #333;
+            border-bottom: 1px dashed #ccc; /* Guía de corte opcional */
+        }
         
         /* Half-page container for Receipt PDF */
         .receipt-pdf-container {
@@ -55,6 +69,9 @@
             border: 1px solid #e0e0e0;
             padding: 10mm;
             background-color: #f7f7f7;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
         }
         .certificate-modern-header {
             text-align: center;
@@ -80,6 +97,7 @@
             font-size: 11pt;
             line-height: 2.2;
             text-align: justify;
+            flex-grow: 1;
         }
         .certificate-modern-body strong {
             font-weight: 700;
@@ -106,44 +124,6 @@
             width: 60mm;
             text-align: center;
             padding-top: 5px;
-        }
-
-        /* Notification & Ficha Box Styles */
-        .notification-container {
-            display: flex;
-            gap: 10mm;
-            margin-top: 10mm;
-            flex-grow: 1;
-        }
-        .notification-box {
-            border: 1px solid #ccc;
-            padding: 5mm;
-            flex: 1;
-            font-size: 9pt;
-            line-height: 1.8;
-            display: flex;
-            flex-direction: column;
-        }
-        .notification-box h4 {
-            text-align: center;
-            font-weight: bold;
-            font-size: 10pt;
-            margin-bottom: 5mm;
-        }
-        .notification-box .field-line {
-            border-bottom: 1px dotted #888;
-            flex-grow: 1;
-            margin-left: 4px;
-        }
-        .notification-box p {
-            display: flex;
-        }
-        .notification-box .footer-note {
-            font-size: 7pt;
-            text-align: center;
-            margin-top: auto;
-            padding-top: 5mm;
-            font-style: italic;
         }
         
         /* MODIFICACIÓN: Estilo para campos editables */
@@ -417,13 +397,6 @@
                         </div>
                         <div><label for="c-fecha-expedicion" class="block text-sm font-medium">Fecha de expedición</label><input name="fechaExpedicion" type="date" id="c-fecha-expedicion" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700" required></div>
                         <div class="md:col-span-2"><label for="c-parroco" class="block text-sm font-medium">Párroco/Ministro</label><input name="parroco" type="text" id="c-parroco" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700" required></div>
-
-                        <h3 class="col-span-full text-xl font-bold text-gray-900 dark:text-white border-b pb-2 mt-4">Datos del Bautismo (para notificación)</h3>
-                        <div class="md:col-span-2"><label for="c-bautizado-en" class="block text-sm font-medium">Bautizado en la Pquia.</label><input name="bautizadoEn" type="text" id="c-bautizado-en" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700" required></div>
-                        <div><label for="c-bautizado-diocesis" class="block text-sm font-medium">Diócesis (Bautismo)</label><input name="bautizadoDiocesis" type="text" id="c-bautizado-diocesis" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700" required></div>
-                        <div class="md:col-span-2"></div>
-                        <div><label for="c-bautizado-libro" class="block text-sm font-medium">Libro (Bautismo)</label><input name="bautizadoLibro" type="text" id="c-bautizado-libro" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700" required></div>
-                        <div><label for="c-bautizado-folio" class="block text-sm font-medium">Folio (Bautismo)</label><input name="bautizadoFolio" type="text" id="c-bautizado-folio" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700" required></div>
 
                         <div class="md:col-span-2 flex justify-end space-x-4 mt-6">
                             <button type="submit" data-action="save-certificate" data-type="confirmacion" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-2 px-6 rounded-lg flex items-center space-x-2 transition-all duration-300 ease-in-out transform hover:scale-105">
@@ -1223,7 +1196,11 @@
                         const canvas = await html2canvas(elementToRender.firstChild, { scale: 3 });
                         const imgData = canvas.toDataURL('image/png');
                         const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-                        pdf.addImage(imgData, 'PNG', 0, 0, 210, 297);
+                        
+                        // MODIFICACIÓN: Ajustar la altura del PDF para confirmación
+                        const pdfHeight = type === 'confirmacion' ? 148.5 : 297;
+                        pdf.addImage(imgData, 'PNG', 0, 0, 210, pdfHeight);
+                        
                         pdf.save(`Certificado_${type}_${formData.nombre.replace(/ /g, '_')}.pdf`);
                         document.body.removeChild(elementToRender);
                         showToast('PDF generado con éxito');
@@ -1298,16 +1275,17 @@
                 
                 if (type === 'confirmacion') {
                     const mainCert = `
-                        <div class="certificate-modern" style="height: 140mm; display: flex; flex-direction: column;">
+                        <div class="certificate-modern">
                             <div class="certificate-modern-header">
                                 <h3>CERTIFICADO DE CONFIRMACIÓN</h3>
                                 <p>Diócesis de Santo Tomé - Paso de los Libres – Corrientes<br>Dirección: Bartolomé Mitre 940<br>WhatsApp (3772) 651931</p>
                             </div>
-                            <div class="certificate-modern-body" style="flex-grow: 1;">
+                            <div class="certificate-modern-body">
                                 <p>Certifico que: <strong>${(data.nombre || '').toUpperCase()}</strong></p>
                                 <p>hijo(a) de <span class="field">${data.padre || ''}</span> y de <span class="field">${data.madre || ''}</span>&nbsp;
                                 ha recibido solemnemente el Sacramento de la Confirmación en esta parroquia el día ${formatDate(data.fechaConfirmacion, 'long')}.</p>
                                 <p>Registrado en el Libro Parroquial de Confirmaciones, página <span class="field">${data.pagina || ''}</span>, acta Nº <span class="field">${data.acta || ''}</span>.</p>
+                                <p>Padrino/Madrina: <span class="field">${data.padrino || ''}</span>.</p>
                                 <p>En <span class="field">${data.lugarExpedicion || ''}</span>, ${formatDate(data.fechaExpedicion, 'long_parts')}.</p>
                             </div>
                             <div class="certificate-modern-footer">
@@ -1316,49 +1294,8 @@
                             </div>
                         </div>`;
                     
-                    const notificationBox = `
-                        <div class="notification-box">
-                            <h4>DIOCESIS DE SANTO TOME-CORRIENTES</h4>
-                            <p>Parroquia:<span class="field-line">San José</span></p>
-                            <p>Localidad:<span class="field-line">Paso de los Libres, Corrientes</span></p>
-                            <h4 style="margin-top: 5mm;">NOTIFICACION DE CONFIRMACION</h4>
-                            <p>Nombre y Apellido:<span class="field-line">${data.nombre || ''}</span></p>
-                            <p>Bautizado en la Pquia.:<span class="field-line">${data.bautizadoEn || ''}</span></p>
-                            <div style="display: flex; gap: 10px;">
-                                <p>L.<span class="field-line">${data.bautizadoLibro || ''}</span></p>
-                                <p>F.<span class="field-line">${data.bautizadoFolio || ''}</span></p>
-                            </div>
-                            <p>Diócesis:<span class="field-line">${data.bautizadoDiocesis || ''}</span></p>
-                            <p>Fue Confirmado el:<span class="field-line">${formatDate(data.fechaConfirmacion)}</span></p>
-                            <p>Registrado en L.<span class="field-line">${data.pagina || ''}</span> F.<span class="field-line">${data.acta || ''}</span></p>
-                            <div style="display: flex; justify-content: space-between; margin-top: 10mm;">
-                                <span>Sello</span>
-                                <span>Párroco</span>
-                            </div>
-                            <p class="footer-note">PARA ENVIAR A LA PARROQUIA DONDE SE CONFIRIO EL BAUTISMO</p>
-                        </div>`;
-
-                    const fichaBox = `
-                        <div class="notification-box">
-                            <h4>DIOCESIS DE SANTO TOME-CORRIENTES</h4>
-                            <p>Parroquia:<span class="field-line">San José</span></p>
-                            <p>Localidad:<span class="field-line">Paso de los Libres, Corrientes</span></p>
-                            <h4 style="margin-top: 5mm;">FICHA DE CONFIRMACION</h4>
-                            <p>Nombre y Apellido:<span class="field-line">${data.nombre || ''}</span></p>
-                            <p>Bautizado en la Pquia.:<span class="field-line">${data.bautizadoEn || ''}</span></p>
-                            <div style="display: flex; gap: 10px;">
-                                <p>L.<span class="field-line">${data.bautizadoLibro || ''}</span></p>
-                                <p>F.<span class="field-line">${data.bautizadoFolio || ''}</span></p>
-                            </div>
-                            <p>Padre:<span class="field-line">${data.padre || ''}</span></p>
-                            <p>Madre:<span class="field-line">${data.madre || ''}</span></p>
-                            <p>Padrino/Madrina:<span class="field-line">${data.padrino || ''}</span></p>
-                            <p>Fecha:<span class="field-line">${formatDate(data.fechaConfirmacion)}</span></p>
-                            <p>Ministro:<span class="field-line">${data.parroco || ''}</span></p>
-                            <p class="footer-note">PARA INSCRIBIR EN EL LIBRO PARROQUIAL DE CONFIRMACIONES</p>
-                        </div>`;
-
-                    return `<div class="pdf-page-container" style="display: block;">${mainCert}<div class="notification-container" style="flex-grow: 0;">${notificationBox}${fichaBox}</div></div>`;
+                    // MODIFICACIÓN: Usar el contenedor de media página
+                    return `<div class="pdf-half-page-container">${mainCert}</div>`;
                 }
                 return '';
             };
