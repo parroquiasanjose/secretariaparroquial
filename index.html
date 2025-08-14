@@ -25,8 +25,8 @@
         /* A4 Page container for PDF */
         .pdf-page-container {
             width: 210mm;
-            height: 297mm;
-            padding: 10mm;
+            min-height: 297mm;
+            padding: 15mm;
             box-sizing: border-box;
             background-color: #fff;
             display: flex;
@@ -162,7 +162,7 @@
         }
          .dark .editable-field:hover, .dark .editable-field:focus {
              background-color: rgba(255,255,255,0.2);
-        }
+         }
 
         /* Loading Spinner */
         @keyframes spin {
@@ -244,17 +244,16 @@
                         <button id="logout-btn" class="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105">Cerrar Sesión</button>
                     </div>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                     <div data-action="show-view" data-view-id="certificate-choice-content" class="card-hover-effect bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 flex flex-col items-center text-center cursor-pointer">
                         <div class="bg-indigo-100 dark:bg-indigo-900/30 p-4 rounded-full mb-6"><i data-feather="file-text" class="h-10 w-10 text-indigo-600 dark:text-indigo-400"></i></div>
                         <h3 class="text-2xl font-bold mb-2">Certificados</h3>
                         <p class="text-gray-600 dark:text-gray-400">Generar certificados de Bautismo y Confirmación.</p>
                     </div>
-                    <!-- NEW MODULE: Caja de Secretaría -->
                     <div data-action="show-view" data-view-id="caja-content" class="card-hover-effect bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 flex flex-col items-center text-center cursor-pointer">
                         <div class="bg-green-100 dark:bg-green-900/30 p-4 rounded-full mb-6"><i data-feather="dollar-sign" class="h-10 w-10 text-green-600 dark:text-green-400"></i></div>
                         <h3 class="text-2xl font-bold mb-2">Caja de Secretaría</h3>
-                        <p class="text-gray-600 dark:text-gray-400">Ingresos e Egresos.</p>
+                        <p class="text-gray-600 dark:text-gray-400">Ingresos, Egresos y Rendiciones.</p>
                     </div>
                     <div data-action="show-view" data-view-id="mass-org-content" class="card-hover-effect bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 flex flex-col items-center text-center cursor-pointer">
                         <div class="bg-teal-100 dark:bg-teal-900/30 p-4 rounded-full mb-6"><i data-feather="calendar" class="h-10 w-10 text-teal-600 dark:text-teal-400"></i></div>
@@ -270,7 +269,7 @@
             </div>
         </section>
 
-        <!-- NEW SECTION: Caja de Secretaría -->
+        <!-- SECTION: Caja de Secretaría -->
         <section id="caja-content" data-view="caja-content" class="hidden min-h-screen">
             <div class="container mx-auto px-6 py-12">
                 <div class="flex justify-between items-center mb-8">
@@ -280,16 +279,29 @@
                 <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8">
                     <h3 class="text-2xl font-bold mb-2">Bienvenido al Módulo de Caja</h3>
                     <p class="text-gray-600 dark:text-gray-400 mb-6">Aquí puede gestionar los ingresos y egresos de la secretaría.</p>
-                    <button data-action="open-receipt-date-modal" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105 flex items-center space-x-2">
-                        <i data-feather="file-plus" class="h-5 w-5"></i>
-                        <span>Generar Nuevo Recibo</span>
-                    </button>
+                    <div class="flex flex-wrap gap-4">
+                        <button data-action="open-receipt-date-modal" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105 flex items-center space-x-2">
+                            <i data-feather="file-plus" class="h-5 w-5"></i>
+                            <span>Generar Nuevo Recibo</span>
+                        </button>
+                        <button data-action="open-rendicion-date-modal" class="bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105 flex items-center space-x-2">
+                            <i data-feather="archive" class="h-5 w-5"></i>
+                            <span>Rendición de Secretaría</span>
+                        </button>
+                        <button data-action="open-socios-management-modal" class="bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-600 hover:to-cyan-700 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105 flex items-center space-x-2">
+                            <i data-feather="users" class="h-5 w-5"></i>
+                            <span>Gestionar Socios</span>
+                        </button>
+                    </div>
 
                     <div class="mt-12 border-t pt-8">
                         <h3 class="text-xl font-bold mb-4">Historial de Recibos</h3>
-                        <div id="receipts-history-container" class="space-y-3">
-                            <!-- Receipt records will be rendered here -->
-                        </div>
+                        <div id="receipts-history-container" class="space-y-3"></div>
+                    </div>
+                    
+                    <div class="mt-12 border-t pt-8">
+                        <h3 class="text-xl font-bold mb-4">Historial de Rendiciones</h3>
+                        <div id="rendicion-history-container" class="space-y-3"></div>
                     </div>
                 </div>
             </div>
@@ -521,7 +533,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            
+                                
                                 <div>
                                     <h4 class="text-xl font-semibold mb-4">Adoración de Martes a Viernes</h4>
                                     <div class="overflow-x-auto">
@@ -591,21 +603,35 @@
         </section>
     </main>
 
-    <!-- NEW MODAL: Receipt Date -->
+    <!-- MODAL: Receipt Date -->
     <div id="receipt-date-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 no-print z-50">
         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 w-full max-w-sm">
             <h3 class="text-2xl font-bold mb-6 text-center">Fecha del Recibo</h3>
             <form id="receipt-date-form">
                 <input type="date" id="receipt-date-input" class="block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700" required>
                 <div class="mt-8 flex justify-between space-x-4">
-                    <button type="button" data-action="close-receipt-date-modal" class="w-full bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-bold py-2 px-4 rounded-lg">Volver</button>
+                    <button type="button" data-action="close-modal" data-modal-id="receipt-date-modal" class="w-full bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-bold py-2 px-4 rounded-lg">Volver</button>
                     <button type="submit" class="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-2 px-4 rounded-lg">Confirmar</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- NEW MODAL: Receipt Data -->
+    <!-- MODAL: Rendicion Date -->
+    <div id="rendicion-date-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 no-print z-50">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 w-full max-w-sm">
+            <h3 class="text-2xl font-bold mb-6 text-center">Fecha de la Rendición</h3>
+            <form id="rendicion-date-form">
+                <input type="date" id="rendicion-date-input" class="block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700" required>
+                <div class="mt-8 flex justify-between space-x-4">
+                    <button type="button" data-action="close-modal" data-modal-id="rendicion-date-modal" class="w-full bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-bold py-2 px-4 rounded-lg">Volver</button>
+                    <button type="submit" class="w-full bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white font-bold py-2 px-4 rounded-lg">Confirmar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: Receipt Data -->
     <div id="receipt-data-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 no-print z-50">
         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 w-full max-w-lg">
             <h3 class="text-2xl font-bold mb-6">Datos del Recibo</h3>
@@ -621,11 +647,106 @@
                 </div>
                 <div>
                     <label for="receipt-importe" class="block text-sm font-medium">Importe ($):</label>
-                    <input type="number" step="1" id="receipt-importe" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700" required>
+                    <input type="text" id="receipt-importe" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 currency-input" required>
                 </div>
                 <div class="mt-8 flex justify-end space-x-4">
-                    <button type="button" data-action="close-receipt-data-modal" class="bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-bold py-2 px-4 rounded-lg">Volver</button>
+                    <button type="button" data-action="close-modal" data-modal-id="receipt-data-modal" class="bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-bold py-2 px-4 rounded-lg">Volver</button>
                     <button type="submit" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-2 px-4 rounded-lg">Confirmar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: Rendicion Form -->
+    <div id="rendicion-form-modal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center p-4 no-print z-50">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 w-full max-w-4xl max-h-[90vh] flex flex-col">
+            <h3 class="text-2xl font-bold mb-6 text-center">Formulario de Rendición</h3>
+            <form id="rendicion-form" class="flex-grow overflow-y-auto pr-4 space-y-8">
+                <input type="hidden" id="rendicion-id">
+                
+                <!-- Socios Benefactores -->
+                <div>
+                    <h4 class="text-lg font-semibold mb-3 border-b pb-2">Socios Benefactores</h4>
+                    <div id="socios-container" class="space-y-3">
+                        <!-- Dynamic rows will be inserted here -->
+                    </div>
+                    <button type="button" data-action="add-socio-row" class="mt-3 text-sm bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-900 font-semibold py-1 px-3 rounded-md flex items-center space-x-2">
+                        <i data-feather="plus" class="h-4 w-4"></i>
+                        <span>Agregar Socio</span>
+                    </button>
+                </div>
+
+                <!-- Otros Ingresos -->
+                <div>
+                    <h4 class="text-lg font-semibold mb-3 border-b pb-2">Otros Ingresos</h4>
+                    <div id="otros-ingresos-container" class="space-y-3">
+                        <!-- Dynamic rows will be inserted here -->
+                    </div>
+                    <button type="button" data-action="add-ingreso-row" class="mt-3 text-sm bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-900 font-semibold py-1 px-3 rounded-md flex items-center space-x-2">
+                        <i data-feather="plus" class="h-4 w-4"></i>
+                        <span>Agregar Ingreso</span>
+                    </button>
+                </div>
+
+                <!-- Egresos -->
+                <div>
+                    <h4 class="text-lg font-semibold mb-3 border-b pb-2">Egresos</h4>
+                    <div id="egresos-container" class="space-y-3">
+                        <!-- Dynamic rows will be inserted here -->
+                    </div>
+                    <button type="button" data-action="add-egreso-row" class="mt-3 text-sm bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300 hover:bg-red-200 dark:hover:bg-red-900 font-semibold py-1 px-3 rounded-md flex items-center space-x-2">
+                        <i data-feather="plus" class="h-4 w-4"></i>
+                        <span>Agregar Egreso</span>
+                    </button>
+                </div>
+
+            </form>
+            <div class="mt-8 flex justify-end space-x-4 pt-4 border-t">
+                <button type="button" data-action="close-modal" data-modal-id="rendicion-form-modal" class="bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-bold py-2 px-4 rounded-lg">Cancelar</button>
+                <button type="button" data-action="save-rendicion" class="bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white font-bold py-2 px-4 rounded-lg">Guardar Rendición</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Add New Socio -->
+    <div id="add-socio-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center p-4 no-print z-50">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 w-full max-w-md">
+            <h3 class="text-2xl font-bold mb-6 text-center">Agregar Nuevo Socio</h3>
+            <form id="add-socio-form">
+                <label for="new-socio-name" class="block text-sm font-medium">Nombre del Socio</label>
+                <input type="text" id="new-socio-name" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700" required>
+                <div class="mt-8 flex justify-end space-x-4">
+                    <button type="button" data-action="close-modal" data-modal-id="add-socio-modal" class="bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-bold py-2 px-4 rounded-lg">Cancelar</button>
+                    <button type="submit" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-2 px-4 rounded-lg">Guardar Socio</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- MODAL: Socios Management -->
+    <div id="socios-management-modal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center p-4 no-print z-50">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 w-full max-w-2xl max-h-[90vh] flex flex-col">
+            <h3 class="text-2xl font-bold mb-6 text-center">Gestionar Socios</h3>
+            <div id="socios-list-container" class="flex-grow overflow-y-auto pr-4 space-y-3">
+                <!-- Lista de socios se renderizará aquí -->
+            </div>
+            <div class="mt-8 flex justify-end space-x-4 pt-4 border-t">
+                <button type="button" data-action="close-modal" data-modal-id="socios-management-modal" class="bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-bold py-2 px-4 rounded-lg">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Edit Socio -->
+    <div id="edit-socio-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center p-4 no-print z-50">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 w-full max-w-md">
+            <h3 class="text-2xl font-bold mb-6 text-center">Modificar Socio</h3>
+            <form id="edit-socio-form">
+                <input type="hidden" id="edit-socio-id">
+                <label for="edit-socio-name" class="block text-sm font-medium">Nombre del Socio</label>
+                <input type="text" id="edit-socio-name" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700" required>
+                <div class="mt-8 flex justify-end space-x-4">
+                    <button type="button" data-action="close-modal" data-modal-id="edit-socio-modal" class="bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-bold py-2 px-4 rounded-lg">Cancelar</button>
+                    <button type="submit" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-2 px-4 rounded-lg">Guardar Cambios</button>
                 </div>
             </form>
         </div>
@@ -646,7 +767,7 @@
                     <div><label for="edit-dom20" class="block text-sm font-medium">Domingo 19:30 H / 20:00 H</label><input type="text" id="edit-dom20" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700"></div>
                 </div>
                 <div class="mt-8 flex justify-end space-x-4">
-                    <button type="button" data-action="close-edit-modal" class="bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105">Cancelar</button>
+                    <button type="button" data-action="close-modal" data-modal-id="edit-modal" class="bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105">Cancelar</button>
                     <button type="submit" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105">Guardar Cambios</button>
                 </div>
             </form>
@@ -670,7 +791,7 @@
                     </div>
                 </div>
                 <div class="mt-8 flex justify-end space-x-4">
-                    <button type="button" data-action="close-edit-adoracion-modal" class="bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-bold py-2 px-4 rounded-lg">Cancelar</button>
+                    <button type="button" data-action="close-modal" data-modal-id="edit-adoracion-modal" class="bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-bold py-2 px-4 rounded-lg">Cancelar</button>
                     <button type="submit" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-2 px-4 rounded-lg">Guardar Cambios</button>
                 </div>
             </form>
@@ -741,7 +862,7 @@
             
             let recordToDelete = { type: null, id: null };
             let unsubscribeListeners = [];
-            let tempReceiptDate = null; // To hold date between modals
+            let tempDate = null; // To hold date between modals
 
             const appState = {
                 notifications: [],
@@ -752,7 +873,9 @@
                 horariosAdoracion: {}, 
                 bautismos: [],
                 confirmaciones: [],
-                recibos: [], // New state for receipts
+                recibos: [],
+                rendiciones: [],
+                socios: [],
                 bautismosSearchTerm: '',
                 bautismosCurrentPage: 1,
                 confirmacionesSearchTerm: '',
@@ -801,12 +924,24 @@
                 notificationBadge: document.getElementById('notification-badge'),
                 loadingSpinner: document.getElementById('loading-spinner'),
                 toastContainer: document.getElementById('toast-container'),
-                // New DOM elements for Caja module
+                // Caja module elements
                 receiptDateModal: document.getElementById('receipt-date-modal'),
                 receiptDateForm: document.getElementById('receipt-date-form'),
                 receiptDataModal: document.getElementById('receipt-data-modal'),
                 receiptDataForm: document.getElementById('receipt-data-form'),
                 receiptsHistoryContainer: document.getElementById('receipts-history-container'),
+                // Rendicion module elements
+                rendicionDateModal: document.getElementById('rendicion-date-modal'),
+                rendicionDateForm: document.getElementById('rendicion-date-form'),
+                rendicionFormModal: document.getElementById('rendicion-form-modal'),
+                rendicionForm: document.getElementById('rendicion-form'),
+                rendicionHistoryContainer: document.getElementById('rendicion-history-container'),
+                addSocioModal: document.getElementById('add-socio-modal'),
+                addSocioForm: document.getElementById('add-socio-form'),
+                sociosManagementModal: document.getElementById('socios-management-modal'),
+                sociosListContainer: document.getElementById('socios-list-container'),
+                editSocioModal: document.getElementById('edit-socio-modal'),
+                editSocioForm: document.getElementById('edit-socio-form'),
             };
 
             const showSpinner = () => dom.loadingSpinner.classList.remove('hidden');
@@ -889,7 +1024,7 @@
                         </div>
                         ${n.dueDate ? `<p class="text-sm mt-2 ${dateColor}">Vence: ${formatDate(n.dueDate)}</p>` : ''}
                     </div>
-                `}).join('');
+                    `}).join('');
                 feather.replace();
                 updateNotificationBell();
             };
@@ -1011,6 +1146,7 @@
                 }
                  if (viewId === 'caja-content') {
                     renderReceipts();
+                    renderRendiciones();
                 }
                 if (viewId === 'certificate-choice-content' || viewId === 'bautismo-content' || viewId === 'confirmacion-content') {
                     renderRecords('bautismo', dom.bautismoRecordsContainer, dom.bautismoPaginationContainer, appState.bautismosSearchTerm, 'bautismosCurrentPage');
@@ -1019,6 +1155,16 @@
                     renderRecords('confirmacion', dom.confirmacionFormRecordsContainer, dom.confirmacionFormPaginationContainer, '', 'confirmacionesCurrentPage');
                 }
                 feather.replace();
+            };
+
+            const showModal = (modalId) => {
+                const modal = document.getElementById(modalId);
+                if (modal) modal.classList.remove('hidden');
+            };
+
+            const closeModal = (modalId) => {
+                const modal = document.getElementById(modalId);
+                if (modal) modal.classList.add('hidden');
             };
 
             const showEditModal = (table, id) => {
@@ -1032,7 +1178,7 @@
                 dom.editForm.querySelector('#edit-dom08').value = rowData.dom08 || '';
                 dom.editForm.querySelector('#edit-dom10').value = rowData.dom10 || '';
                 dom.editForm.querySelector('#edit-dom20').value = rowData.dom20 || '';
-                dom.editModal.classList.remove('hidden');
+                showModal('edit-modal');
             };
 
             const showEditAdoracionModal = (table, id) => {
@@ -1045,13 +1191,11 @@
                 dom.editAdoracionModal.querySelector('#edit-adoracion-label1').innerText = isJueves ? 'Semanas' : 'Día';
                 dom.editAdoracionModal.querySelector('#edit-adoracion-col1').value = rowData.col1 || '';
                 dom.editAdoracionModal.querySelector('#edit-adoracion-col2').value = rowData.col2 || '';
-                dom.editAdoracionModal.classList.remove('hidden');
+                showModal('edit-adoracion-modal');
             };
 
-            const closeEditModal = () => dom.editModal.classList.add('hidden');
-            const closeEditAdoracionModal = () => dom.editAdoracionModal.classList.add('hidden');
             const closeCustomLocationModal = () => {
-                dom.customLocationModal.classList.add('hidden');
+                closeModal('custom-location-modal');
                 dom.lugarSelect.value = dom.hiddenLugarInput.value;
             };
 
@@ -1262,6 +1406,14 @@
                     { col1: 'Miércoles', col2: 'Raul Segovia' },
                     { col1: 'Jueves', col2: 'Maritel Reyero' },
                     { col1: 'Viernes', col2: 'Estela Santia' }
+                ],
+                socios: [
+                    { nombre: "TERESITA PRESSEL" }, { nombre: "BLANCA MANGO" }, { nombre: "ELIDA VERGARA" },
+                    { nombre: "ITATI ESTER VIZCAÍNO" }, { nombre: "SUSANA COPELLO" }, { nombre: "ROSANA AMARAL" },
+                    { nombre: "MIRTHA Y OSVALDO VERGARA" }, { nombre: "GLADYS MANGO DE RUBIO" }, { nombre: "SANDRA GUTIERREZ" },
+                    { nombre: "BEATRIZ SILVA" }, { nombre: "CLARA BENCE" }, { nombre: "VIVIANA BONTEMPO" },
+                    { nombre: "JUAN CARLOS MONGIAT" }, { nombre: "TEIA ALCARAZ" }, { nombre: "MARITEL REYERO" },
+                    { nombre: "GUSTAVO HIDALGO" }, { nombre: "BEATRIZ CABRAL" }, { nombre: "GLORIA OJEDA" }
                 ]
             };
 
@@ -1270,15 +1422,41 @@
                 for (const collectionName in initialData) {
                     const collectionRef = collection(db, `parroquia/shared-data/${collectionName}`);
                     const snapshot = await getDocs(collectionRef);
-                    if (snapshot.empty) {
-                        console.log(`Populating initial data for ${collectionName}...`);
-                        const batch = writeBatch(db);
-                        initialData[collectionName].forEach(item => {
-                            const docRef = doc(collectionRef);
-                            batch.set(docRef, item);
+
+                    if (collectionName === 'socios') {
+                        const existingSocios = new Set();
+                        snapshot.forEach(doc => {
+                            existingSocios.add(doc.data().nombre);
                         });
-                        await batch.commit();
-                        console.log(`Initial data for ${collectionName} populated.`);
+
+                        const batch = writeBatch(db);
+                        let batchHasWrites = false;
+
+                        initialData.socios.forEach(socio => {
+                            if (!existingSocios.has(socio.nombre)) {
+                                console.log(`Adding missing socio: ${socio.nombre}`);
+                                const docRef = doc(collectionRef);
+                                batch.set(docRef, socio);
+                                batchHasWrites = true;
+                            }
+                        });
+
+                        if (batchHasWrites) {
+                            await batch.commit();
+                            console.log('Initial socios populated/updated.');
+                        }
+
+                    } else { // Keep original logic for other collections
+                        if (snapshot.empty) {
+                            console.log(`Populating initial data for ${collectionName}...`);
+                            const batch = writeBatch(db);
+                            initialData[collectionName].forEach(item => {
+                                const docRef = doc(collectionRef);
+                                batch.set(docRef, item);
+                            });
+                            await batch.commit();
+                            console.log(`Initial data for ${collectionName} populated.`);
+                        }
                     }
                 }
             };
@@ -1361,18 +1539,20 @@
 
                     const imgProps = pdf.getImageProperties(imgData);
                     const pdfWidth = pdf.internal.pageSize.getWidth();
+                    const pageHeight = pdf.internal.pageSize.getHeight();
                     const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
                     let heightLeft = pdfHeight;
                     let position = 0;
                     
                     pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
-                    heightLeft -= pdf.internal.pageSize.getHeight();
+                    heightLeft -= pageHeight;
 
                     while (heightLeft > 0) {
-                        position = heightLeft - pdfHeight;
+                        position -= pageHeight;
                         pdf.addPage();
                         pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
-                        heightLeft -= pdf.internal.pageSize.getHeight();
+                        heightLeft -= pageHeight;
                     }
 
                     pdf.save(filename);
@@ -1388,7 +1568,7 @@
             };
 
             const setupDataListeners = () => {
-                const collections = ['bautismos', 'confirmaciones', 'notifications', 'ministros', 'grupos', 'adoracionJueves', 'adoracionSemanal', 'recibos'];
+                const collections = ['bautismos', 'confirmaciones', 'notifications', 'ministros', 'grupos', 'adoracionJueves', 'adoracionSemanal', 'recibos', 'rendiciones', 'socios'];
                 const weekOrder = { 'Primero': 1, 'Primera': 1, 'Segundo': 2, 'Segunda': 2, 'Tercero': 3, 'Tercera': 3, 'Cuarto': 4, 'Cuarta': 4, 'Quinto': 5, 'Quinta': 5 };
                 const dayOrder = { 'Martes': 1, 'Miércoles': 2, 'Jueves': 3, 'Viernes': 4 };
 
@@ -1410,8 +1590,10 @@
                             data.sort((a, b) => (weekOrder[a.col1] || 99) - (weekOrder[b.col1] || 99));
                         } else if (coll === 'adoracionSemanal') {
                             data.sort((a, b) => (dayOrder[a.col1] || 99) - (dayOrder[b.col1] || 99));
-                        } else if (coll === 'recibos') {
+                        } else if (['recibos', 'rendiciones'].includes(coll)) {
                             data.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+                        } else if (coll === 'socios') {
+                            data.sort((a, b) => a.nombre.localeCompare(b.nombre));
                         }
                         
                         appState[coll] = data;
@@ -1425,24 +1607,14 @@
                                 renderRecords('confirmacion', dom.confirmacionRecordsContainer, dom.confirmacionPaginationContainer, appState.confirmacionesSearchTerm, 'confirmacionesCurrentPage');
                                 renderRecords('confirmacion', dom.confirmacionFormRecordsContainer, dom.confirmacionFormPaginationContainer, '', 'confirmacionesCurrentPage');
                                 break;
-                            case 'notifications':
-                                renderNotifications();
-                                break;
-                            case 'ministros':
-                                renderStandardTable('ministros', dom.ministrosTableBody);
-                                break;
-                            case 'grupos':
-                                renderStandardTable('grupos', dom.gruposTableBody);
-                                break;
-                            case 'adoracionJueves':
-                                renderAdoracionTable('adoracionJueves', dom.adoracionJuevesTableBody);
-                                break;
-                            case 'adoracionSemanal':
-                                renderAdoracionTable('adoracionSemanal', dom.adoracionSemanalTableBody);
-                                break;
-                            case 'recibos':
-                                renderReceipts();
-                                break;
+                            case 'notifications': renderNotifications(); break;
+                            case 'ministros': renderStandardTable('ministros', dom.ministrosTableBody); break;
+                            case 'grupos': renderStandardTable('grupos', dom.gruposTableBody); break;
+                            case 'adoracionJueves': renderAdoracionTable('adoracionJueves', dom.adoracionJuevesTableBody); break;
+                            case 'adoracionSemanal': renderAdoracionTable('adoracionSemanal', dom.adoracionSemanalTableBody); break;
+                            case 'recibos': renderReceipts(); break;
+                            case 'rendiciones': renderRendiciones(); break;
+                            case 'socios': renderSociosManagementList(); break;
                         }
 
                     }, (error) => {
@@ -1471,7 +1643,7 @@
             document.body.addEventListener('click', (e) => {
                 const target = e.target.closest('[data-action]');
                 if (!target) return;
-                const { action, viewId, table, id, type, direction } = target.dataset;
+                const { action, viewId, table, id, type, direction, modalId, name } = target.dataset;
                 switch (action) {
                     case 'show-view': showView(viewId); break;
                     case 'download-pdf':
@@ -1479,9 +1651,8 @@
                         generatePdfForArea(targetId, title, subtitle, filename);
                         break;
                     case 'show-edit-modal': showEditModal(table, id); break;
-                    case 'close-edit-modal': closeEditModal(); break;
                     case 'show-edit-adoracion-modal': showEditAdoracionModal(table, id); break;
-                    case 'close-edit-adoracion-modal': closeEditAdoracionModal(); break;
+                    case 'close-modal': closeModal(modalId); break;
                     case 'close-custom-location-modal': closeCustomLocationModal(); break;
                     case 'save-horarios': handleSaveHorarios(); break;
                     case 'add-row':
@@ -1518,44 +1689,59 @@
                         break;
                     case 'delete-record':
                         recordToDelete = { type, id };
-                        dom.deleteConfirmModal.classList.remove('hidden');
+                        showModal('delete-confirm-modal');
                         break;
                     case 'cancel-delete':
-                        dom.deleteConfirmModal.classList.add('hidden');
+                        closeModal('delete-confirm-modal');
                         recordToDelete = { type: null, id: null };
                         break;
                     case 'confirm-delete':
                         if (recordToDelete.type && recordToDelete.id) {
                             let collectionName = '';
-                            if (recordToDelete.type === 'recibo') {
-                                collectionName = 'recibos';
+                            if (['recibo', 'rendicion', 'socio'].includes(recordToDelete.type)) {
+                                collectionName = `${recordToDelete.type}s`;
                             } else {
                                 collectionName = recordToDelete.type === 'confirmacion' ? 'confirmaciones' : `${recordToDelete.type}s`;
                             }
                             deleteDoc(doc(db, `parroquia/shared-data/${collectionName}`, recordToDelete.id));
                             showToast('Registro eliminado con éxito');
                         }
-                        dom.deleteConfirmModal.classList.add('hidden');
+                        closeModal('delete-confirm-modal');
                         recordToDelete = { type: null, id: null };
                         break;
-                    // New actions for Caja module
+                    // Caja module actions
                     case 'open-receipt-date-modal':
                         dom.receiptDateForm.reset();
                         dom.receiptDateModal.querySelector('#receipt-date-input').value = new Date().toISOString().split('T')[0];
-                        dom.receiptDateModal.classList.remove('hidden');
+                        showModal('receipt-date-modal');
                         break;
-                    case 'close-receipt-date-modal':
-                        dom.receiptDateModal.classList.add('hidden');
-                        break;
-                    case 'close-receipt-data-modal':
-                        dom.receiptDataModal.classList.add('hidden');
-                        break;
-                    case 'edit-receipt':
-                        populateReceiptForm(id);
-                        break;
+                    case 'edit-receipt': populateReceiptForm(id); break;
                     case 'download-receipt-pdf':
                         const receiptData = appState.recibos.find(r => r.id === id);
                         if (receiptData) generateReceiptPDF(receiptData);
+                        break;
+                    // Rendicion & Socios module actions
+                    case 'open-rendicion-date-modal':
+                        dom.rendicionDateForm.reset();
+                        dom.rendicionDateModal.querySelector('#rendicion-date-input').value = new Date().toISOString().split('T')[0];
+                        showModal('rendicion-date-modal');
+                        break;
+                    case 'add-socio-row': addDynamicRow('socio'); break;
+                    case 'add-ingreso-row': addDynamicRow('ingreso'); break;
+                    case 'add-egreso-row': addDynamicRow('egreso'); break;
+                    case 'remove-dynamic-row': e.target.closest('.dynamic-row').remove(); break;
+                    case 'open-add-socio-modal': showModal('add-socio-modal'); break;
+                    case 'save-rendicion': saveRendicion(); break;
+                    case 'edit-rendicion': populateRendicionForm(id); break;
+                    case 'download-rendicion-pdf': generateRendicionPDF(id); break;
+                    case 'open-socios-management-modal':
+                        renderSociosManagementList();
+                        showModal('socios-management-modal');
+                        break;
+                    case 'edit-socio':
+                        dom.editSocioForm.querySelector('#edit-socio-id').value = id;
+                        dom.editSocioForm.querySelector('#edit-socio-name').value = name;
+                        showModal('edit-socio-modal');
                         break;
                 }
             });
@@ -1606,7 +1792,7 @@
                     dom20: dom.editForm.querySelector('#edit-dom20').value,
                 };
                 await setDoc(doc(db, `parroquia/shared-data/${table}`, id), updatedData, { merge: true });
-                closeEditModal();
+                closeModal('edit-modal');
             });
 
             dom.editAdoracionForm.addEventListener('submit', async (e) => {
@@ -1618,12 +1804,12 @@
                     col2: dom.editAdoracionForm.querySelector('#edit-adoracion-col2').value,
                 };
                 await setDoc(doc(db, `parroquia/shared-data/${table}`, id), updatedData, { merge: true });
-                closeEditAdoracionModal();
+                closeModal('edit-adoracion-modal');
             });
 
             dom.lugarSelect.addEventListener('change', () => {
                 if (dom.lugarSelect.value === 'otro') {
-                    dom.customLocationModal.classList.remove('hidden');
+                    showModal('custom-location-modal');
                     dom.customLocationModal.querySelector('#custom-location-input').focus();
                 } else {
                     dom.hiddenLugarInput.value = dom.lugarSelect.value;
@@ -1700,23 +1886,40 @@
                 }
             });
 
-            // --- NEW FUNCTIONS FOR CAJA MODULE ---
+            // --- FUNCTIONS FOR CAJA & RENDICION MODULE ---
 
             const formatCurrency = (number) => {
-                if (isNaN(number)) return number;
-                return new Intl.NumberFormat('es-AR').format(number);
+                const num = parseFloat(number);
+                if (isNaN(num)) return '0';
+                return new Intl.NumberFormat('es-AR').format(Math.trunc(num));
             };
+
+            const parseFormattedNumber = (value) => {
+                if (typeof value !== 'string') return 0;
+                return parseInt(value.replace(/\./g, ''), 10) || 0;
+            };
+
+            document.body.addEventListener('input', (e) => {
+                if (e.target.matches('.currency-input')) {
+                    const input = e.target;
+                    let value = input.value.replace(/\D/g, '');
+                    if (value) {
+                        const numberValue = parseInt(value, 10);
+                        input.value = numberValue.toLocaleString('es-AR');
+                    } else {
+                        input.value = '';
+                    }
+                }
+            });
 
             const renderReceipts = () => {
                 if (!dom.receiptsHistoryContainer) return;
-                const sortedReceipts = [...appState.recibos].sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
-
-                if (sortedReceipts.length === 0) {
+                if (appState.recibos.length === 0) {
                     dom.receiptsHistoryContainer.innerHTML = `<p class="text-gray-500 dark:text-gray-400 italic">No hay recibos registrados.</p>`;
                     return;
                 }
 
-                dom.receiptsHistoryContainer.innerHTML = sortedReceipts.map(r => `
+                dom.receiptsHistoryContainer.innerHTML = appState.recibos.map(r => `
                     <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3 flex justify-between items-center">
                         <div>
                             <p class="font-bold">Recibí de: ${r.recibiDe}</p>
@@ -1735,12 +1938,12 @@
             const populateReceiptForm = (id) => {
                 const receipt = appState.recibos.find(r => r.id === id);
                 if (!receipt) return;
-                tempReceiptDate = receipt.fecha; // Store date for saving
+                tempDate = receipt.fecha; // Store date for saving
                 dom.receiptDataForm.querySelector('#receipt-id').value = receipt.id;
                 dom.receiptDataForm.querySelector('#receipt-recibiDe').value = receipt.recibiDe;
                 dom.receiptDataForm.querySelector('#receipt-concepto').value = receipt.concepto;
-                dom.receiptDataForm.querySelector('#receipt-importe').value = receipt.importe;
-                dom.receiptDataModal.classList.remove('hidden');
+                dom.receiptDataForm.querySelector('#receipt-importe').value = (receipt.importe || 0).toLocaleString('es-AR');
+                showModal('receipt-data-modal');
             };
 
             const saveReceipt = async () => {
@@ -1751,10 +1954,10 @@
                 
                 const id = dom.receiptDataForm.querySelector('#receipt-id').value;
                 const receiptData = {
-                    fecha: tempReceiptDate,
+                    fecha: tempDate,
                     recibiDe: dom.receiptDataForm.querySelector('#receipt-recibiDe').value,
                     concepto: dom.receiptDataForm.querySelector('#receipt-concepto').value,
-                    importe: dom.receiptDataForm.querySelector('#receipt-importe').value,
+                    importe: parseFormattedNumber(dom.receiptDataForm.querySelector('#receipt-importe').value),
                 };
 
                 showSpinner();
@@ -1768,13 +1971,13 @@
                         showToast('Recibo guardado con éxito');
                     }
                     dom.receiptDataForm.reset();
-                    dom.receiptDataModal.classList.add('hidden');
+                    closeModal('receipt-data-modal');
                 } catch (error) {
                     console.error("Error saving receipt:", error);
                     showToast('Error al guardar el recibo.', 'error');
                 } finally {
                     hideSpinner();
-                    tempReceiptDate = null; // Clear temp date
+                    tempDate = null; // Clear temp date
                 }
             };
 
@@ -1846,16 +2049,353 @@
 
             dom.receiptDateForm.addEventListener('submit', (e) => {
                 e.preventDefault();
-                tempReceiptDate = dom.receiptDateForm.querySelector('#receipt-date-input').value;
-                dom.receiptDateModal.classList.add('hidden');
+                tempDate = dom.receiptDateForm.querySelector('#receipt-date-input').value;
+                closeModal('receipt-date-modal');
                 dom.receiptDataForm.reset();
                 dom.receiptDataForm.querySelector('#receipt-id').value = ''; // Ensure ID is cleared for new receipt
-                dom.receiptDataModal.classList.remove('hidden');
+                showModal('receipt-data-modal');
             });
 
             dom.receiptDataForm.addEventListener('submit', (e) => {
                 e.preventDefault();
                 saveReceipt();
+            });
+
+            // --- NEW RENDICION & SOCIOS FUNCTIONS ---
+
+            const populateSociosDropdown = (selectElement) => {
+                const socios = appState.socios;
+                const currentValue = selectElement.value;
+                selectElement.innerHTML = '<option value="">Seleccionar socio...</option>';
+                socios.forEach(socio => {
+                    const option = document.createElement('option');
+                    option.value = socio.nombre;
+                    option.textContent = socio.nombre;
+                    selectElement.appendChild(option);
+                });
+                const otherOption = document.createElement('option');
+                otherOption.value = 'add_new_socio';
+                otherOption.textContent = '✚ Agregar nuevo socio...';
+                selectElement.appendChild(otherOption);
+                selectElement.value = currentValue; // Restore previous value if possible
+            };
+
+            const addDynamicRow = (type, data = {}) => {
+                const containerId = type === 'socio' ? 'socios-container' : (type === 'ingreso' ? 'otros-ingresos-container' : 'egresos-container');
+                const container = document.getElementById(containerId);
+                const row = document.createElement('div');
+                row.className = 'grid grid-cols-12 gap-2 items-center dynamic-row';
+
+                if (type === 'socio') {
+                    row.innerHTML = `
+                        <div class="col-span-4">
+                            <select class="w-full form-input socio-select rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700"></select>
+                        </div>
+                        <div class="col-span-3">
+                            <input type="text" placeholder="Importe" value="${(data.importe || 0).toLocaleString('es-AR')}" class="w-full form-input socio-importe currency-input rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700">
+                        </div>
+                        <div class="col-span-4">
+                            <select class="w-full form-input socio-metodo rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700">
+                                <option value="Efectivo" ${data.metodo === 'Efectivo' ? 'selected' : ''}>Efectivo</option>
+                                <option value="Transferencia" ${data.metodo === 'Transferencia' ? 'selected' : ''}>Transferencia</option>
+                            </select>
+                        </div>
+                        <div class="col-span-1 text-right">
+                            <button type="button" data-action="remove-dynamic-row" class="text-red-500 hover:text-red-700 p-1"><i data-feather="x-circle" class="h-5 w-5"></i></button>
+                        </div>
+                    `;
+                    const select = row.querySelector('.socio-select');
+                    populateSociosDropdown(select);
+                    if(data.nombre) select.value = data.nombre;
+                    select.addEventListener('change', (e) => {
+                        if (e.target.value === 'add_new_socio') {
+                            showModal('add-socio-modal');
+                            e.target.value = ''; // Reset select
+                        }
+                    });
+                } else { // Ingreso or Egreso
+                    row.innerHTML = `
+                        <div class="col-span-7">
+                            <input type="text" placeholder="Descripción" value="${data.descripcion || ''}" class="w-full form-input ${type}-descripcion rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700">
+                        </div>
+                        <div class="col-span-4">
+                            <input type="text" placeholder="Importe" value="${(data.importe || 0).toLocaleString('es-AR')}" class="w-full form-input ${type}-importe currency-input rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700">
+                        </div>
+                        <div class="col-span-1 text-right">
+                            <button type="button" data-action="remove-dynamic-row" class="text-red-500 hover:text-red-700 p-1"><i data-feather="x-circle" class="h-5 w-5"></i></button>
+                        </div>
+                    `;
+                }
+
+                container.appendChild(row);
+                feather.replace();
+            };
+
+            const saveRendicion = async () => {
+                const id = dom.rendicionForm.querySelector('#rendicion-id').value;
+                
+                const sociosData = Array.from(document.querySelectorAll('#socios-container .dynamic-row')).map(row => ({
+                    nombre: row.querySelector('.socio-select').value,
+                    importe: parseFormattedNumber(row.querySelector('.socio-importe').value),
+                    metodo: row.querySelector('.socio-metodo').value,
+                })).filter(s => s.nombre && s.importe > 0);
+
+                const otrosIngresosData = Array.from(document.querySelectorAll('#otros-ingresos-container .dynamic-row')).map(row => ({
+                    descripcion: row.querySelector('.ingreso-descripcion').value,
+                    importe: parseFormattedNumber(row.querySelector('.ingreso-importe').value),
+                })).filter(i => i.descripcion && i.importe > 0);
+
+                const egresosData = Array.from(document.querySelectorAll('#egresos-container .dynamic-row')).map(row => ({
+                    descripcion: row.querySelector('.egreso-descripcion').value,
+                    importe: parseFormattedNumber(row.querySelector('.egreso-importe').value),
+                })).filter(e => e.descripcion && e.importe > 0);
+
+                const rendicionData = {
+                    fecha: tempDate,
+                    socios: sociosData,
+                    otrosIngresos: otrosIngresosData,
+                    egresos: egresosData,
+                };
+                
+                showSpinner();
+                try {
+                    const collectionPath = 'parroquia/shared-data/rendiciones';
+                    if (id) {
+                        await setDoc(doc(db, collectionPath, id), rendicionData, { merge: true });
+                        showToast('Rendición actualizada con éxito');
+                    } else {
+                        await addDoc(collection(db, collectionPath), rendicionData);
+                        showToast('Rendición guardada con éxito');
+                    }
+                    closeModal('rendicion-form-modal');
+                } catch (error) {
+                    console.error("Error saving rendicion:", error);
+                    showToast('Error al guardar la rendición.', 'error');
+                } finally {
+                    hideSpinner();
+                    tempDate = null;
+                }
+            };
+
+            const renderRendiciones = () => {
+                if (!dom.rendicionHistoryContainer) return;
+                if (appState.rendiciones.length === 0) {
+                    dom.rendicionHistoryContainer.innerHTML = `<p class="text-gray-500 dark:text-gray-400 italic">No hay rendiciones registradas.</p>`;
+                    return;
+                }
+                dom.rendicionHistoryContainer.innerHTML = appState.rendiciones.map(r => `
+                    <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3 flex justify-between items-center">
+                        <div>
+                            <p class="font-bold">Rendición del ${formatDate(r.fecha, 'long')}</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button data-action="edit-rendicion" data-id="${r.id}" class="text-blue-500 hover:text-blue-700 p-1" title="Modificar"><i data-feather="edit" class="h-4 w-4"></i></button>
+                            <button data-action="download-rendicion-pdf" data-id="${r.id}" class="text-green-500 hover:text-green-700 p-1" title="Descargar PDF"><i data-feather="download" class="h-4 w-4"></i></button>
+                            <button data-action="delete-record" data-type="rendicion" data-id="${r.id}" class="text-red-500 hover:text-red-700 p-1" title="Eliminar"><i data-feather="trash-2" class="h-4 w-4"></i></button>
+                        </div>
+                    </div>
+                `).join('');
+                feather.replace();
+            };
+            
+            const populateRendicionForm = (id) => {
+                const rendicion = appState.rendiciones.find(r => r.id === id);
+                if (!rendicion) return;
+
+                tempDate = rendicion.fecha;
+                dom.rendicionForm.querySelector('#rendicion-id').value = id;
+                
+                // Clear existing dynamic rows
+                document.getElementById('socios-container').innerHTML = '';
+                document.getElementById('otros-ingresos-container').innerHTML = '';
+                document.getElementById('egresos-container').innerHTML = '';
+
+                // Populate rows
+                rendicion.socios?.forEach(s => addDynamicRow('socio', s));
+                rendicion.otrosIngresos?.forEach(i => addDynamicRow('ingreso', i));
+                rendicion.egresos?.forEach(e => addDynamicRow('egreso', e));
+
+                showModal('rendicion-form-modal');
+            };
+
+            const generateRendicionPDF = async (id) => {
+                const rendicion = appState.rendiciones.find(r => r.id === id);
+                if (!rendicion) {
+                    showToast('No se encontró la rendición.', 'error');
+                    return;
+                }
+
+                showSpinner();
+                
+                const totalSociosEfectivo = rendicion.socios?.filter(s => s.metodo === 'Efectivo').reduce((sum, s) => sum + s.importe, 0) || 0;
+                const totalOtrosIngresos = rendicion.otrosIngresos?.reduce((sum, i) => sum + i.importe, 0) || 0;
+                const subtotalIngresosEfectivo = totalSociosEfectivo + totalOtrosIngresos;
+                
+                const subtotalEgresos = rendicion.egresos?.reduce((sum, e) => sum + e.importe, 0) || 0;
+
+                const totalRendido = subtotalIngresosEfectivo - subtotalEgresos;
+
+                const sociosTransferencia = rendicion.socios?.filter(s => s.metodo === 'Transferencia') || [];
+
+                const pdfHTML = `
+                    <div class="pdf-page-container">
+                        <div style="text-align: center; border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 15mm;">
+                            <h3 style="font-size: 24pt; font-weight: 700; margin: 0;">Rendición de Secretaría</h3>
+                            <p style="font-size: 12pt; margin: 2px 0;">Parroquia San José</p>
+                            <p style="font-size: 12pt; font-weight: bold;">Fecha: ${formatDate(rendicion.fecha, 'long')}</p>
+                        </div>
+
+                        <h4 style="font-size: 14pt; margin-top: 10mm; border-bottom: 1px solid #ccc; padding-bottom: 5px;">Ingresos en Efectivo</h4>
+                        <table style="width: 100%; font-size: 11pt; border-collapse: collapse; margin-top: 5mm;">
+                            ${(rendicion.socios?.filter(s => s.metodo === 'Efectivo').map(s => `<tr><td style="padding: 8px; border: 1px solid #ddd;">Aporte Socio: ${s.nombre}</td><td style="padding: 8px; border: 1px solid #ddd; text-align: right;">$ ${formatCurrency(s.importe)}</td></tr>`).join('')) || ''}
+                            ${(rendicion.otrosIngresos?.map(i => `<tr><td style="padding: 8px; border: 1px solid #ddd;">${i.descripcion}</td><td style="padding: 8px; border: 1px solid #ddd; text-align: right;">$ ${formatCurrency(i.importe)}</td></tr>`).join('')) || ''}
+                            ${subtotalIngresosEfectivo === 0 ? '<tr><td colspan="2" style="padding: 8px; border: 1px solid #ddd; font-style: italic;">Sin ingresos en efectivo</td></tr>' : ''}
+                        </table>
+
+                        <h4 style="font-size: 14pt; margin-top: 10mm; border-bottom: 1px solid #ccc; padding-bottom: 5px;">Egresos</h4>
+                        <table style="width: 100%; font-size: 11pt; border-collapse: collapse; margin-top: 5mm;">
+                            ${rendicion.egresos?.map(e => `<tr><td style="padding: 8px; border: 1px solid #ddd;">${e.descripcion}</td><td style="padding: 8px; border: 1px solid #ddd; text-align: right;">- $ ${formatCurrency(e.importe)}</td></tr>`).join('') || '<tr><td colspan="2" style="padding: 8px; border: 1px solid #ddd; font-style: italic;">Sin egresos</td></tr>'}
+                        </table>
+
+                        <div style="margin-top: 15mm; padding-top: 10mm; border-top: 2px solid #333; font-size: 12pt;">
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <tr><td style="text-align: right; padding: 5px;">Subtotal Ingresos Efectivo:</td><td style="text-align: right; padding: 5px; width: 35%;">$ ${formatCurrency(subtotalIngresosEfectivo)}</td></tr>
+                                <tr><td style="text-align: right; padding: 5px;">Subtotal Egresos:</td><td style="text-align: right; padding: 5px;">- $ ${formatCurrency(subtotalEgresos)}</td></tr>
+                                <tr style="font-weight: bold; font-size: 16pt; border-top: 2px solid #333;"><td style="text-align: right; padding: 8px;">TOTAL RENDIDO:</td><td style="text-align: right; padding: 8px;">$ ${formatCurrency(totalRendido)}</td></tr>
+                            </table>
+                        </div>
+
+                        ${sociosTransferencia.length > 0 ? `
+                        <div style="page-break-before: always;">
+                            <h4 style="font-size: 14pt; margin-top: 10mm; border-bottom: 1px solid #ccc; padding-bottom: 5px;">Detalle de Aportes por Transferencia</h4>
+                             <table style="width: 100%; font-size: 11pt; border-collapse: collapse; margin-top: 5mm;">
+                                ${sociosTransferencia.map(s => `<tr><td style="padding: 8px; border: 1px solid #ddd;">${s.nombre}</td><td style="padding: 8px; border: 1px solid #ddd; text-align: right;">$ ${formatCurrency(s.importe)}</td></tr>`).join('')}
+                            </table>
+                            <p style="font-size: 10pt; font-style: italic; margin-top: 5mm;">Nota: Los montos por transferencia no se suman al total rendido en efectivo.</p>
+                        </div>
+                        ` : ''}
+                    </div>
+                `;
+                
+                const elementToRender = document.createElement('div');
+                elementToRender.style.position = 'absolute';
+                elementToRender.style.left = '-9999px';
+                elementToRender.style.width = '210mm';
+                elementToRender.style.backgroundColor = '#ffffff';
+                elementToRender.innerHTML = pdfHTML;
+                document.body.appendChild(elementToRender);
+
+                try {
+                    const { jsPDF } = window.jspdf;
+                    const contentToCapture = elementToRender.querySelector('.pdf-page-container');
+                    if (!contentToCapture) {
+                        throw new Error("Could not find .pdf-page-container to capture.");
+                    }
+                    const canvas = await html2canvas(contentToCapture, { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
+                    const imgData = canvas.toDataURL('image/png');
+                    const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+                    
+                    const imgProps = pdf.getImageProperties(imgData);
+                    const pdfWidth = pdf.internal.pageSize.getWidth();
+                    const pageHeight = pdf.internal.pageSize.getHeight();
+                    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+                    let heightLeft = pdfHeight;
+                    let position = 0;
+
+                    pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
+                    heightLeft -= pageHeight;
+
+                    while (heightLeft > 0) {
+                        position -= pageHeight;
+                        pdf.addPage();
+                        pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
+                        heightLeft -= pageHeight;
+                    }
+
+                    pdf.save(`Rendicion_${rendicion.fecha}.pdf`);
+                    showToast('PDF de rendición generado con éxito');
+                } catch (error) {
+                    console.error("Error generating rendicion PDF:", error);
+                    showToast('Error al generar el PDF.', 'error');
+                } finally {
+                    hideSpinner();
+                    if (elementToRender) {
+                        document.body.removeChild(elementToRender);
+                    }
+                }
+            };
+
+
+            dom.rendicionDateForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                tempDate = dom.rendicionDateForm.querySelector('#rendicion-date-input').value;
+                closeModal('rendicion-date-modal');
+                // Reset and open main form
+                dom.rendicionForm.reset();
+                dom.rendicionForm.querySelector('#rendicion-id').value = '';
+                document.getElementById('socios-container').innerHTML = '';
+                document.getElementById('otros-ingresos-container').innerHTML = '';
+                document.getElementById('egresos-container').innerHTML = '';
+                showModal('rendicion-form-modal');
+            });
+
+            dom.addSocioForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const newName = dom.addSocioForm.querySelector('#new-socio-name').value.trim();
+                if (newName && !appState.socios.some(s => s.nombre === newName)) {
+                    showSpinner();
+                    try {
+                        await addDoc(collection(db, 'parroquia/shared-data/socios'), { nombre: newName });
+                        showToast('Socio agregado con éxito');
+                        dom.addSocioForm.reset();
+                        closeModal('add-socio-modal');
+                        // Refresh dropdowns in the rendicion form
+                        document.querySelectorAll('.socio-select').forEach(populateSociosDropdown);
+                    } catch (error) {
+                        console.error('Error adding socio:', error);
+                        showToast('Error al agregar socio.', 'error');
+                    } finally {
+                        hideSpinner();
+                    }
+                } else if (newName) {
+                    showToast('El socio ya existe.', 'error');
+                }
+            });
+
+            const renderSociosManagementList = () => {
+                if (!dom.sociosListContainer) return;
+                dom.sociosListContainer.innerHTML = appState.socios.map(socio => `
+                    <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3 flex justify-between items-center">
+                        <p class="font-medium">${socio.nombre}</p>
+                        <div class="flex items-center space-x-2">
+                            <button data-action="edit-socio" data-id="${socio.id}" data-name="${socio.nombre}" class="text-blue-500 hover:text-blue-700 p-1" title="Modificar"><i data-feather="edit" class="h-4 w-4"></i></button>
+                            <button data-action="delete-record" data-type="socio" data-id="${socio.id}" class="text-red-500 hover:text-red-700 p-1" title="Eliminar"><i data-feather="trash-2" class="h-4 w-4"></i></button>
+                        </div>
+                    </div>
+                `).join('');
+                feather.replace();
+            };
+
+            dom.editSocioForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const id = dom.editSocioForm.querySelector('#edit-socio-id').value;
+                const newName = dom.editSocioForm.querySelector('#edit-socio-name').value.trim();
+                if (!id || !newName) {
+                    showToast('Error: Faltan datos para modificar el socio.', 'error');
+                    return;
+                }
+                showSpinner();
+                try {
+                    await setDoc(doc(db, 'parroquia/shared-data/socios', id), { nombre: newName }, { merge: true });
+                    showToast('Socio actualizado con éxito');
+                    closeModal('edit-socio-modal');
+                } catch(error) {
+                    console.error('Error updating socio:', error);
+                    showToast('No se pudo actualizar el socio.', 'error');
+                } finally {
+                    hideSpinner();
+                }
             });
 
         });
