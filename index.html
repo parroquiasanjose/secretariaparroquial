@@ -35,10 +35,10 @@
             color: #333;
         }
 
-        /* MODIFICACIÓN: Contenedor de media página A4 para certificados */
-        .pdf-half-page-container {
+        /* Contenedor de altura flexible para certificados */
+        .pdf-certificate-container {
             width: 210mm;
-            height: 148.5mm; /* Mitad de la altura de A4 */
+            /* Altura automática para que se ajuste al contenido */
             padding: 15mm;
             box-sizing: border-box;
             background-color: #fff;
@@ -61,6 +61,7 @@
             font-family: 'Noto Serif', serif;
             color: #333;
             border-bottom: 1px dashed #ccc; /* Optional: visual separator */
+            overflow: hidden; 
         }
 
 
@@ -126,7 +127,7 @@
             padding-top: 5px;
         }
         
-        /* MODIFICACIÓN: Estilo para campos editables */
+        /* Estilo para campos editables */
         .editable-field {
             padding: 2px 6px;
             border-radius: 4px;
@@ -1173,42 +1174,56 @@
             };
 
             const handleCertificateAction = async (type, format, existingData = null) => {
-                let formData = existingData;
-                if (!formData) {
+                if (!existingData) {
                     showToast('No hay datos para esta acción.', 'error');
                     return;
                 }
 
                 showSpinner();
-                const certificateHTML = getCertificateHTML(type, formData);
+                const elementToRender = document.createElement('div');
+                elementToRender.style.position = 'absolute';
+                elementToRender.style.left = '-9999px';
+                elementToRender.style.width = '210mm'; 
+                
+                const certificateHTML = getCertificateHTML(type, existingData);
                 if (!certificateHTML) {
                     hideSpinner();
                     showToast('Error al crear el HTML del certificado', 'error');
                     return;
                 }
+                elementToRender.innerHTML = certificateHTML;
+                document.body.appendChild(elementToRender);
 
                 try {
                     if (format === 'pdf') {
-                        const elementToRender = document.createElement('div');
-                        elementToRender.innerHTML = certificateHTML;
-                        document.body.appendChild(elementToRender);
                         const { jsPDF } = window.jspdf;
-                        const canvas = await html2canvas(elementToRender.firstChild, { scale: 3 });
+                        const contentToCapture = elementToRender.firstChild;
+                        const canvas = await html2canvas(contentToCapture, { 
+                            scale: 3, 
+                            useCORS: true,
+                            backgroundColor: '#ffffff'
+                        });
+                        
                         const imgData = canvas.toDataURL('image/png');
                         const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
                         
-                        // MODIFICACIÓN: Ajustar la altura del PDF para confirmación
-                        const pdfHeight = type === 'confirmacion' ? 148.5 : 297;
-                        pdf.addImage(imgData, 'PNG', 0, 0, 210, pdfHeight);
+                        const pdfWidth = 210; // Ancho A4
+                        const imgProps = pdf.getImageProperties(imgData);
+                        // Calcular el alto de la imagen manteniendo la proporción para el ancho del PDF
+                        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+                        // Añadir la imagen al PDF. Ocupará el ancho completo y el alto que necesite.
+                        // Esto asegura que no se distorsione y sea legible.
+                        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
                         
-                        pdf.save(`Certificado_${type}_${formData.nombre.replace(/ /g, '_')}.pdf`);
-                        document.body.removeChild(elementToRender);
+                        pdf.save(`Certificado_${type}_${existingData.nombre.replace(/ /g, '_')}.pdf`);
                         showToast('PDF generado con éxito');
                     }
                 } catch (error) {
                     console.error("Error generating document:", error);
                     showToast('Error al generar el documento', 'error');
                 } finally {
+                    document.body.removeChild(elementToRender);
                     hideSpinner();
                 }
             };
@@ -1266,36 +1281,29 @@
             };
 
             const getCertificateHTML = (type, data) => {
+                // Usamos la misma clase para ambos para que el contenedor se ajuste al contenido
+                const containerClass = "pdf-certificate-container"; 
+
+                const header = `<div class="certificate-modern-header"><h3>CERTIFICADO DE ${type.toUpperCase()}</h3><p>Diócesis de Santo Tomé - Paso de los Libres – Corrientes<br>Dirección: Bartolomé Mitre 940<br>WhatsApp (3772) 651931</p></div>`;
+                
                 if (type === 'bautismo') {
-                    const header = `<div class="certificate-modern-header"><h3>CERTIFICADO DE BAUTISMO</h3><p>Diócesis de Santo Tomé - Paso de los Libres – Corrientes<br>Dirección: Bartolomé Mitre 940<br>WhatsApp (3772) 651931</p></div>`;
                     const body = `<div class="certificate-modern-body"><p>Se certifica que en el libro N° <span class="field">${data.libro || ''}</span>, Folio N° <span class="field">${data.folio || ''}</span>, se encuentra la partida de Bautismo de: <strong>${(data.nombre || '').toUpperCase()}</strong>, nacido/a en <span class="field">${data.lugarNac || ''}</span> el <span class="field">${formatDate(data.fechaNac)}</span>, hijo/a de <span class="field">${data.padre || ''}</span> y de <span class="field">${data.madre || ''}</span>. Fue bautizado/a el día <span class="field">${formatDate(data.fechaBautismo)}</span>, siendo sus padrinos <span class="field">${data.padrino || ''}</span> y <span class="field">${data.madrina || ''}</span>.</p><p><strong>Notas:</strong> ${data.notas || 'Ninguna'}</p></div>`;
                     const footer = `<div class="certificate-modern-footer"><div class="signature-line">Sello Parroquial</div><div class="signature-line">Firma del Párroco</div></div>`;
-                    return `<div class="pdf-page-container"><div class="certificate-modern">${header}${body}${footer}</div></div>`;
+                    return `<div class="${containerClass}"><div class="certificate-modern">${header}${body}${footer}</div></div>`;
                 }
                 
                 if (type === 'confirmacion') {
-                    const mainCert = `
-                        <div class="certificate-modern">
-                            <div class="certificate-modern-header">
-                                <h3>CERTIFICADO DE CONFIRMACIÓN</h3>
-                                <p>Diócesis de Santo Tomé - Paso de los Libres – Corrientes<br>Dirección: Bartolomé Mitre 940<br>WhatsApp (3772) 651931</p>
-                            </div>
-                            <div class="certificate-modern-body">
-                                <p>Certifico que: <strong>${(data.nombre || '').toUpperCase()}</strong></p>
-                                <p>hijo(a) de <span class="field">${data.padre || ''}</span> y de <span class="field">${data.madre || ''}</span>&nbsp;
-                                ha recibido solemnemente el Sacramento de la Confirmación en esta parroquia el día ${formatDate(data.fechaConfirmacion, 'long')}.</p>
-                                <p>Registrado en el Libro Parroquial de Confirmaciones, página <span class="field">${data.pagina || ''}</span>, acta Nº <span class="field">${data.acta || ''}</span>.</p>
-                                <p>Padrino/Madrina: <span class="field">${data.padrino || ''}</span>.</p>
-                                <p>En <span class="field">${data.lugarExpedicion || ''}</span>, ${formatDate(data.fechaExpedicion, 'long_parts')}.</p>
-                            </div>
-                            <div class="certificate-modern-footer">
-                                <div class="signature-line">Sello parroquial</div>
-                                <div class="signature-line">Pbro. ${data.parroco || ''} <br> Párroco</div>
-                            </div>
+                    const body = `
+                        <div class="certificate-modern-body">
+                            <p>Certifico que: <strong>${(data.nombre || '').toUpperCase()}</strong></p>
+                            <p>hijo(a) de <span class="field">${data.padre || ''}</span> y de <span class="field">${data.madre || ''}</span>&nbsp;
+                            ha recibido solemnemente el Sacramento de la Confirmación en esta parroquia el día ${formatDate(data.fechaConfirmacion, 'long')}.</p>
+                            <p>Registrado en el Libro Parroquial de Confirmaciones, página <span class="field">${data.pagina || ''}</span>, acta Nº <span class="field">${data.acta || ''}</span>.</p>
+                            <p>Padrino/Madrina: <span class="field">${data.padrino || ''}</span>.</p>
+                            <p>En <span class="field">${data.lugarExpedicion || ''}</span>, ${formatDate(data.fechaExpedicion, 'long_parts')}.</p>
                         </div>`;
-                    
-                    // MODIFICACIÓN: Usar el contenedor de media página
-                    return `<div class="pdf-half-page-container">${mainCert}</div>`;
+                    const confirmationFooter = `<div class="certificate-modern-footer"><div class="signature-line">Sello parroquial</div><div class="signature-line">Pbro. ${data.parroco || ''} <br> Párroco</div></div>`;
+                    return `<div class="${containerClass}"><div class="certificate-modern">${header}${body}${confirmationFooter}</div></div>`;
                 }
                 return '';
             };
