@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" class="dark">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -35,33 +35,16 @@
             color: #333;
         }
 
-        /* Contenedor de altura flexible para certificados */
-        .pdf-certificate-container {
+        /* Contenedor de altura flexible para certificados y recibos */
+        .pdf-certificate-container, .receipt-pdf-container {
             width: 210mm;
-            /* Altura automática para que se ajuste al contenido */
             padding: 15mm;
             box-sizing: border-box;
             background-color: #fff;
             display: flex;
             flex-direction: column;
-            font-family: 'Noto Serif', serif;
+            font-family: 'Inter', sans-serif;
             color: #333;
-            border-bottom: 1px dashed #ccc; /* Guía de corte opcional */
-        }
-        
-        /* Half-page container for Receipt PDF */
-        .receipt-pdf-container {
-            width: 210mm;
-            height: 148.5mm; /* Half of A4 height */
-            padding: 15mm;
-            box-sizing: border-box;
-            background-color: #fff;
-            display: flex;
-            flex-direction: column;
-            font-family: 'Noto Serif', serif;
-            color: #333;
-            border-bottom: 1px dashed #ccc; /* Optional: visual separator */
-            overflow: hidden;  
         }
 
 
@@ -134,16 +117,10 @@
             background-color: rgba(0,0,0,0.05);
             transition: background-color 0.2s ease;
         }
-        .dark .editable-field {
-             background-color: rgba(255,255,255,0.1);
-        }
         .editable-field:hover, .editable-field:focus {
             background-color: rgba(0,0,0,0.1);
             outline: none;
         }
-         .dark .editable-field:hover, .dark .editable-field:focus {
-             background-color: rgba(255,255,255,0.2);
-         }
 
         /* Loading Spinner */
         @keyframes spin {
@@ -173,9 +150,6 @@
             text-decoration: line-through;
             color: #9ca3af; /* gray-400 */
         }
-        .dark .notification-completed p {
-            color: #4b5563; /* gray-600 */
-        }
 
         /* Interactive Alert Ticker */
         .alert-ticker-container {
@@ -183,14 +157,11 @@
             width: 250px;
             overflow: hidden;
             position: relative;
-            background-color: rgba(255, 255, 255, 0.5);
             border-radius: 0.75rem;
             padding: 0 1rem;
             display: flex;
             align-items: center;
-        }
-        .dark .alert-ticker-container {
-            background-color: rgba(30, 41, 59, 0.5);
+            transition: background-color 0.3s ease-in-out;
         }
         .alert-ticker-item {
             position: absolute;
@@ -228,19 +199,19 @@
         }
     </style>
 </head>
-<body class="bg-gray-100 dark:bg-slate-900 text-gray-800 dark:text-gray-200">
+<body class="bg-gray-100 text-gray-800">
 
     <section id="login-view" class="min-h-screen flex items-center justify-center">
-        <div class="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg w-full max-w-md">
+        <div class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
             <h2 class="text-3xl font-bold text-center mb-2">Secretaría Parroquial</h2>
-            <p class="text-center text-gray-600 dark:text-gray-400 mb-8">Acceso</p>
+            <p class="text-center text-gray-600 mb-8">Acceso</p>
             <form id="login-form" class="space-y-6">
                 <div>
-                    <input type="email" id="email" placeholder="Correo" class="block w-full rounded-lg py-3 px-4 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-center" required>
+                    <input type="email" id="email" placeholder="Correo" class="block w-full rounded-lg py-3 px-4 border-gray-300 bg-gray-50 text-center" required>
                 </div>
                 <div class="relative">
-                    <input type="password" id="password" placeholder="Contraseña" class="block w-full rounded-lg py-3 px-4 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-center" required>
-                    <button type="button" id="toggle-password" class="absolute inset-y-0 right-0 px-4 flex items-center text-gray-500 dark:text-gray-300">
+                    <input type="password" id="password" placeholder="Contraseña" class="block w-full rounded-lg py-3 px-4 border-gray-300 bg-gray-50 text-center" required>
+                    <button type="button" id="toggle-password" class="absolute inset-y-0 right-0 px-4 flex items-center text-gray-500">
                         <i data-feather="eye" class="icon-eye"></i>
                         <i data-feather="eye-off" class="icon-eye-off hidden"></i>
                     </button>
@@ -257,18 +228,18 @@
                     <h2 class="text-3xl font-bold">Secretaría Parroquia San José</h2>
                     <div class="flex items-center space-x-4">
                         <!-- Interactive Alert Ticker -->
-                        <div id="alert-ticker" class="alert-ticker-container">
-                           <span class="text-gray-500 dark:text-gray-400">Sin alertas pendientes.</span>
+                        <div id="alert-ticker" class="alert-ticker-container bg-gray-100">
+                           <span class="text-gray-500">Sin alertas pendientes.</span>
                         </div>
                         <!-- Notification Bell -->
                         <div class="relative">
                             <div id="notification-bell-container" class="cursor-pointer">
-                                <i data-feather="bell" class="h-8 w-8 text-gray-600 dark:text-gray-300"></i>
+                                <i data-feather="bell" class="h-8 w-8 text-gray-600"></i>
                                 <span id="notification-badge" class="hidden absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center"></span>
                             </div>
                             <!-- Notification Dropdown Panel -->
-                            <div id="notification-panel" class="hidden absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-xl z-20">
-                                <div class="p-4 border-b dark:border-gray-700">
+                            <div id="notification-panel" class="hidden absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl z-20">
+                                <div class="p-4 border-b">
                                     <h4 class="font-bold">Alertas Pendientes</h4>
                                 </div>
                                 <div id="notification-panel-list" class="p-2 max-h-96 overflow-y-auto">
@@ -280,25 +251,25 @@
                     </div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                    <div data-action="show-view" data-view-id="certificate-choice-content" class="card-hover-effect bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 flex flex-col items-center text-center cursor-pointer">
-                        <div class="bg-indigo-100 dark:bg-indigo-900/30 p-4 rounded-full mb-6"><i data-feather="file-text" class="h-10 w-10 text-indigo-600 dark:text-indigo-400"></i></div>
+                    <div data-action="show-view" data-view-id="certificate-choice-content" class="card-hover-effect bg-white rounded-2xl shadow-lg p-8 flex flex-col items-center text-center cursor-pointer">
+                        <div class="bg-indigo-100 p-4 rounded-full mb-6"><i data-feather="file-text" class="h-10 w-10 text-indigo-600"></i></div>
                         <h3 class="text-2xl font-bold mb-2">Certificados</h3>
-                        <p class="text-gray-600 dark:text-gray-400">Generar certificados de Bautismo y Confirmación.</p>
+                        <p class="text-gray-600">Generar certificados de Bautismo y Confirmación.</p>
                     </div>
-                    <div data-action="show-view" data-view-id="caja-content" class="card-hover-effect bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 flex flex-col items-center text-center cursor-pointer">
-                        <div class="bg-green-100 dark:bg-green-900/30 p-4 rounded-full mb-6"><i data-feather="dollar-sign" class="h-10 w-10 text-green-600 dark:text-green-400"></i></div>
+                    <div data-action="show-view" data-view-id="caja-content" class="card-hover-effect bg-white rounded-2xl shadow-lg p-8 flex flex-col items-center text-center cursor-pointer">
+                        <div class="bg-green-100 p-4 rounded-full mb-6"><i data-feather="dollar-sign" class="h-10 w-10 text-green-600"></i></div>
                         <h3 class="text-2xl font-bold mb-2">Caja de Secretaría</h3>
-                        <p class="text-gray-600 dark:text-gray-400">Ingresos, Egresos y Rendiciones.</p>
+                        <p class="text-gray-600">Ingresos, Egresos y Rendiciones.</p>
                     </div>
-                    <div data-action="show-view" data-view-id="mass-org-content" class="card-hover-effect bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 flex flex-col items-center text-center cursor-pointer">
-                        <div class="bg-teal-100 dark:bg-teal-900/30 p-4 rounded-full mb-6"><i data-feather="calendar" class="h-10 w-10 text-teal-600 dark:text-teal-400"></i></div>
+                    <div data-action="show-view" data-view-id="mass-org-content" class="card-hover-effect bg-white rounded-2xl shadow-lg p-8 flex flex-col items-center text-center cursor-pointer">
+                        <div class="bg-teal-100 p-4 rounded-full mb-6"><i data-feather="calendar" class="h-10 w-10 text-teal-600"></i></div>
                         <h3 class="text-2xl font-bold mb-2">Organización de Misas</h3>
-                        <p class="text-gray-600 dark:text-gray-400">Gestionar horarios de misas y ministros.</p>
+                        <p class="text-gray-600">Gestionar horarios de misas y ministros.</p>
                     </div>
-                    <div data-action="show-view" data-view-id="notifications-content" class="card-hover-effect bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 flex flex-col items-center text-center cursor-pointer">
-                        <div class="bg-amber-100 dark:bg-amber-900/30 p-4 rounded-full mb-6"><i data-feather="bell" class="h-10 w-10 text-amber-600 dark:text-amber-400"></i></div>
+                    <div data-action="show-view" data-view-id="notifications-content" class="card-hover-effect bg-white rounded-2xl shadow-lg p-8 flex flex-col items-center text-center cursor-pointer">
+                        <div class="bg-amber-100 p-4 rounded-full mb-6"><i data-feather="bell" class="h-10 w-10 text-amber-600"></i></div>
                         <h3 class="text-2xl font-bold mb-2">Notificaciones</h3>
-                        <p class="text-gray-600 dark:text-gray-400">Crear y ver recordatorios y anuncios internos.</p>
+                        <p class="text-gray-600">Crear y ver recordatorios y anuncios internos.</p>
                     </div>
                 </div>
             </div>
@@ -311,9 +282,9 @@
                     <h2 class="text-3xl font-bold">Caja de Secretaría</h2>
                     <button data-action="show-view" data-view-id="secretaria-dashboard" class="bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105">Inicio</button>
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8">
+                <div class="bg-white rounded-2xl shadow-lg p-8">
                     <h3 class="text-2xl font-bold mb-2">Bienvenido al Módulo de Caja</h3>
-                    <p class="text-gray-600 dark:text-gray-400 mb-6">Aquí puede gestionar los ingresos y egresos de la secretaría.</p>
+                    <p class="text-gray-600 mb-6">Aquí puede gestionar los ingresos y egresos de la secretaría.</p>
                     <div class="flex flex-wrap gap-4">
                         <button data-action="open-receipt-date-modal" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105 flex items-center space-x-2">
                             <i data-feather="file-plus" class="h-5 w-5"></i>
@@ -350,15 +321,15 @@
                 </div>
                 <div class="flex justify-center">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-10 w-full max-w-4xl">
-                        <div data-action="show-view" data-view-id="bautismo-content" class="card-hover-effect bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 flex flex-col items-center text-center cursor-pointer">
-                            <div class="bg-sky-100 dark:bg-sky-900/30 p-4 rounded-full mb-6"><i data-feather="droplet" class="h-10 w-10 text-sky-600 dark:text-sky-400"></i></div>
+                        <div data-action="show-view" data-view-id="bautismo-content" class="card-hover-effect bg-white rounded-2xl shadow-lg p-8 flex flex-col items-center text-center cursor-pointer">
+                            <div class="bg-sky-100 p-4 rounded-full mb-6"><i data-feather="droplet" class="h-10 w-10 text-sky-600"></i></div>
                             <h2 class="text-2xl font-bold mb-2">Certificado de Bautismo</h2>
-                            <p class="text-gray-600 dark:text-gray-400">Crear un nuevo certificado de bautismo.</p>
+                            <p class="text-gray-600">Crear un nuevo certificado de bautismo.</p>
                         </div>
-                        <div data-action="show-view" data-view-id="confirmacion-content" class="card-hover-effect bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 flex flex-col items-center text-center cursor-pointer">
-                            <div class="bg-red-100 dark:bg-red-900/30 p-4 rounded-full mb-6"><i data-feather="wind" class="h-10 w-10 text-red-600 dark:text-red-400"></i></div>
+                        <div data-action="show-view" data-view-id="confirmacion-content" class="card-hover-effect bg-white rounded-2xl shadow-lg p-8 flex flex-col items-center text-center cursor-pointer">
+                            <div class="bg-red-100 p-4 rounded-full mb-6"><i data-feather="wind" class="h-10 w-10 text-red-600"></i></div>
                             <h2 class="text-2xl font-bold mb-2">Certificado de Confirmación</h2>
-                            <p class="text-gray-600 dark:text-gray-400">Crear un nuevo certificado de confirmación.</p>
+                            <p class="text-gray-600">Crear un nuevo certificado de confirmación.</p>
                         </div>
                     </div>
                 </div>
@@ -367,7 +338,7 @@
                     <div>
                         <h3 class="text-2xl font-bold mb-4">Últimos Registros de Bautismo</h3>
                         <div class="mb-4 relative">
-                            <input type="search" id="bautismo-search" placeholder="Buscar por nombre, fecha, padrinos..." class="w-full rounded-md p-2 pl-10 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:ring-indigo-500 focus:border-indigo-500">
+                            <input type="search" id="bautismo-search" placeholder="Buscar por nombre, fecha, padrinos..." class="w-full rounded-md p-2 pl-10 border-gray-300 bg-white focus:ring-indigo-500 focus:border-indigo-500">
                             <i data-feather="search" class="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400"></i>
                         </div>
                         <div id="bautismo-records-container" class="space-y-3"></div>
@@ -376,7 +347,7 @@
                     <div>
                         <h3 class="text-2xl font-bold mb-4">Últimos Registros de Confirmación</h3>
                         <div class="mb-4 relative">
-                            <input type="search" id="confirmacion-search" placeholder="Buscar por nombre, fecha..." class="w-full rounded-md p-2 pl-10 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:ring-indigo-500 focus:border-indigo-500">
+                            <input type="search" id="confirmacion-search" placeholder="Buscar por nombre, fecha..." class="w-full rounded-md p-2 pl-10 border-gray-300 bg-white focus:ring-indigo-500 focus:border-indigo-500">
                                 <i data-feather="search" class="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400"></i>
                         </div>
                         <div id="confirmacion-records-container" class="space-y-3"></div>
@@ -392,22 +363,22 @@
                     <h2 class="text-3xl font-bold">Gestión de Certificados de Bautismo</h2>
                     <button data-action="show-view" data-view-id="certificate-choice-content" class="bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105">Volver a Elegir</button>
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8">
+                <div class="bg-white rounded-2xl shadow-lg p-8">
                     <form id="baptism-form" class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <input type="hidden" name="id" id="b-id">
-                        <h3 class="col-span-full text-xl font-bold text-gray-900 dark:text-white border-b pb-2">Datos del Certificado</h3>
-                        <div><label for="b-libro" class="block text-sm font-medium">Libro N°</label><input name="libro" type="text" id="b-libro" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700" required></div>
-                        <div><label for="b-folio" class="block text-sm font-medium">Folio N°</label><input name="folio" type="text" id="b-folio" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700" required></div>
-                        <div class="md:col-span-2"><label for="b-nombre" class="block text-sm font-medium">Nombre y Apellido del Bautizado</label><input name="nombre" type="text" id="b-nombre" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700" required></div>
-                        <div><label for="b-dni" class="block text-sm font-medium">DNI</label><input name="dni" type="text" id="b-dni" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700"></div>
-                        <div><label for="b-fecha-nac" class="block text-sm font-medium">Fecha de Nacimiento</label><input name="fechaNac" type="date" id="b-fecha-nac" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700" required></div>
-                        <div class="md:col-span-2"><label for="b-lugar-nac" class="block text-sm font-medium">Nacido en</label><input name="lugarNac" type="text" id="b-lugar-nac" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700" required></div>
-                        <div><label for="b-padre" class="block text-sm font-medium">Hijo de (Padre)</label><input name="padre" type="text" id="b-padre" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700"></div>
-                        <div><label for="b-madre" class="block text-sm font-medium">y de (Madre)</label><input name="madre" type="text" id="b-madre" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700" required></div>
-                        <div><label for="b-fecha-bautismo" class="block text-sm font-medium">Fecha del Bautismo</label><input name="fechaBautismo" type="date" id="b-fecha-bautismo" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700" required></div>
-                        <div><label for="b-padrino" class="block text-sm font-medium">Padrino</label><input name="padrino" type="text" id="b-padrino" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700" required></div>
-                        <div><label for="b-madrina" class="block text-sm font-medium">Madrina</label><input name="madrina" type="text" id="b-madrina" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700" required></div>
-                        <div class="md:col-span-2"><label for="b-notas" class="block text-sm font-medium">Notas Marginales</label><textarea name="notas" id="b-notas" rows="3" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700"></textarea></div>
+                        <h3 class="col-span-full text-xl font-bold text-gray-900 border-b pb-2">Datos del Certificado</h3>
+                        <div><label for="b-libro" class="block text-sm font-medium">Libro N°</label><input name="libro" type="text" id="b-libro" class="mt-1 block w-full rounded-md p-2 border-gray-300 bg-gray-50" required></div>
+                        <div><label for="b-folio" class="block text-sm font-medium">Folio N°</label><input name="folio" type="text" id="b-folio" class="mt-1 block w-full rounded-md p-2 border-gray-300 bg-gray-50" required></div>
+                        <div class="md:col-span-2"><label for="b-nombre" class="block text-sm font-medium">Nombre y Apellido del Bautizado</label><input name="nombre" type="text" id="b-nombre" class="mt-1 block w-full rounded-md p-2 border-gray-300 bg-gray-50" required></div>
+                        <div><label for="b-dni" class="block text-sm font-medium">DNI</label><input name="dni" type="text" id="b-dni" class="mt-1 block w-full rounded-md p-2 border-gray-300 bg-gray-50"></div>
+                        <div><label for="b-fecha-nac" class="block text-sm font-medium">Fecha de Nacimiento</label><input name="fechaNac" type="date" id="b-fecha-nac" class="mt-1 block w-full rounded-md p-2 border-gray-300 bg-gray-50" required></div>
+                        <div class="md:col-span-2"><label for="b-lugar-nac" class="block text-sm font-medium">Nacido en</label><input name="lugarNac" type="text" id="b-lugar-nac" class="mt-1 block w-full rounded-md p-2 border-gray-300 bg-gray-50" required></div>
+                        <div><label for="b-padre" class="block text-sm font-medium">Hijo de (Padre)</label><input name="padre" type="text" id="b-padre" class="mt-1 block w-full rounded-md p-2 border-gray-300 bg-gray-50"></div>
+                        <div><label for="b-madre" class="block text-sm font-medium">y de (Madre)</label><input name="madre" type="text" id="b-madre" class="mt-1 block w-full rounded-md p-2 border-gray-300 bg-gray-50" required></div>
+                        <div><label for="b-fecha-bautismo" class="block text-sm font-medium">Fecha del Bautismo</label><input name="fechaBautismo" type="date" id="b-fecha-bautismo" class="mt-1 block w-full rounded-md p-2 border-gray-300 bg-gray-50" required></div>
+                        <div><label for="b-padrino" class="block text-sm font-medium">Padrino</label><input name="padrino" type="text" id="b-padrino" class="mt-1 block w-full rounded-md p-2 border-gray-300 bg-gray-50" required></div>
+                        <div><label for="b-madrina" class="block text-sm font-medium">Madrina</label><input name="madrina" type="text" id="b-madrina" class="mt-1 block w-full rounded-md p-2 border-gray-300 bg-gray-50" required></div>
+                        <div class="md:col-span-2"><label for="b-notas" class="block text-sm font-medium">Notas Marginales</label><textarea name="notas" id="b-notas" rows="3" class="mt-1 block w-full rounded-md p-2 border-gray-300 bg-gray-50"></textarea></div>
                         <div class="md:col-span-2 flex justify-end space-x-4">
                             <button type="submit" data-action="save-certificate" data-type="bautismo" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-2 px-6 rounded-lg flex items-center space-x-2 transition-all duration-300 ease-in-out transform hover:scale-105">
                                 <i data-feather="save" class="h-4 w-4"></i>
@@ -430,28 +401,28 @@
                     <h2 class="text-3xl font-bold">Gestión de Certificados de Confirmación</h2>
                     <button data-action="show-view" data-view-id="certificate-choice-content" class="bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105">Volver a Elegir</button>
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8">
+                <div class="bg-white rounded-2xl shadow-lg p-8">
                     <form id="confirmation-form" class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
                         <input type="hidden" name="id" id="c-id">
-                        <h3 class="col-span-full text-xl font-bold text-gray-900 dark:text-white border-b pb-2">Datos del Certificado</h3>
+                        <h3 class="col-span-full text-xl font-bold text-gray-900 border-b pb-2">Datos del Certificado</h3>
                         
-                        <div class="md:col-span-2"><label for="c-nombre" class="block text-sm font-medium">Certifico que (Nombre completo)</label><input name="nombre" type="text" id="c-nombre" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700" required></div>
-                        <div><label for="c-padre" class="block text-sm font-medium">Hijo(a) de</label><input name="padre" type="text" id="c-padre" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700" required></div>
-                        <div><label for="c-madre" class="block text-sm font-medium">y de</label><input name="madre" type="text" id="c-madre" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700" required></div>
-                        <div><label for="c-padrino" class="block text-sm font-medium">Padrino/Madrina</label><input name="padrino" type="text" id="c-padrino" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700" required></div>
-                        <div><label for="c-fecha-confirmacion" class="block text-sm font-medium">Fecha de Confirmación</label><input name="fechaConfirmacion" type="date" id="c-fecha-confirmacion" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700" required></div>
-                        <div><label for="c-pagina" class="block text-sm font-medium">Página N°</label><input name="pagina" type="text" id="c-pagina" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700" required></div>
-                        <div><label for="c-acta" class="block text-sm font-medium">Acta N°</label><input name="acta" type="text" id="c-acta" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700" required></div>
+                        <div class="md:col-span-2"><label for="c-nombre" class="block text-sm font-medium">Certifico que (Nombre completo)</label><input name="nombre" type="text" id="c-nombre" class="mt-1 block w-full rounded-md p-2 border-gray-300 bg-gray-50" required></div>
+                        <div><label for="c-padre" class="block text-sm font-medium">Hijo(a) de</label><input name="padre" type="text" id="c-padre" class="mt-1 block w-full rounded-md p-2 border-gray-300 bg-gray-50" required></div>
+                        <div><label for="c-madre" class="block text-sm font-medium">y de</label><input name="madre" type="text" id="c-madre" class="mt-1 block w-full rounded-md p-2 border-gray-300 bg-gray-50" required></div>
+                        <div><label for="c-padrino" class="block text-sm font-medium">Padrino/Madrina</label><input name="padrino" type="text" id="c-padrino" class="mt-1 block w-full rounded-md p-2 border-gray-300 bg-gray-50" required></div>
+                        <div><label for="c-fecha-confirmacion" class="block text-sm font-medium">Fecha de Confirmación</label><input name="fechaConfirmacion" type="date" id="c-fecha-confirmacion" class="mt-1 block w-full rounded-md p-2 border-gray-300 bg-gray-50" required></div>
+                        <div><label for="c-pagina" class="block text-sm font-medium">Página N°</label><input name="pagina" type="text" id="c-pagina" class="mt-1 block w-full rounded-md p-2 border-gray-300 bg-gray-50" required></div>
+                        <div><label for="c-acta" class="block text-sm font-medium">Acta N°</label><input name="acta" type="text" id="c-acta" class="mt-1 block w-full rounded-md p-2 border-gray-300 bg-gray-50" required></div>
                         <div>
                             <label for="c-lugar-select" class="block text-sm font-medium">Lugar de expedición</label>
-                            <select id="c-lugar-select" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700">
+                            <select id="c-lugar-select" class="mt-1 block w-full rounded-md p-2 border-gray-300 bg-gray-50">
                                 <option>Paso de los Libres, Corrientes</option>
                                 <option value="otro">Otro...</option>
                             </select>
                             <input type="hidden" name="lugarExpedicion" id="c-lugar-expedicion-hidden" value="Paso de los Libres, Corrientes">
                         </div>
-                        <div><label for="c-fecha-expedicion" class="block text-sm font-medium">Fecha de expedición</label><input name="fechaExpedicion" type="date" id="c-fecha-expedicion" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700" required></div>
-                        <div class="md:col-span-2"><label for="c-parroco" class="block text-sm font-medium">Párroco/Ministro</label><input name="parroco" type="text" id="c-parroco" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700" required></div>
+                        <div><label for="c-fecha-expedicion" class="block text-sm font-medium">Fecha de expedición</label><input name="fechaExpedicion" type="date" id="c-fecha-expedicion" class="mt-1 block w-full rounded-md p-2 border-gray-300 bg-gray-50" required></div>
+                        <div class="md:col-span-2"><label for="c-parroco" class="block text-sm font-medium">Párroco/Ministro</label><input name="parroco" type="text" id="c-parroco" class="mt-1 block w-full rounded-md p-2 border-gray-300 bg-gray-50" required></div>
 
                         <div class="md:col-span-2 flex justify-end space-x-4 mt-6">
                             <button type="submit" data-action="save-certificate" data-type="confirmacion" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-2 px-6 rounded-lg flex items-center space-x-2 transition-all duration-300 ease-in-out transform hover:scale-105">
@@ -478,7 +449,7 @@
                     </div>
                 </div>
                 <div class="space-y-12">
-                    <div id="ministros-print-area" class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8">
+                    <div id="ministros-print-area" class="bg-white rounded-2xl shadow-lg p-8">
                         <div class="flex justify-between items-center mb-4">
                             <h3 class="text-2xl font-bold">Organización para el servicio litúrgico (Ministros)</h3>
                             <button data-action="download-pdf" data-target="ministros-print-area" data-title="Parroquia San José" data-subtitle="Organización para el servicio litúrgico (Ministros)" data-filename="Organizacion_Ministros.pdf" class="no-print bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold py-2 px-4 rounded-lg flex items-center space-x-2">
@@ -487,8 +458,8 @@
                             </button>
                         </div>
                         <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                                <thead class="bg-gray-50 dark:bg-gray-700">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
                                     <tr>
                                         <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Semanas</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Sábado 19:30 H</th>
@@ -498,7 +469,7 @@
                                         <th class="px-6 py-3 text-center text-xs font-medium uppercase no-print">Acciones</th>
                                     </tr>
                                 </thead>
-                                <tbody id="ministros-table-body" class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                                <tbody id="ministros-table-body" class="bg-white divide-y divide-gray-200">
                                 </tbody>
                             </table>
                         </div>
@@ -506,7 +477,7 @@
                     </div>
 
                     <div id="grupos-adoracion-print-area">
-                        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8">
+                        <div class="bg-white rounded-2xl shadow-lg p-8">
                              <div class="flex justify-between items-center mb-4">
                                 <h3 class="text-2xl font-bold">Organización de las Misas (Grupos)</h3>
                                 <button data-action="download-pdf" data-target="grupos-adoracion-print-area" data-title="Parroquia San José" data-subtitle="Organización de Misas, Grupos y Adoración" data-filename="Organizacion_Grupos_y_Adoracion.pdf" class="no-print bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold py-2 px-4 rounded-lg flex items-center space-x-2">
@@ -515,8 +486,8 @@
                                 </button>
                             </div>
                             <div class="overflow-x-auto">
-                                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                                    <thead class="bg-gray-50 dark:bg-gray-700">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
                                         <tr>
                                             <th class="px-6 py-3 text-left text-xs font-medium uppercase">Semanas</th>
                                             <th class="px-6 py-3 text-left text-xs font-medium uppercase">Sábado 19:30 H</th>
@@ -526,33 +497,33 @@
                                             <th class="px-6 py-3 text-center text-xs font-medium uppercase no-print">Acciones</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="grupos-table-body" class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700"></tbody>
+                                    <tbody id="grupos-table-body" class="bg-white divide-y divide-gray-200"></tbody>
                                 </table>
                             </div>
                             <div class="mt-4 text-right no-print"><button data-action="add-row" data-table="grupos" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105">Agregar Fila</button></div>
                         </div>
 
-                        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 mt-12">
+                        <div class="bg-white rounded-2xl shadow-lg p-8 mt-12">
                             <h3 class="text-2xl font-bold mb-6">Organización de la Adoración</h3>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
                                 <div>
                                     <h4 class="text-xl font-semibold mb-4">Adoración de los Jueves</h4>
                                     <div class="overflow-x-auto">
-                                        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                                            <thead class="bg-gray-50 dark:bg-gray-700">
+                                        <table class="min-w-full divide-y divide-gray-200">
+                                            <thead class="bg-gray-50">
                                                 <tr>
                                                     <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Semanas</th>
                                                     <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Ministro</th>
                                                     <th class="px-6 py-3 text-center text-xs font-medium uppercase no-print">Acciones</th>
                                                 </tr>
                                             </thead>
-                                            <tbody id="adoracion-jueves-table-body" class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                                            <tbody id="adoracion-jueves-table-body" class="bg-white divide-y divide-gray-200">
                                             </tbody>
                                         </table>
                                     </div>
                                     <div class="mt-4 text-right no-print"><button data-action="add-row" data-table="adoracionJueves" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105">Agregar Fila</button></div>
                                     
-                                    <div id="adoracion-jueves-horarios" class="mt-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                                    <div id="adoracion-jueves-horarios" class="mt-4 p-4 bg-gray-50 rounded-lg">
                                         <h5 class="font-bold">Horarios de la Adoración (Jueves)</h5>
                                         <p class="mt-2">Exposición: <span contenteditable="true" data-key="juevesExpo" class="editable-field"></span></p>
                                         <p class="mt-1">Reserva: <span contenteditable="true" data-key="juevesReserva" class="editable-field"></span></p>
@@ -565,21 +536,21 @@
                                 <div>
                                     <h4 class="text-xl font-semibold mb-4">Adoración de Martes a Viernes</h4>
                                     <div class="overflow-x-auto">
-                                        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                                            <thead class="bg-gray-50 dark:bg-gray-700">
+                                        <table class="min-w-full divide-y divide-gray-200">
+                                            <thead class="bg-gray-50">
                                                 <tr>
                                                     <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Días</th>
                                                     <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Ministro</th>
                                                     <th class="px-6 py-3 text-center text-xs font-medium uppercase no-print">Acciones</th>
                                                 </tr>
                                             </thead>
-                                            <tbody id="adoracion-semanal-table-body" class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                                            <tbody id="adoracion-semanal-table-body" class="bg-white divide-y divide-gray-200">
                                             </tbody>
                                         </table>
                                     </div>
                                     <div class="mt-4 text-right no-print"><button data-action="add-row" data-table="adoracionSemanal" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105">Agregar Fila</button></div>
 
-                                    <div id="adoracion-semanal-horarios" class="mt-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                                    <div id="adoracion-semanal-horarios" class="mt-4 p-4 bg-gray-50 rounded-lg">
                                         <h5 class="font-bold">Horarios de la Adoración (Semanal)</h5>
                                         <p class="mt-2">Exposición: <span contenteditable="true" data-key="semanalExpo" class="editable-field"></span></p>
                                         <p class="mt-1">Reserva: <span contenteditable="true" data-key="semanalReserva" class="editable-field"></span></p>
@@ -603,13 +574,13 @@
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                     <div class="md:col-span-1">
-                        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8">
+                        <div class="bg-white rounded-2xl shadow-lg p-8">
                             <h3 class="text-xl font-bold mb-4">Nueva Notificación</h3>
                             <form id="notification-form" class="space-y-4">
-                                <textarea id="notification-text" rows="4" class="w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700" placeholder="Escribe tu recordatorio aquí..." required></textarea>
+                                <textarea id="notification-text" rows="4" class="w-full rounded-md p-2 border-gray-300 bg-gray-50" placeholder="Escribe tu recordatorio aquí..." required></textarea>
                                 <div>
                                     <label for="notification-due-date" class="block text-sm font-medium">Fecha de Vencimiento</label>
-                                    <input type="date" id="notification-due-date" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700">
+                                    <input type="date" id="notification-due-date" class="mt-1 block w-full rounded-md p-2 border-gray-300 bg-gray-50">
                                 </div>
                                 <button type="submit" class="mt-4 w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105">Agregar</button>
                             </form>
@@ -626,10 +597,10 @@
 
     <!-- MODAL: Receipt Date -->
     <div id="receipt-date-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 no-print z-50">
-        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 w-full max-w-sm">
+        <div class="bg-white rounded-2xl shadow-lg p-8 w-full max-w-sm">
             <h3 class="text-2xl font-bold mb-6 text-center">Fecha del Recibo</h3>
             <form id="receipt-date-form">
-                <input type="date" id="receipt-date-input" class="block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700" required>
+                <input type="date" id="receipt-date-input" class="block w-full rounded-md p-2 border-gray-300 bg-gray-50" required>
                 <div class="mt-8 flex justify-between space-x-4">
                     <button type="button" data-action="close-modal" data-modal-id="receipt-date-modal" class="w-full bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-bold py-2 px-4 rounded-lg">Volver</button>
                     <button type="submit" class="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-2 px-4 rounded-lg">Confirmar</button>
@@ -640,10 +611,10 @@
 
     <!-- MODAL: Rendicion Date -->
     <div id="rendicion-date-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 no-print z-50">
-        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 w-full max-w-sm">
+        <div class="bg-white rounded-2xl shadow-lg p-8 w-full max-w-sm">
             <h3 class="text-2xl font-bold mb-6 text-center">Fecha de la Rendición</h3>
             <form id="rendicion-date-form">
-                <input type="date" id="rendicion-date-input" class="block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700" required>
+                <input type="date" id="rendicion-date-input" class="block w-full rounded-md p-2 border-gray-300 bg-gray-50" required>
                 <div class="mt-8 flex justify-between space-x-4">
                     <button type="button" data-action="close-modal" data-modal-id="rendicion-date-modal" class="w-full bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-bold py-2 px-4 rounded-lg">Volver</button>
                     <button type="submit" class="w-full bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white font-bold py-2 px-4 rounded-lg">Confirmar</button>
@@ -654,21 +625,21 @@
 
     <!-- MODAL: Receipt Data -->
     <div id="receipt-data-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 no-print z-50">
-        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 w-full max-w-lg">
+        <div class="bg-white rounded-2xl shadow-lg p-8 w-full max-w-lg">
             <h3 class="text-2xl font-bold mb-6">Datos del Recibo</h3>
             <form id="receipt-data-form" class="space-y-4">
                 <input type="hidden" id="receipt-id">
                 <div>
                     <label for="receipt-recibiDe" class="block text-sm font-medium">Recibí de:</label>
-                    <input type="text" id="receipt-recibiDe" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700" required>
+                    <input type="text" id="receipt-recibiDe" class="mt-1 block w-full rounded-md p-2 border-gray-300 bg-gray-50" required>
                 </div>
                 <div>
                     <label for="receipt-concepto" class="block text-sm font-medium">En concepto de:</label>
-                    <input type="text" id="receipt-concepto" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700" required>
+                    <input type="text" id="receipt-concepto" class="mt-1 block w-full rounded-md p-2 border-gray-300 bg-gray-50" required>
                 </div>
                 <div>
                     <label for="receipt-importe" class="block text-sm font-medium">Importe ($):</label>
-                    <input type="text" id="receipt-importe" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 currency-input" required>
+                    <input type="text" id="receipt-importe" class="mt-1 block w-full rounded-md p-2 border-gray-300 bg-gray-50 currency-input" required>
                 </div>
                 <div class="mt-8 flex justify-end space-x-4">
                     <button type="button" data-action="close-modal" data-modal-id="receipt-data-modal" class="bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-bold py-2 px-4 rounded-lg">Volver</button>
@@ -680,7 +651,7 @@
 
     <!-- MODAL: Rendicion Form -->
     <div id="rendicion-form-modal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center p-4 no-print z-50">
-        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 w-full max-w-4xl max-h-[90vh] flex flex-col">
+        <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-4xl max-h-[90vh] flex flex-col">
             <h3 class="text-2xl font-bold mb-6 text-center">Formulario de Rendición</h3>
             <form id="rendicion-form" class="flex-grow overflow-y-auto pr-4 space-y-8">
                 <input type="hidden" id="rendicion-id">
@@ -691,7 +662,7 @@
                     <div id="socios-container" class="space-y-3">
                         <!-- Dynamic rows will be inserted here -->
                     </div>
-                    <button type="button" data-action="add-socio-row" class="mt-3 text-sm bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-900 font-semibold py-1 px-3 rounded-md flex items-center space-x-2">
+                    <button type="button" data-action="add-socio-row" class="mt-3 text-sm bg-blue-100 text-blue-700 hover:bg-blue-200 font-semibold py-1 px-3 rounded-md flex items-center space-x-2">
                         <i data-feather="plus" class="h-4 w-4"></i>
                         <span>Agregar Socio</span>
                     </button>
@@ -703,7 +674,7 @@
                     <div id="otros-ingresos-container" class="space-y-3">
                         <!-- Dynamic rows will be inserted here -->
                     </div>
-                    <button type="button" data-action="add-ingreso-row" class="mt-3 text-sm bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-900 font-semibold py-1 px-3 rounded-md flex items-center space-x-2">
+                    <button type="button" data-action="add-ingreso-row" class="mt-3 text-sm bg-green-100 text-green-700 hover:bg-green-200 font-semibold py-1 px-3 rounded-md flex items-center space-x-2">
                         <i data-feather="plus" class="h-4 w-4"></i>
                         <span>Agregar Ingreso</span>
                     </button>
@@ -715,7 +686,7 @@
                     <div id="egresos-container" class="space-y-3">
                         <!-- Dynamic rows will be inserted here -->
                     </div>
-                    <button type="button" data-action="add-egreso-row" class="mt-3 text-sm bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300 hover:bg-red-200 dark:hover:bg-red-900 font-semibold py-1 px-3 rounded-md flex items-center space-x-2">
+                    <button type="button" data-action="add-egreso-row" class="mt-3 text-sm bg-red-100 text-red-700 hover:bg-red-200 font-semibold py-1 px-3 rounded-md flex items-center space-x-2">
                         <i data-feather="plus" class="h-4 w-4"></i>
                         <span>Agregar Egreso</span>
                     </button>
@@ -731,11 +702,11 @@
 
     <!-- MODAL: Add New Socio -->
     <div id="add-socio-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center p-4 no-print z-50">
-        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 w-full max-w-md">
+        <div class="bg-white rounded-2xl shadow-lg p-8 w-full max-w-md">
             <h3 class="text-2xl font-bold mb-6 text-center">Agregar Nuevo Socio</h3>
             <form id="add-socio-form">
                 <label for="new-socio-name" class="block text-sm font-medium">Nombre del Socio</label>
-                <input type="text" id="new-socio-name" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700" required>
+                <input type="text" id="new-socio-name" class="mt-1 block w-full rounded-md p-2 border-gray-300 bg-gray-50" required>
                 <div class="mt-8 flex justify-end space-x-4">
                     <button type="button" data-action="close-modal" data-modal-id="add-socio-modal" class="bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-bold py-2 px-4 rounded-lg">Cancelar</button>
                     <button type="submit" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-2 px-4 rounded-lg">Guardar Socio</button>
@@ -746,7 +717,7 @@
     
     <!-- MODAL: Socios Management -->
     <div id="socios-management-modal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center p-4 no-print z-50">
-        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 w-full max-w-2xl max-h-[90vh] flex flex-col">
+        <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-2xl max-h-[90vh] flex flex-col">
             <h3 class="text-2xl font-bold mb-6 text-center">Gestionar Socios</h3>
             <div id="socios-list-container" class="flex-grow overflow-y-auto pr-4 space-y-3">
                 <!-- Lista de socios se renderizará aquí -->
@@ -759,12 +730,12 @@
 
     <!-- MODAL: Edit Socio -->
     <div id="edit-socio-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center p-4 no-print z-50">
-        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 w-full max-w-md">
+        <div class="bg-white rounded-2xl shadow-lg p-8 w-full max-w-md">
             <h3 class="text-2xl font-bold mb-6 text-center">Modificar Socio</h3>
             <form id="edit-socio-form">
                 <input type="hidden" id="edit-socio-id">
                 <label for="edit-socio-name" class="block text-sm font-medium">Nombre del Socio</label>
-                <input type="text" id="edit-socio-name" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700" required>
+                <input type="text" id="edit-socio-name" class="mt-1 block w-full rounded-md p-2 border-gray-300 bg-gray-50" required>
                 <div class="mt-8 flex justify-end space-x-4">
                     <button type="button" data-action="close-modal" data-modal-id="edit-socio-modal" class="bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-bold py-2 px-4 rounded-lg">Cancelar</button>
                     <button type="submit" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-2 px-4 rounded-lg">Guardar Cambios</button>
@@ -775,17 +746,17 @@
 
 
     <div id="edit-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 no-print z-50">
-        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 w-full max-w-lg">
+        <div class="bg-white rounded-2xl shadow-lg p-8 w-full max-w-lg">
             <h3 id="edit-modal-title" class="text-2xl font-bold mb-6">Modificar Fila</h3>
             <form id="edit-form">
                 <input type="hidden" id="edit-id">
                 <input type="hidden" id="edit-table">
                 <div class="space-y-4">
-                    <div><label for="edit-semana" class="block text-sm font-medium">Semanas</label><input type="text" id="edit-semana" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700"></div>
-                    <div><label for="edit-sabado" class="block text-sm font-medium">Sábado 19:30 H</label><input type="text" id="edit-sabado" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700"></div>
-                    <div><label for="edit-dom08" class="block text-sm font-medium">Domingo 08:00 H</label><input type="text" id="edit-dom08" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700"></div>
-                    <div><label for="edit-dom10" class="block text-sm font-medium">Domingo 10:30 H</label><input type="text" id="edit-dom10" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700"></div>
-                    <div><label for="edit-dom20" class="block text-sm font-medium">Domingo 19:30 H / 20:00 H</label><input type="text" id="edit-dom20" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700"></div>
+                    <div><label for="edit-semana" class="block text-sm font-medium">Semanas</label><input type="text" id="edit-semana" class="mt-1 block w-full rounded-md p-2 border-gray-300 bg-gray-50"></div>
+                    <div><label for="edit-sabado" class="block text-sm font-medium">Sábado 19:30 H</label><input type="text" id="edit-sabado" class="mt-1 block w-full rounded-md p-2 border-gray-300 bg-gray-50"></div>
+                    <div><label for="edit-dom08" class="block text-sm font-medium">Domingo 08:00 H</label><input type="text" id="edit-dom08" class="mt-1 block w-full rounded-md p-2 border-gray-300 bg-gray-50"></div>
+                    <div><label for="edit-dom10" class="block text-sm font-medium">Domingo 10:30 H</label><input type="text" id="edit-dom10" class="mt-1 block w-full rounded-md p-2 border-gray-300 bg-gray-50"></div>
+                    <div><label for="edit-dom20" class="block text-sm font-medium">Domingo 19:30 H / 20:00 H</label><input type="text" id="edit-dom20" class="mt-1 block w-full rounded-md p-2 border-gray-300 bg-gray-50"></div>
                 </div>
                 <div class="mt-8 flex justify-end space-x-4">
                     <button type="button" data-action="close-modal" data-modal-id="edit-modal" class="bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105">Cancelar</button>
@@ -796,7 +767,7 @@
     </div>
     
     <div id="edit-adoracion-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 no-print z-50">
-        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 w-full max-w-md">
+        <div class="bg-white rounded-2xl shadow-lg p-8 w-full max-w-md">
             <h3 id="edit-adoracion-modal-title" class="text-2xl font-bold mb-6">Modificar Fila de Adoración</h3>
             <form id="edit-adoracion-form">
                 <input type="hidden" id="edit-adoracion-id">
@@ -804,11 +775,11 @@
                 <div class="space-y-4">
                     <div>
                         <label id="edit-adoracion-label1" for="edit-adoracion-col1" class="block text-sm font-medium">Semanas/Día</label>
-                        <input type="text" id="edit-adoracion-col1" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700">
+                        <input type="text" id="edit-adoracion-col1" class="mt-1 block w-full rounded-md p-2 border-gray-300 bg-gray-50">
                     </div>
                      <div>
                         <label for="edit-adoracion-col2" class="block text-sm font-medium">Ministro</label>
-                        <input type="text" id="edit-adoracion-col2" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700">
+                        <input type="text" id="edit-adoracion-col2" class="mt-1 block w-full rounded-md p-2 border-gray-300 bg-gray-50">
                     </div>
                 </div>
                 <div class="mt-8 flex justify-end space-x-4">
@@ -821,13 +792,13 @@
 
 
     <div id="custom-location-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 no-print z-50">
-        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 w-full max-w-md">
+        <div class="bg-white rounded-2xl shadow-lg p-8 w-full max-w-md">
             <h3 class="text-2xl font-bold mb-6">Ingresar Lugar de Expedición</h3>
             <form id="custom-location-form">
                 <div class="space-y-4">
                     <div>
                         <label for="custom-location-input" class="block text-sm font-medium">Lugar</label>
-                        <input type="text" id="custom-location-input" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700" required>
+                        <input type="text" id="custom-location-input" class="mt-1 block w-full rounded-md p-2 border-gray-300 bg-gray-50" required>
                     </div>
                 </div>
                 <div class="mt-8 flex justify-end space-x-4">
@@ -839,7 +810,7 @@
     </div>
 
     <div id="delete-confirm-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 no-print z-50">
-        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 w-full max-w-md">
+        <div class="bg-white rounded-2xl shadow-lg p-8 w-full max-w-md">
             <h3 class="text-xl font-bold mb-4">Confirmar Eliminación</h3>
             <p>¿Estás seguro de que deseas eliminar este registro? Esta acción no se puede deshacer.</p>
             <div class="mt-8 flex justify-end space-x-4">
@@ -1046,14 +1017,14 @@
 
                 dom.notificationsList.innerHTML = sortedNotifications.map(n => {
                     const isOverdue = n.dueDate && new Date(n.dueDate) < today && !n.completed;
-                    const dateColor = isOverdue ? 'text-red-500' : 'text-gray-500 dark:text-gray-400';
+                    const dateColor = isOverdue ? 'text-red-500' : 'text-gray-500';
                     const completedClass = n.completed ? 'notification-completed opacity-60' : '';
 
                     return `
-                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-4 ${completedClass}">
+                    <div class="bg-white rounded-2xl shadow-lg p-4 ${completedClass}">
                         <div class="flex justify-between items-start">
                             <div class="flex-grow pr-4">
-                                <p class="text-gray-800 dark:text-gray-200">${n.text}</p>
+                                <p class="text-gray-800">${n.text}</p>
                                 ${n.dueDate ? `<p class="text-sm mt-2 ${dateColor}">Vence: ${formatDate(n.dueDate)}</p>` : ''}
                             </div>
                             <div class="flex flex-col space-y-2 no-print">
@@ -1073,11 +1044,11 @@
 
             const renderNotificationPanel = (pendingAlerts) => {
                 if (pendingAlerts.length === 0) {
-                    dom.notificationPanelList.innerHTML = `<p class="text-center text-gray-500 dark:text-gray-400 p-4">No hay alertas.</p>`;
+                    dom.notificationPanelList.innerHTML = `<p class="text-center text-gray-500 p-4">No hay alertas.</p>`;
                     return;
                 }
                 dom.notificationPanelList.innerHTML = pendingAlerts.map(n => `
-                    <div class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md flex justify-between items-center">
+                    <div class="p-2 hover:bg-gray-100 rounded-md flex justify-between items-center">
                         <span class="text-sm flex-grow pr-2">${n.text}</span>
                         <button data-action="mark-notification-complete" data-id="${n.id}" class="flex-shrink-0 bg-green-100 text-green-700 text-xs font-bold py-1 px-2 rounded-full hover:bg-green-200" title="Marcar como completado">
                             Completado
@@ -1091,30 +1062,34 @@
                 dom.alertTicker.innerHTML = '';
 
                 if (pendingAlerts.length === 0) {
-                    dom.alertTicker.innerHTML = `<span class="text-gray-500 dark:text-gray-400">Sin alertas pendientes.</span>`;
-                    return;
-                }
-                
-                pendingAlerts.forEach((alert, index) => {
-                    const item = document.createElement('span');
-                    item.className = 'alert-ticker-item';
-                    item.textContent = alert.text;
-                    dom.alertTicker.appendChild(item);
-                });
+                    dom.alertTicker.innerHTML = `<span class="text-gray-500">Sin alertas pendientes.</span>`;
+                    dom.alertTicker.classList.remove('bg-amber-100');
+                    dom.alertTicker.classList.add('bg-gray-100');
+                } else {
+                    dom.alertTicker.classList.remove('bg-gray-100');
+                    dom.alertTicker.classList.add('bg-amber-100');
+                    
+                    pendingAlerts.forEach((alert) => {
+                        const item = document.createElement('span');
+                        item.className = 'alert-ticker-item text-amber-800 font-medium';
+                        item.textContent = alert.text;
+                        dom.alertTicker.appendChild(item);
+                    });
 
-                let currentIndex = 0;
-                const items = dom.alertTicker.querySelectorAll('.alert-ticker-item');
-                
-                const cycleAlerts = () => {
-                    items.forEach(item => item.classList.remove('active'));
-                    if (items[currentIndex]) {
-                        items[currentIndex].classList.add('active');
-                        currentIndex = (currentIndex + 1) % items.length;
-                    }
-                };
-                
-                cycleAlerts();
-                alertTickerInterval = setInterval(cycleAlerts, 4000);
+                    let currentIndex = 0;
+                    const items = dom.alertTicker.querySelectorAll('.alert-ticker-item');
+                    
+                    const cycleAlerts = () => {
+                        items.forEach(item => item.classList.remove('active'));
+                        if (items[currentIndex]) {
+                            items[currentIndex].classList.add('active');
+                            currentIndex = (currentIndex + 1) % items.length;
+                        }
+                    };
+                    
+                    cycleAlerts();
+                    alertTickerInterval = setInterval(cycleAlerts, 4000);
+                }
             };
 
 
@@ -1191,13 +1166,13 @@
                 const paginatedRecords = filteredRecords.slice(start, end);
 
                 if (paginatedRecords.length === 0) {
-                    container.innerHTML = `<p class="text-gray-500 dark:text-gray-400 italic">No hay registros para mostrar.</p>`;
+                    container.innerHTML = `<p class="text-gray-500 italic">No hay registros para mostrar.</p>`;
                 } else {
                     container.innerHTML = paginatedRecords.map(r => `
-                        <div class="bg-white dark:bg-gray-800 rounded-lg p-3 shadow flex justify-between items-center">
+                        <div class="bg-white rounded-lg p-3 shadow flex justify-between items-center">
                             <div>
                                 <p class="font-bold">${r.nombre}</p>
-                                <p class="text-sm text-gray-600 dark:text-gray-400">Fecha: ${isBautismo ? formatDate(r.fechaBautismo) : formatDate(r.fechaConfirmacion)}</p>
+                                <p class="text-sm text-gray-600">Fecha: ${isBautismo ? formatDate(r.fechaBautismo) : formatDate(r.fechaConfirmacion)}</p>
                             </div>
                             <div class="flex items-center space-x-2">
                                 <button data-action="edit-record" data-type="${type}" data-id="${r.id}" class="text-blue-500 hover:text-blue-700 p-1" title="Modificar"><i data-feather="edit" class="h-4 w-4"></i></button>
@@ -1209,9 +1184,9 @@
                 }
 
                 paginationContainer.innerHTML = `
-                    <button data-action="paginate" data-type="${type}" data-direction="prev" class="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}" ${currentPage === 1 ? 'disabled' : ''}>Anterior</button>
-                    <span class="text-sm text-gray-600 dark:text-gray-400">Página ${currentPage} de ${totalPages || 1}</span>
-                    <button data-action="paginate" data-type="${type}" data-direction="next" class="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded ${currentPage === totalPages || totalPages === 0 ? 'opacity-50 cursor-not-allowed' : ''}" ${currentPage === totalPages || totalPages === 0 ? 'disabled' : ''}>Siguiente</button>
+                    <button data-action="paginate" data-type="${type}" data-direction="prev" class="px-3 py-1 bg-gray-200 rounded ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}" ${currentPage === 1 ? 'disabled' : ''}>Anterior</button>
+                    <span class="text-sm text-gray-600">Página ${currentPage} de ${totalPages || 1}</span>
+                    <button data-action="paginate" data-type="${type}" data-direction="next" class="px-3 py-1 bg-gray-200 rounded ${currentPage === totalPages || totalPages === 0 ? 'opacity-50 cursor-not-allowed' : ''}" ${currentPage === totalPages || totalPages === 0 ? 'disabled' : ''}>Siguiente</button>
                 `;
                 feather.replace();
             };
@@ -1990,15 +1965,15 @@
             const renderReceipts = () => {
                 if (!dom.receiptsHistoryContainer) return;
                 if (appState.recibos.length === 0) {
-                    dom.receiptsHistoryContainer.innerHTML = `<p class="text-gray-500 dark:text-gray-400 italic">No hay recibos registrados.</p>`;
+                    dom.receiptsHistoryContainer.innerHTML = `<p class="text-gray-500 italic">No hay recibos registrados.</p>`;
                     return;
                 }
 
                 dom.receiptsHistoryContainer.innerHTML = appState.recibos.map(r => `
-                    <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3 flex justify-between items-center">
+                    <div class="bg-gray-50 rounded-lg p-3 flex justify-between items-center">
                         <div>
                             <p class="font-bold">Recibí de: ${r.recibiDe}</p>
-                            <p class="text-sm text-gray-600 dark:text-gray-400">Fecha: ${formatDate(r.fecha)} - Importe: $${formatCurrency(r.importe)}</p>
+                            <p class="text-sm text-gray-600">Fecha: ${formatDate(r.fecha)} - Importe: $${formatCurrency(r.importe)}</p>
                         </div>
                         <div class="flex items-center space-x-2">
                             <button data-action="edit-receipt" data-id="${r.id}" class="text-blue-500 hover:text-blue-700 p-1" title="Modificar"><i data-feather="edit" class="h-4 w-4"></i></button>
@@ -2058,22 +2033,30 @@
 
             const getReceiptHTML = (data) => {
                 return `
-                    <div class="receipt-pdf-container" style="display: flex; flex-direction: column; justify-content: space-between;">
-                        <div>
-                            <div style="text-align: center; border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 15mm;">
-                                <h3 style="font-size: 24pt; font-weight: 700; margin: 0;">Recibo</h3>
-                                <p style="font-size: 9pt; margin: 2px 0; line-height: 1.5;">Diócesis de Santo Tomé - Paso de los Libres – Corrientes<br>Dirección: Bartolomé Mitre 940<br>WhatsApp (3772) 651931</p>
+                    <div class="receipt-pdf-container" style="min-height: 0;">
+                        <div style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px;">
+                            <div style="text-align: center; border-bottom: 1px solid #dee2e6; padding-bottom: 10px; margin-bottom: 10mm;">
+                                <h3 style="font-size: 20pt; font-weight: 600; margin: 0; color: #343a40;">Recibo</h3>
+                                <p style="font-size: 9pt; margin: 4px 0 0 0; color: #6c757d;">Parroquia San José</p>
                             </div>
-                            <div style="font-size: 12pt; line-height: 2.5;">
+                            <div style="font-size: 11pt; line-height: 2.2;">
                                 <p><strong>Fecha:</strong> ${formatDate(data.fecha, 'long')}</p>
                                 <p><strong>Recibí de:</strong> ${data.recibiDe || ''}</p>
                                 <p><strong>En concepto de:</strong> ${data.concepto || ''}</p>
                                 <p><strong>Importe:</strong> $${formatCurrency(data.importe)}</p>
                             </div>
+                            <div style="text-align: center; padding-top: 15mm;">
+                                <div style="border-top: 1px solid #adb5bd; width: 60mm; margin: 0 auto; padding-top: 5px; font-size: 9pt; color: #6c757d;">
+                                    Sello Parroquial
+                                </div>
+                            </div>
                         </div>
-                        <div style="text-align: center; padding-top: 20mm;">
-                            <div style="border-top: 1px solid #555; width: 70mm; margin: 0 auto; padding-top: 5px; font-size: 10pt;">
-                                Sello Parroquial
+                        <div style="border-top: 1px dashed #adb5bd; margin-top: 15mm; padding-top: 10mm; font-size: 10pt; color: #495057;">
+                             <p>Entregué la cantidad de <strong>$${formatCurrency(data.importe)}</strong> a Secretaría Parroquial.</p>
+                             <div style="padding-top: 20mm; text-align: center;">
+                                <div style="border-top: 1px solid #555; width: 70mm; margin: 0 auto; padding-top: 5px; font-size: 10pt;">
+                                    Firma
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -2109,7 +2092,11 @@
                     const imgData = canvas.toDataURL('image/png');
                     const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
                     
-                    pdf.addImage(imgData, 'PNG', 0, 0, 210, 148.5); 
+                    const imgProps = pdf.getImageProperties(imgData);
+                    const pdfWidth = pdf.internal.pageSize.getWidth();
+                    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+                    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight); 
                     
                     pdf.save(`Recibo_${data.recibiDe.replace(/ /g, '_')}.pdf`);
                     showToast('PDF del recibo generado con éxito');
@@ -2126,6 +2113,7 @@
                 e.preventDefault();
                 tempDate = dom.receiptDateForm.querySelector('#receipt-date-input').value;
                 closeModal('receipt-date-modal');
+                // Reset and open main form
                 dom.receiptDataForm.reset();
                 dom.receiptDataForm.querySelector('#receipt-id').value = ''; // Ensure ID is cleared for new receipt
                 showModal('receipt-data-modal');
@@ -2164,13 +2152,13 @@
                 if (type === 'socio') {
                     row.innerHTML = `
                         <div class="col-span-4">
-                            <select class="w-full form-input socio-select rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700"></select>
+                            <select class="w-full form-input socio-select rounded-md p-2 border-gray-300 bg-gray-50"></select>
                         </div>
                         <div class="col-span-3">
-                            <input type="text" placeholder="Importe" value="${(data.importe || 0).toLocaleString('es-AR')}" class="w-full form-input socio-importe currency-input rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700">
+                            <input type="text" placeholder="Importe" value="${(data.importe || 0).toLocaleString('es-AR')}" class="w-full form-input socio-importe currency-input rounded-md p-2 border-gray-300 bg-gray-50">
                         </div>
                         <div class="col-span-4">
-                            <select class="w-full form-input socio-metodo rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700">
+                            <select class="w-full form-input socio-metodo rounded-md p-2 border-gray-300 bg-gray-50">
                                 <option value="Efectivo" ${data.metodo === 'Efectivo' ? 'selected' : ''}>Efectivo</option>
                                 <option value="Transferencia" ${data.metodo === 'Transferencia' ? 'selected' : ''}>Transferencia</option>
                             </select>
@@ -2191,10 +2179,10 @@
                 } else { // Ingreso or Egreso
                     row.innerHTML = `
                         <div class="col-span-7">
-                            <input type="text" placeholder="Descripción" value="${data.descripcion || ''}" class="w-full form-input ${type}-descripcion rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700">
+                            <input type="text" placeholder="Descripción" value="${data.descripcion || ''}" class="w-full form-input ${type}-descripcion rounded-md p-2 border-gray-300 bg-gray-50">
                         </div>
                         <div class="col-span-4">
-                            <input type="text" placeholder="Importe" value="${(data.importe || 0).toLocaleString('es-AR')}" class="w-full form-input ${type}-importe currency-input rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700">
+                            <input type="text" placeholder="Importe" value="${(data.importe || 0).toLocaleString('es-AR')}" class="w-full form-input ${type}-importe currency-input rounded-md p-2 border-gray-300 bg-gray-50">
                         </div>
                         <div class="col-span-1 text-right">
                             <button type="button" data-action="remove-dynamic-row" class="text-red-500 hover:text-red-700 p-1"><i data-feather="x-circle" class="h-5 w-5"></i></button>
@@ -2255,11 +2243,11 @@
             const renderRendiciones = () => {
                 if (!dom.rendicionHistoryContainer) return;
                 if (appState.rendiciones.length === 0) {
-                    dom.rendicionHistoryContainer.innerHTML = `<p class="text-gray-500 dark:text-gray-400 italic">No hay rendiciones registradas.</p>`;
+                    dom.rendicionHistoryContainer.innerHTML = `<p class="text-gray-500 italic">No hay rendiciones registradas.</p>`;
                     return;
                 }
                 dom.rendicionHistoryContainer.innerHTML = appState.rendiciones.map(r => `
-                    <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3 flex justify-between items-center">
+                    <div class="bg-gray-50 rounded-lg p-3 flex justify-between items-center">
                         <div>
                             <p class="font-bold">Rendición del ${formatDate(r.fecha, 'long')}</p>
                         </div>
@@ -2313,40 +2301,44 @@
                 const sociosTransferencia = rendicion.socios?.filter(s => s.metodo === 'Transferencia') || [];
 
                 const pdfHTML = `
-                    <div class="pdf-page-container">
-                        <div style="text-align: center; border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 15mm;">
-                            <h3 style="font-size: 24pt; font-weight: 700; margin: 0;">Rendición de Secretaría</h3>
-                            <p style="font-size: 12pt; margin: 2px 0;">Parroquia San José</p>
-                            <p style="font-size: 12pt; font-weight: bold;">Fecha: ${formatDate(rendicion.fecha, 'long')}</p>
+                    <div class="pdf-page-container" style="min-height: 0; font-family: 'Inter', sans-serif;">
+                        <div style="text-align: center; border-bottom: 1px solid #dee2e6; padding-bottom: 12px; margin-bottom: 12px;">
+                            <h3 style="font-size: 20pt; font-weight: 600; margin: 0; color: #343a40;">Rendición de Secretaría</h3>
+                            <p style="font-size: 10pt; margin: 4px 0 0 0; color: #6c757d;">Parroquia San José</p>
+                            <p style="font-size: 10pt; font-weight: 500; margin: 2px 0 0 0; color: #495057;">Fecha: ${formatDate(rendicion.fecha, 'long')}</p>
                         </div>
 
-                        <h4 style="font-size: 14pt; margin-top: 10mm; border-bottom: 1px solid #ccc; padding-bottom: 5px;">Ingresos en Efectivo</h4>
-                        <table style="width: 100%; font-size: 11pt; border-collapse: collapse; margin-top: 5mm;">
-                            ${(rendicion.socios?.filter(s => s.metodo === 'Efectivo').map(s => `<tr><td style="padding: 8px; border: 1px solid #ddd;">Aporte Socio: ${s.nombre}</td><td style="padding: 8px; border: 1px solid #ddd; text-align: right;">$ ${formatCurrency(s.importe)}</td></tr>`).join('')) || ''}
-                            ${(rendicion.otrosIngresos?.map(i => `<tr><td style="padding: 8px; border: 1px solid #ddd;">${i.descripcion}</td><td style="padding: 8px; border: 1px solid #ddd; text-align: right;">$ ${formatCurrency(i.importe)}</td></tr>`).join('')) || ''}
-                            ${subtotalIngresosEfectivo === 0 ? '<tr><td colspan="2" style="padding: 8px; border: 1px solid #ddd; font-style: italic;">Sin ingresos en efectivo</td></tr>' : ''}
-                        </table>
+                        <div style="background-color: #f8f9fa; border-radius: 8px; padding: 12px; margin-top: 8mm;">
+                            <h4 style="font-size: 12pt; margin: 0 0 8px 0; color: #495057; border-bottom: 1px solid #e9ecef; padding-bottom: 6px;">Ingresos en Efectivo</h4>
+                            <table style="width: 100%; font-size: 9pt; border-collapse: collapse;">
+                                ${(rendicion.socios?.filter(s => s.metodo === 'Efectivo').map(s => `<tr><td style="padding: 6px 0; border-bottom: 1px solid #e9ecef;">Aporte Socio: ${s.nombre}</td><td style="padding: 6px 0; border-bottom: 1px solid #e9ecef; text-align: right;">$ ${formatCurrency(s.importe)}</td></tr>`).join('')) || ''}
+                                ${(rendicion.otrosIngresos?.map(i => `<tr><td style="padding: 6px 0; border-bottom: 1px solid #e9ecef;">${i.descripcion}</td><td style="padding: 6px 0; border-bottom: 1px solid #e9ecef; text-align: right;">$ ${formatCurrency(i.importe)}</td></tr>`).join('')) || ''}
+                                ${subtotalIngresosEfectivo === 0 ? '<tr><td colspan="2" style="padding: 6px 0; font-style: italic; color: #6c757d;">Sin ingresos en efectivo</td></tr>' : ''}
+                            </table>
+                        </div>
 
-                        <h4 style="font-size: 14pt; margin-top: 10mm; border-bottom: 1px solid #ccc; padding-bottom: 5px;">Egresos</h4>
-                        <table style="width: 100%; font-size: 11pt; border-collapse: collapse; margin-top: 5mm;">
-                            ${rendicion.egresos?.map(e => `<tr><td style="padding: 8px; border: 1px solid #ddd;">${e.descripcion}</td><td style="padding: 8px; border: 1px solid #ddd; text-align: right;">- $ ${formatCurrency(e.importe)}</td></tr>`).join('') || '<tr><td colspan="2" style="padding: 8px; border: 1px solid #ddd; font-style: italic;">Sin egresos</td></tr>'}
-                        </table>
+                        <div style="background-color: #f8f9fa; border-radius: 8px; padding: 12px; margin-top: 6mm;">
+                            <h4 style="font-size: 12pt; margin: 0 0 8px 0; color: #495057; border-bottom: 1px solid #e9ecef; padding-bottom: 6px;">Egresos</h4>
+                            <table style="width: 100%; font-size: 9pt; border-collapse: collapse;">
+                                ${rendicion.egresos?.map(e => `<tr><td style="padding: 6px 0; border-bottom: 1px solid #e9ecef;">${e.descripcion}</td><td style="padding: 6px 0; border-bottom: 1px solid #e9ecef; text-align: right;">- $ ${formatCurrency(e.importe)}</td></tr>`).join('') || '<tr><td colspan="2" style="padding: 6px 0; font-style: italic; color: #6c757d;">Sin egresos</td></tr>'}
+                            </table>
+                        </div>
 
-                        <div style="margin-top: 15mm; padding-top: 10mm; border-top: 2px solid #333; font-size: 12pt;">
+                        <div style="margin-top: 8mm; padding-top: 8mm; border-top: 2px solid #343a40; font-size: 10pt;">
                             <table style="width: 100%; border-collapse: collapse;">
-                                <tr><td style="text-align: right; padding: 5px;">Subtotal Ingresos Efectivo:</td><td style="text-align: right; padding: 5px; width: 35%;">$ ${formatCurrency(subtotalIngresosEfectivo)}</td></tr>
-                                <tr><td style="text-align: right; padding: 5px;">Subtotal Egresos:</td><td style="text-align: right; padding: 5px;">- $ ${formatCurrency(subtotalEgresos)}</td></tr>
-                                <tr style="font-weight: bold; font-size: 16pt; border-top: 2px solid #333;"><td style="text-align: right; padding: 8px;">TOTAL RENDIDO:</td><td style="text-align: right; padding: 8px;">$ ${formatCurrency(totalRendido)}</td></tr>
+                                <tr><td style="text-align: right; padding: 4px 8px;">Subtotal Ingresos Efectivo:</td><td style="text-align: right; padding: 4px 8px; width: 35%;">$ ${formatCurrency(subtotalIngresosEfectivo)}</td></tr>
+                                <tr><td style="text-align: right; padding: 4px 8px;">Subtotal Egresos:</td><td style="text-align: right; padding: 4px 8px;">- $ ${formatCurrency(subtotalEgresos)}</td></tr>
+                                <tr style="font-weight: 600; font-size: 14pt; background-color: #e9ecef;"><td style="text-align: right; padding: 8px;">TOTAL RENDIDO:</td><td style="text-align: right; padding: 8px;">$ ${formatCurrency(totalRendido)}</td></tr>
                             </table>
                         </div>
 
                         ${sociosTransferencia.length > 0 ? `
-                        <div style="page-break-before: always;">
-                            <h4 style="font-size: 14pt; margin-top: 10mm; border-bottom: 1px solid #ccc; padding-bottom: 5px;">Detalle de Aportes por Transferencia</h4>
-                             <table style="width: 100%; font-size: 11pt; border-collapse: collapse; margin-top: 5mm;">
-                                ${sociosTransferencia.map(s => `<tr><td style="padding: 8px; border: 1px solid #ddd;">${s.nombre}</td><td style="padding: 8px; border: 1px solid #ddd; text-align: right;">$ ${formatCurrency(s.importe)}</td></tr>`).join('')}
+                        <div style="margin-top: 8mm; page-break-before: auto;">
+                            <h4 style="font-size: 12pt; margin: 0 0 8px 0; color: #495057; border-bottom: 1px solid #e9ecef; padding-bottom: 6px;">Detalle de Aportes por Transferencia</h4>
+                             <table style="width: 100%; font-size: 9pt; border-collapse: collapse; margin-top: 4mm;">
+                                ${sociosTransferencia.map(s => `<tr><td style="padding: 6px 0; border-bottom: 1px solid #eee;">${s.nombre}</td><td style="padding: 6px 0; border-bottom: 1px solid #eee; text-align: right;">$ ${formatCurrency(s.importe)}</td></tr>`).join('')}
                             </table>
-                            <p style="font-size: 10pt; font-style: italic; margin-top: 5mm;">Nota: Los montos por transferencia no se suman al total rendido en efectivo.</p>
+                            <p style="font-size: 8pt; font-style: italic; margin-top: 4mm; color: #6c757d;">Nota: Los montos por transferencia no se suman al total rendido en efectivo.</p>
                         </div>
                         ` : ''}
                     </div>
@@ -2372,21 +2364,9 @@
                     
                     const imgProps = pdf.getImageProperties(imgData);
                     const pdfWidth = pdf.internal.pageSize.getWidth();
-                    const pageHeight = pdf.internal.pageSize.getHeight();
                     const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
 
-                    let heightLeft = pdfHeight;
-                    let position = 0;
-
-                    pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
-                    heightLeft -= pageHeight;
-
-                    while (heightLeft > 0) {
-                        position -= pageHeight;
-                        pdf.addPage();
-                        pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
-                        heightLeft -= pageHeight;
-                    }
+                    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
 
                     pdf.save(`Rendicion_${rendicion.fecha}.pdf`);
                     showToast('PDF de rendición generado con éxito');
@@ -2441,7 +2421,7 @@
             const renderSociosManagementList = () => {
                 if (!dom.sociosListContainer) return;
                 dom.sociosListContainer.innerHTML = appState.socios.map(socio => `
-                    <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3 flex justify-between items-center">
+                    <div class="bg-gray-50 rounded-lg p-3 flex justify-between items-center">
                         <p class="font-medium">${socio.nombre}</p>
                         <div class="flex items-center space-x-2">
                             <button data-action="edit-socio" data-id="${socio.id}" data-name="${socio.nombre}" class="text-blue-500 hover:text-blue-700 p-1" title="Modificar"><i data-feather="edit" class="h-4 w-4"></i></button>
