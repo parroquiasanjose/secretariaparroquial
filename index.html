@@ -61,7 +61,7 @@
             font-family: 'Noto Serif', serif;
             color: #333;
             border-bottom: 1px dashed #ccc; /* Optional: visual separator */
-            overflow: hidden; 
+            overflow: hidden;  
         }
 
 
@@ -167,6 +167,44 @@
         .toast {
             animation: toast-in 0.5s, toast-out 0.5s 3s;
         }
+        
+        /* Strikethrough for completed notifications */
+        .notification-completed p {
+            text-decoration: line-through;
+            color: #9ca3af; /* gray-400 */
+        }
+        .dark .notification-completed p {
+            color: #4b5563; /* gray-600 */
+        }
+
+        /* Interactive Alert Ticker */
+        .alert-ticker-container {
+            height: 3rem; /* Same height as bell icon container */
+            width: 250px;
+            overflow: hidden;
+            position: relative;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 0.75rem;
+            padding: 0 1rem;
+            display: flex;
+            align-items: center;
+        }
+        .dark .alert-ticker-container {
+            background-color: rgba(30, 41, 59, 0.5);
+        }
+        .alert-ticker-item {
+            position: absolute;
+            white-space: nowrap;
+            opacity: 0;
+            transform: translateY(100%);
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+            font-size: 0.875rem;
+        }
+        .alert-ticker-item.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
 
         /* Print-specific styles */
         @media print {
@@ -218,9 +256,25 @@
                 <div class="flex justify-between items-center mb-12">
                     <h2 class="text-3xl font-bold">Secretaría Parroquia San José</h2>
                     <div class="flex items-center space-x-4">
-                        <div id="notification-bell-container" class="relative cursor-pointer" data-action="show-view" data-view-id="notifications-content">
-                            <i data-feather="bell" class="h-8 w-8 text-gray-600 dark:text-gray-300"></i>
-                            <span id="notification-badge" class="hidden absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center"></span>
+                        <!-- Interactive Alert Ticker -->
+                        <div id="alert-ticker" class="alert-ticker-container">
+                           <span class="text-gray-500 dark:text-gray-400">Sin alertas pendientes.</span>
+                        </div>
+                        <!-- Notification Bell -->
+                        <div class="relative">
+                            <div id="notification-bell-container" class="cursor-pointer">
+                                <i data-feather="bell" class="h-8 w-8 text-gray-600 dark:text-gray-300"></i>
+                                <span id="notification-badge" class="hidden absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center"></span>
+                            </div>
+                            <!-- Notification Dropdown Panel -->
+                            <div id="notification-panel" class="hidden absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-xl z-20">
+                                <div class="p-4 border-b dark:border-gray-700">
+                                    <h4 class="font-bold">Alertas Pendientes</h4>
+                                </div>
+                                <div id="notification-panel-list" class="p-2 max-h-96 overflow-y-auto">
+                                    <!-- Pending notifications will be rendered here -->
+                                </div>
+                            </div>
                         </div>
                         <button id="logout-btn" class="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105">Cerrar Sesión</button>
                     </div>
@@ -554,14 +608,6 @@
                             <form id="notification-form" class="space-y-4">
                                 <textarea id="notification-text" rows="4" class="w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700" placeholder="Escribe tu recordatorio aquí..." required></textarea>
                                 <div>
-                                    <label for="notification-priority" class="block text-sm font-medium">Prioridad</label>
-                                    <select id="notification-priority" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700">
-                                        <option value="normal">Normal</option>
-                                        <option value="importante">Importante</option>
-                                        <option value="urgente">Urgente</option>
-                                    </select>
-                                </div>
-                                <div>
                                     <label for="notification-due-date" class="block text-sm font-medium">Fecha de Vencimiento</label>
                                     <input type="date" id="notification-due-date" class="mt-1 block w-full rounded-md p-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700">
                                 </div>
@@ -570,6 +616,7 @@
                         </div>
                     </div>
                     <div class="md:col-span-2">
+                         <h3 class="text-xl font-bold mb-4">Registro de Notificaciones</h3>
                         <div id="notifications-list" class="space-y-4"></div>
                     </div>
                 </div>
@@ -837,6 +884,7 @@
             let recordToDelete = { type: null, id: null };
             let unsubscribeListeners = [];
             let tempDate = null; // To hold date between modals
+            let alertTickerInterval = null; // To manage the alert ticker animation
 
             const appState = {
                 notifications: [],
@@ -896,6 +944,10 @@
                 confirmacionFormPaginationContainer: document.getElementById('confirmacion-form-pagination-container'),
                 deleteConfirmModal: document.getElementById('delete-confirm-modal'),
                 notificationBadge: document.getElementById('notification-badge'),
+                notificationBell: document.getElementById('notification-bell-container'),
+                notificationPanel: document.getElementById('notification-panel'),
+                notificationPanelList: document.getElementById('notification-panel-list'),
+                alertTicker: document.getElementById('alert-ticker'),
                 loadingSpinner: document.getElementById('loading-spinner'),
                 toastContainer: document.getElementById('toast-container'),
                 // Caja module elements
@@ -967,41 +1019,104 @@
             };
 
             const updateNotificationBell = () => {
-                const alertCount = appState.notifications.filter(n => n.priority === 'importante' || n.priority === 'urgente').length;
-                if (alertCount > 0) {
-                    dom.notificationBadge.textContent = alertCount;
+                const pendingAlerts = appState.notifications.filter(n => !n.completed);
+                if (pendingAlerts.length > 0) {
+                    dom.notificationBadge.textContent = pendingAlerts.length;
                     dom.notificationBadge.classList.remove('hidden');
                 } else {
                     dom.notificationBadge.classList.add('hidden');
                 }
+                renderNotificationPanel(pendingAlerts);
+                renderAlertTicker(pendingAlerts);
             };
 
             const renderNotifications = () => {
-                const priorityClasses = {
-                    normal: 'border-gray-200 dark:border-gray-700',
-                    importante: 'border-yellow-500',
-                    urgente: 'border-red-500',
-                };
                 const today = new Date();
                 today.setHours(0, 0, 0, 0);
 
-                dom.notificationsList.innerHTML = appState.notifications.map(n => {
-                    const isOverdue = n.dueDate && new Date(n.dueDate) < today;
+                // Sort by completion status first, then by due date
+                const sortedNotifications = [...appState.notifications].sort((a, b) => {
+                    if (a.completed !== b.completed) {
+                        return a.completed ? 1 : -1;
+                    }
+                    const dateA = a.dueDate ? new Date(a.dueDate) : new Date(0);
+                    const dateB = b.dueDate ? new Date(b.dueDate) : new Date(0);
+                    return dateA - dateB;
+                });
+
+                dom.notificationsList.innerHTML = sortedNotifications.map(n => {
+                    const isOverdue = n.dueDate && new Date(n.dueDate) < today && !n.completed;
                     const dateColor = isOverdue ? 'text-red-500' : 'text-gray-500 dark:text-gray-400';
+                    const completedClass = n.completed ? 'notification-completed opacity-60' : '';
+
                     return `
-                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 border-l-4 ${priorityClasses[n.priority]}">
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-4 ${completedClass}">
                         <div class="flex justify-between items-start">
-                            <p class="text-gray-800 dark:text-gray-200">${n.text}</p>
-                            <button data-action="remove-notification" data-id="${n.id}" class="text-red-500 hover:text-red-700 no-print ml-4">
-                                <i data-feather="trash-2" class="h-4 w-4"></i>
-                            </button>
+                            <div class="flex-grow pr-4">
+                                <p class="text-gray-800 dark:text-gray-200">${n.text}</p>
+                                ${n.dueDate ? `<p class="text-sm mt-2 ${dateColor}">Vence: ${formatDate(n.dueDate)}</p>` : ''}
+                            </div>
+                            <div class="flex flex-col space-y-2 no-print">
+                                <button data-action="mark-notification-complete" data-id="${n.id}" class="text-green-500 hover:text-green-700 p-1" title="Completar">
+                                    <i data-feather="check-circle" class="h-5 w-5"></i>
+                                </button>
+                                <button data-action="remove-notification" data-id="${n.id}" class="text-red-500 hover:text-red-700 p-1" title="Eliminar">
+                                    <i data-feather="trash-2" class="h-5 w-5"></i>
+                                </button>
+                            </div>
                         </div>
-                        ${n.dueDate ? `<p class="text-sm mt-2 ${dateColor}">Vence: ${formatDate(n.dueDate)}</p>` : ''}
                     </div>
                     `}).join('');
                 feather.replace();
                 updateNotificationBell();
             };
+
+            const renderNotificationPanel = (pendingAlerts) => {
+                if (pendingAlerts.length === 0) {
+                    dom.notificationPanelList.innerHTML = `<p class="text-center text-gray-500 dark:text-gray-400 p-4">No hay alertas.</p>`;
+                    return;
+                }
+                dom.notificationPanelList.innerHTML = pendingAlerts.map(n => `
+                    <div class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md flex justify-between items-center">
+                        <span class="text-sm flex-grow pr-2">${n.text}</span>
+                        <button data-action="mark-notification-complete" data-id="${n.id}" class="flex-shrink-0 bg-green-100 text-green-700 text-xs font-bold py-1 px-2 rounded-full hover:bg-green-200" title="Marcar como completado">
+                            Completado
+                        </button>
+                    </div>
+                `).join('');
+            };
+            
+            const renderAlertTicker = (pendingAlerts) => {
+                clearInterval(alertTickerInterval);
+                dom.alertTicker.innerHTML = '';
+
+                if (pendingAlerts.length === 0) {
+                    dom.alertTicker.innerHTML = `<span class="text-gray-500 dark:text-gray-400">Sin alertas pendientes.</span>`;
+                    return;
+                }
+                
+                pendingAlerts.forEach((alert, index) => {
+                    const item = document.createElement('span');
+                    item.className = 'alert-ticker-item';
+                    item.textContent = alert.text;
+                    dom.alertTicker.appendChild(item);
+                });
+
+                let currentIndex = 0;
+                const items = dom.alertTicker.querySelectorAll('.alert-ticker-item');
+                
+                const cycleAlerts = () => {
+                    items.forEach(item => item.classList.remove('active'));
+                    if (items[currentIndex]) {
+                        items[currentIndex].classList.add('active');
+                        currentIndex = (currentIndex + 1) % items.length;
+                    }
+                };
+                
+                cycleAlerts();
+                alertTickerInterval = setInterval(cycleAlerts, 4000);
+            };
+
 
             const renderStandardTable = (tableKey, tbodyElement) => {
                 if (!tbodyElement) return;
@@ -1613,6 +1728,10 @@
                     case 'remove-row':
                         deleteDoc(doc(db, `parroquia/shared-data/${table}`, id));
                         break;
+                    case 'mark-notification-complete':
+                        setDoc(doc(db, `parroquia/shared-data/notifications`, id), { completed: true }, { merge: true });
+                        showToast('Notificación completada');
+                        break;
                     case 'remove-notification':
                         deleteDoc(doc(db, `parroquia/shared-data/notifications`, id));
                         showToast('Notificación eliminada');
@@ -1718,10 +1837,14 @@
             dom.notificationForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const text = dom.notificationForm.querySelector('#notification-text').value.trim();
-                const priority = dom.notificationForm.querySelector('#notification-priority').value;
                 const dueDate = dom.notificationForm.querySelector('#notification-due-date').value;
                 if (text) {
-                    await addDoc(collection(db, `parroquia/shared-data/notifications`), { text, priority, dueDate });
+                    await addDoc(collection(db, `parroquia/shared-data/notifications`), { 
+                        text, 
+                        dueDate,
+                        completed: false, // New field
+                        createdAt: new Date().toISOString()
+                    });
                     dom.notificationForm.reset();
                     showToast('Notificación agregada');
                 }
@@ -1780,6 +1903,11 @@
                     input.value = '';
                     closeCustomLocationModal();
                 }
+            });
+            
+            // Toggle notification panel
+            dom.notificationBell.addEventListener('click', () => {
+                dom.notificationPanel.classList.toggle('hidden');
             });
 
             // --- AUTHENTICATION LOGIC ---
