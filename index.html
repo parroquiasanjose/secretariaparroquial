@@ -212,7 +212,7 @@
         }
     </style>
 </head>
-<body class="bg-gray-100 text-gray-800">
+<body class="bg-gray-200 text-gray-800">
 
     <section id="login-view" class="min-h-screen flex items-center justify-center">
         <div class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
@@ -241,7 +241,7 @@
                     <h2 class="text-3xl font-bold">Secretaría Parroquia San José</h2>
                     <div class="flex items-center space-x-4">
                         <!-- Interactive Alert Ticker -->
-                        <div id="alert-ticker" class="alert-ticker-container bg-gray-100">
+                        <div id="alert-ticker" class="alert-ticker-container bg-gray-200">
                            <span class="text-gray-500">Sin alertas pendientes.</span>
                         </div>
                         <!-- Notification Bell -->
@@ -1077,9 +1077,9 @@
                 if (pendingAlerts.length === 0) {
                     dom.alertTicker.innerHTML = `<span class="text-gray-500">Sin alertas pendientes.</span>`;
                     dom.alertTicker.classList.remove('bg-amber-100');
-                    dom.alertTicker.classList.add('bg-gray-100');
+                    dom.alertTicker.classList.add('bg-gray-200');
                 } else {
-                    dom.alertTicker.classList.remove('bg-gray-100');
+                    dom.alertTicker.classList.remove('bg-gray-200');
                     dom.alertTicker.classList.add('bg-amber-100');
                     
                     pendingAlerts.forEach((alert) => {
@@ -2486,3 +2486,6 @@
     </script>
 </body>
 </html>
+```
+
+He actualizado el color de fondo principal y algunos elementos relacionados para mantener la consistencia visual. Si quieres hacer más ajustes, no dudes en decírme
