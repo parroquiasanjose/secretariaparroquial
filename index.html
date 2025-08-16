@@ -38,7 +38,7 @@
         /* Contenedor de altura flexible para certificados y recibos */
         .pdf-certificate-container, .receipt-pdf-container {
             width: 210mm;
-            padding: 15mm;
+            padding: 10mm; /* CAMBIO: Margen reducido de 15mm a 10mm */
             box-sizing: border-box;
             background-color: #fff;
             display: flex;
@@ -1401,7 +1401,7 @@
                 
                 if (type === 'bautismo') {
                     const body = `<div class="certificate-modern-body"><p>Se certifica que en el libro N° <span class="field">${data.libro || ''}</span>, Folio N° <span class="field">${data.folio || ''}</span>, se encuentra la partida de Bautismo de: <strong>${(data.nombre || '').toUpperCase()}</strong>, nacido/a en <span class="field">${data.lugarNac || ''}</span> el <span class="field">${formatDate(data.fechaNac)}</span>, hijo/a de <span class="field">${data.padre || ''}</span> y de <span class="field">${data.madre || ''}</span>. Fue bautizado/a el día <span class="field">${formatDate(data.fechaBautismo)}</span>, siendo sus padrinos <span class="field">${data.padrino || ''}</span> y <span class="field">${data.madrina || ''}</span>.</p><p><strong>Notas:</strong> ${data.notas || 'Ninguna'}</p></div>`;
-                    const footer = `<div class="certificate-modern-footer"><div class="signature-line">Sello Parroquial</div><div class="signature-line">Firma del Párroco</div></div>`;
+                    const footer = `<div class="certificate-modern-footer"><div class="signature-line">Sello Parroquial</div><div class="signature-line">Firma del Presbítero</div></div>`; // CAMBIO: Texto de la firma
                     return `<div class="${containerClass}"><div class="certificate-modern">${header}${body}${footer}</div></div>`;
                 }
                 
@@ -2486,6 +2486,3 @@
     </script>
 </body>
 </html>
-```
-
-He actualizado el color de fondo principal y algunos elementos relacionados para mantener la consistencia visual. Si quieres hacer más ajustes, no dudes en decírme
