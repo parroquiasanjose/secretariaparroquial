@@ -96,7 +96,7 @@
         .certificate-modern-footer {
             display: flex;
             justify-content: space-between;
-            align-items: flex-end;
+            align-items: center; /* CAMBIO: Alineación vertical al centro */
             margin-top: 15mm;
             border-top: 1px solid #e0e0e0;
             padding-top: 10mm;
@@ -238,7 +238,10 @@
         <section id="secretaria-dashboard" data-view="secretaria-dashboard" class="min-h-screen">
             <div class="container mx-auto px-6 py-20">
                 <div class="flex justify-between items-center mb-12">
-                    <h2 class="text-3xl font-bold">Secretaría Parroquia San José</h2>
+                    <div class="flex items-center space-x-4">
+                        <img src="https://i.postimg.cc/vTQjffhK/NUEVO-LOGO.png" alt="Logo Parroquia" class="h-16 w-16">
+                        <h2 class="text-3xl font-bold">Secretaría Parroquia San José</h2>
+                    </div>
                     <div class="flex items-center space-x-4">
                         <!-- Interactive Alert Ticker -->
                         <div id="alert-ticker" class="alert-ticker-container bg-gray-200">
@@ -1401,7 +1404,7 @@
                 
                 if (type === 'bautismo') {
                     const body = `<div class="certificate-modern-body"><p>Se certifica que en el libro N° <span class="field">${data.libro || ''}</span>, Folio N° <span class="field">${data.folio || ''}</span>, se encuentra la partida de Bautismo de: <strong>${(data.nombre || '').toUpperCase()}</strong>, nacido/a en <span class="field">${data.lugarNac || ''}</span> el <span class="field">${formatDate(data.fechaNac)}</span>, hijo/a de <span class="field">${data.padre || ''}</span> y de <span class="field">${data.madre || ''}</span>. Fue bautizado/a el día <span class="field">${formatDate(data.fechaBautismo)}</span>, siendo sus padrinos <span class="field">${data.padrino || ''}</span> y <span class="field">${data.madrina || ''}</span>.</p><p><strong>Notas:</strong> ${data.notas || 'Ninguna'}</p></div>`;
-                    const footer = `<div class="certificate-modern-footer"><div class="signature-line">Sello Parroquial</div><div class="signature-line">Firma del Presbítero</div></div>`; // CAMBIO: Texto de la firma
+                    const footer = `<div class="certificate-modern-footer"><div class="signature-line">Sello Parroquial</div><img src="https://i.postimg.cc/vTQjffhK/NUEVO-LOGO.png" alt="Logo Parroquia" style="width: 60px; height: auto;"><div class="signature-line">Firma del Presbítero</div></div>`;
                     return `<div class="${containerClass}"><div class="certificate-modern">${header}${body}${footer}</div></div>`;
                 }
                 
@@ -1415,7 +1418,7 @@
                             <p>Padrino/Madrina: <span class="field">${data.padrino || ''}</span>.</p>
                             <p>En <span class="field">${data.lugarExpedicion || ''}</span>, ${formatDate(data.fechaExpedicion, 'long_parts')}.</p>
                         </div>`;
-                    const confirmationFooter = `<div class="certificate-modern-footer"><div class="signature-line">Sello parroquial</div><div class="signature-line">Pbro. ${data.parroco || ''} <br> Párroco</div></div>`;
+                    const confirmationFooter = `<div class="certificate-modern-footer"><div class="signature-line">Sello parroquial</div><img src="https://i.postimg.cc/vTQjffhK/NUEVO-LOGO.png" alt="Logo Parroquia" style="width: 60px; height: auto;"><div class="signature-line">Pbro. ${data.parroco || ''} <br> Párroco</div></div>`;
                     return `<div class="${containerClass}"><div class="certificate-modern">${header}${body}${confirmationFooter}</div></div>`;
                 }
                 return '';
@@ -2083,9 +2086,9 @@
                         <div style="border-top: 1px dashed #adb5bd; margin-top: 15mm; padding-top: 10mm; font-size: 10pt; color: #495057;">
                              <p>Entregué la cantidad de <strong>$${formatCurrency(data.importe)}</strong> a Secretaría Parroquial.</p>
                              <div style="padding-top: 20mm; text-align: center;">
-                                <div style="border-top: 1px solid #555; width: 70mm; margin: 0 auto; padding-top: 5px; font-size: 10pt;">
-                                    Firma
-                                </div>
+                                 <div style="border-top: 1px solid #555; width: 70mm; margin: 0 auto; padding-top: 5px; font-size: 10pt;">
+                                     Firma
+                                 </div>
                             </div>
                         </div>
                     </div>
