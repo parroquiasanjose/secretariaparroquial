@@ -239,7 +239,7 @@
             <div class="container mx-auto px-6 py-20">
                 <div class="flex justify-between items-center mb-12">
                     <div class="flex items-center space-x-4">
-                        <img src="https://i.postimg.cc/vTQjffhK/NUEVO-LOGO.png" alt="Logo Parroquia" class="h-16 w-16">
+                        <img src="https://i.postimg.cc/vTQjffhK/NUEVO-LOGO.png" alt="Logo Parroquia" class="h-20 w-20">
                         <h2 class="text-3xl font-bold">Secretaría Parroquia San José</h2>
                     </div>
                     <div class="flex items-center space-x-4">
@@ -1404,7 +1404,7 @@
                 
                 if (type === 'bautismo') {
                     const body = `<div class="certificate-modern-body"><p>Se certifica que en el libro N° <span class="field">${data.libro || ''}</span>, Folio N° <span class="field">${data.folio || ''}</span>, se encuentra la partida de Bautismo de: <strong>${(data.nombre || '').toUpperCase()}</strong>, nacido/a en <span class="field">${data.lugarNac || ''}</span> el <span class="field">${formatDate(data.fechaNac)}</span>, hijo/a de <span class="field">${data.padre || ''}</span> y de <span class="field">${data.madre || ''}</span>. Fue bautizado/a el día <span class="field">${formatDate(data.fechaBautismo)}</span>, siendo sus padrinos <span class="field">${data.padrino || ''}</span> y <span class="field">${data.madrina || ''}</span>.</p><p><strong>Notas:</strong> ${data.notas || 'Ninguna'}</p></div>`;
-                    const footer = `<div class="certificate-modern-footer"><div class="signature-line">Sello Parroquial</div><img src="https://i.postimg.cc/vTQjffhK/NUEVO-LOGO.png" alt="Logo Parroquia" style="width: 60px; height: auto;"><div class="signature-line">Firma del Presbítero</div></div>`;
+                    const footer = `<div class="certificate-modern-footer"><div class="signature-line">Sello Parroquial</div><img src="https://i.postimg.cc/vTQjffhK/NUEVO-LOGO.png" alt="Logo Parroquia" style="width: 80px; height: 80px; object-fit: contain;"><div class="signature-line">Firma del Presbítero</div></div>`;
                     return `<div class="${containerClass}"><div class="certificate-modern">${header}${body}${footer}</div></div>`;
                 }
                 
@@ -1418,7 +1418,7 @@
                             <p>Padrino/Madrina: <span class="field">${data.padrino || ''}</span>.</p>
                             <p>En <span class="field">${data.lugarExpedicion || ''}</span>, ${formatDate(data.fechaExpedicion, 'long_parts')}.</p>
                         </div>`;
-                    const confirmationFooter = `<div class="certificate-modern-footer"><div class="signature-line">Sello parroquial</div><img src="https://i.postimg.cc/vTQjffhK/NUEVO-LOGO.png" alt="Logo Parroquia" style="width: 60px; height: auto;"><div class="signature-line">Pbro. ${data.parroco || ''} <br> Párroco</div></div>`;
+                    const confirmationFooter = `<div class="certificate-modern-footer"><div class="signature-line">Sello parroquial</div><img src="https://i.postimg.cc/vTQjffhK/NUEVO-LOGO.png" alt="Logo Parroquia" style="width: 80px; height: 80px; object-fit: contain;"><div class="signature-line">Pbro. ${data.parroco || ''} <br> Párroco</div></div>`;
                     return `<div class="${containerClass}"><div class="certificate-modern">${header}${body}${confirmationFooter}</div></div>`;
                 }
                 return '';
