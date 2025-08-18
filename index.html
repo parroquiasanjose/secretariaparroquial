@@ -123,6 +123,19 @@
             outline: none;
         }
 
+        /* NUEVO: Estilo para encabezados de tabla editables */
+        .editable-header {
+            background-color: #fefcbf; /* yellow-100 */
+            cursor: text;
+            transition: background-color 0.2s ease;
+            border-radius: 4px;
+        }
+        .editable-header:hover, .editable-header:focus {
+            background-color: #fef9c3; /* yellow-200 */
+            outline: 1px solid #facc15; /* yellow-400 */
+        }
+
+
         /* Loading Spinner */
         @keyframes spin {
             to { transform: rotate(360deg); }
@@ -462,6 +475,11 @@
                 <div class="flex justify-between items-center mb-8 no-print">
                     <h2 class="text-3xl font-bold">Organización de Misas y Ministros</h2>
                     <div class="flex items-center space-x-4">
+                        <!-- BOTÓN PARA GUARDAR ENCABEZADOS -->
+                        <button data-action="save-mass-org-headers" class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105 flex items-center space-x-2">
+                            <i data-feather="save" class="h-4 w-4"></i>
+                            <span>Guardar Encabezados</span>
+                        </button>
                         <button data-action="show-view" data-view-id="secretaria-dashboard" class="bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105">Inicio</button>
                     </div>
                 </div>
@@ -469,7 +487,7 @@
                     <div id="ministros-print-area" class="bg-white rounded-2xl shadow-lg p-8">
                         <div class="flex justify-between items-center mb-4">
                             <h3 class="text-2xl font-bold">Organización para el servicio litúrgico (Ministros)</h3>
-                            <button data-action="download-pdf" data-target="ministros-print-area" data-title="Parroquia San José" data-subtitle="Organización para el servicio litúrgico (Ministros)" data-filename="Organizacion_Ministros.pdf" class="no-print bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold py-2 px-4 rounded-lg flex items-center space-x-2">
+                            <button data-action="download-pdf" data-target="ministros-print-area" data-title="Parroquia San José" data-subtitle="Organización para el servicio litúrgico (Ministros)" data-filename="Organizacion_Ministros.pdf" class="no-print bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-2 px-4 rounded-lg flex items-center space-x-2">
                                 <i data-feather="download" class="h-4 w-4"></i>
                                 <span>Descargar PDF</span>
                             </button>
@@ -479,10 +497,11 @@
                                 <thead class="bg-gray-50">
                                     <tr>
                                         <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Semanas</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Sábado 19:30 H</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Domingo 08:00 H</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Domingo 10:30 H</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Domingo 20:00 H</th>
+                                        <!-- ENCABEZADOS EDITABLES -->
+                                        <th contenteditable="true" data-key="sabado" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider editable-header">Sábado 19:30 H</th>
+                                        <th contenteditable="true" data-key="dom08" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider editable-header">Domingo 08:00 H</th>
+                                        <th contenteditable="true" data-key="dom10" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider editable-header">Domingo 10:30 H</th>
+                                        <th contenteditable="true" data-key="dom20" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider editable-header">Domingo 20:00 H</th>
                                         <th class="px-6 py-3 text-center text-xs font-medium uppercase no-print">Acciones</th>
                                     </tr>
                                 </thead>
@@ -497,7 +516,7 @@
                         <div class="bg-white rounded-2xl shadow-lg p-8">
                              <div class="flex justify-between items-center mb-4">
                                 <h3 class="text-2xl font-bold">Organización de las Misas (Grupos)</h3>
-                                <button data-action="download-pdf" data-target="grupos-adoracion-print-area" data-title="Parroquia San José" data-subtitle="Organización de Misas, Grupos y Adoración" data-filename="Organizacion_Grupos_y_Adoracion.pdf" class="no-print bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold py-2 px-4 rounded-lg flex items-center space-x-2">
+                                <button data-action="download-pdf" data-target="grupos-adoracion-print-area" data-title="Parroquia San José" data-subtitle="Organización de Misas, Grupos y Adoración" data-filename="Organizacion_Grupos_y_Adoracion.pdf" class="no-print bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-2 px-4 rounded-lg flex items-center space-x-2">
                                     <i data-feather="download" class="h-4 w-4"></i>
                                     <span>Descargar PDF</span>
                                 </button>
@@ -507,10 +526,11 @@
                                     <thead class="bg-gray-50">
                                         <tr>
                                             <th class="px-6 py-3 text-left text-xs font-medium uppercase">Semanas</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium uppercase">Sábado 19:30 H</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium uppercase">Domingo 08:00 H</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium uppercase">Domingo 10:30 H</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium uppercase">Domingo 19:30 H</th>
+                                            <!-- ENCABEZADOS EDITABLES -->
+                                            <th contenteditable="true" data-key="sabado" class="px-6 py-3 text-left text-xs font-medium uppercase editable-header">Sábado 19:30 H</th>
+                                            <th contenteditable="true" data-key="dom08" class="px-6 py-3 text-left text-xs font-medium uppercase editable-header">Domingo 08:00 H</th>
+                                            <th contenteditable="true" data-key="dom10" class="px-6 py-3 text-left text-xs font-medium uppercase editable-header">Domingo 10:30 H</th>
+                                            <th contenteditable="true" data-key="dom20" class="px-6 py-3 text-left text-xs font-medium uppercase editable-header">Domingo 19:30 H</th>
                                             <th class="px-6 py-3 text-center text-xs font-medium uppercase no-print">Acciones</th>
                                         </tr>
                                     </thead>
@@ -770,10 +790,10 @@
                 <input type="hidden" id="edit-table">
                 <div class="space-y-4">
                     <div><label for="edit-semana" class="block text-sm font-medium">Semanas</label><input type="text" id="edit-semana" class="mt-1 block w-full rounded-md p-2 border-gray-300 bg-gray-50"></div>
-                    <div><label for="edit-sabado" class="block text-sm font-medium">Sábado 19:30 H</label><input type="text" id="edit-sabado" class="mt-1 block w-full rounded-md p-2 border-gray-300 bg-gray-50"></div>
-                    <div><label for="edit-dom08" class="block text-sm font-medium">Domingo 08:00 H</label><input type="text" id="edit-dom08" class="mt-1 block w-full rounded-md p-2 border-gray-300 bg-gray-50"></div>
-                    <div><label for="edit-dom10" class="block text-sm font-medium">Domingo 10:30 H</label><input type="text" id="edit-dom10" class="mt-1 block w-full rounded-md p-2 border-gray-300 bg-gray-50"></div>
-                    <div><label for="edit-dom20" class="block text-sm font-medium">Domingo 19:30 H / 20:00 H</label><input type="text" id="edit-dom20" class="mt-1 block w-full rounded-md p-2 border-gray-300 bg-gray-50"></div>
+                    <div><label id="edit-sabado-label" for="edit-sabado" class="block text-sm font-medium">Sábado 19:30 H</label><input type="text" id="edit-sabado" class="mt-1 block w-full rounded-md p-2 border-gray-300 bg-gray-50"></div>
+                    <div><label id="edit-dom08-label" for="edit-dom08" class="block text-sm font-medium">Domingo 08:00 H</label><input type="text" id="edit-dom08" class="mt-1 block w-full rounded-md p-2 border-gray-300 bg-gray-50"></div>
+                    <div><label id="edit-dom10-label" for="edit-dom10" class="block text-sm font-medium">Domingo 10:30 H</label><input type="text" id="edit-dom10" class="mt-1 block w-full rounded-md p-2 border-gray-300 bg-gray-50"></div>
+                    <div><label id="edit-dom20-label" for="edit-dom20" class="block text-sm font-medium">Domingo 19:30 H / 20:00 H</label><input type="text" id="edit-dom20" class="mt-1 block w-full rounded-md p-2 border-gray-300 bg-gray-50"></div>
                 </div>
                 <div class="mt-8 flex justify-end space-x-4">
                     <button type="button" data-action="close-modal" data-modal-id="edit-modal" class="bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105">Cancelar</button>
@@ -881,6 +901,13 @@
                 adoracionJueves: [],
                 adoracionSemanal: [],
                 horariosAdoracion: {}, 
+                // NUEVO: Estado para los encabezados de las tablas de misas
+                massOrgHeaders: {
+                    sabado: 'Sábado 19:30 H',
+                    dom08: 'Domingo 08:00 H',
+                    dom10: 'Domingo 10:30 H',
+                    dom20: 'Domingo 20:00 H'
+                },
                 bautismos: [],
                 confirmaciones: [],
                 recibos: [],
@@ -1234,6 +1261,7 @@
                     renderAdoracionTable('adoracionJueves', dom.adoracionJuevesTableBody);
                     renderAdoracionTable('adoracionSemanal', dom.adoracionSemanalTableBody);
                     renderHorariosAdoracion(); // Cargar horarios editables
+                    renderMassOrgHeaders(); // Cargar encabezados de misas
                 }
                  if (viewId === 'caja-content') {
                     renderReceipts();
@@ -1262,6 +1290,13 @@
                 const rowData = appState[table].find(row => row.id === id);
                 if (!rowData) return;
                 dom.editModalTitle.innerText = `Modificar Fila de ${table === 'ministros' ? 'Ministros' : 'Grupos'}`;
+                
+                // Update labels in the modal with current header text
+                dom.editForm.querySelector('#edit-sabado-label').textContent = appState.massOrgHeaders.sabado;
+                dom.editForm.querySelector('#edit-dom08-label').textContent = appState.massOrgHeaders.dom08;
+                dom.editForm.querySelector('#edit-dom10-label').textContent = appState.massOrgHeaders.dom10;
+                dom.editForm.querySelector('#edit-dom20-label').textContent = appState.massOrgHeaders.dom20;
+                
                 dom.editForm.querySelector('#edit-id').value = rowData.id;
                 dom.editForm.querySelector('#edit-table').value = table;
                 dom.editForm.querySelector('#edit-semana').value = rowData.semana || '';
@@ -1700,6 +1735,55 @@
                     showToast('Error al cargar la configuración de horarios.', 'error');
                 });
                 unsubscribeListeners.push(unsubHorarios);
+
+                // NUEVO: Listener para los encabezados de misas
+                const massHeadersDocRef = doc(db, 'parroquia/shared-data/configuracion', 'massOrganizationHeaders');
+                const unsubMassHeaders = onSnapshot(massHeadersDocRef, (docSnap) => {
+                    if (docSnap.exists()) {
+                        appState.massOrgHeaders = docSnap.data();
+                    } else {
+                        console.log("Mass headers config not found. Creating default...");
+                        setDoc(massHeadersDocRef, appState.massOrgHeaders); // Crea el doc con los valores por defecto
+                    }
+                    renderMassOrgHeaders();
+                }, (error) => {
+                    console.error("Error listening to mass headers config:", error);
+                    showToast('Error al cargar la configuración de encabezados.', 'error');
+                });
+                unsubscribeListeners.push(unsubMassHeaders);
+            };
+
+            // NUEVA FUNCIÓN: Renderiza los encabezados de las tablas de misas
+            const renderMassOrgHeaders = () => {
+                const headers = document.querySelectorAll('#mass-org-content .editable-header');
+                headers.forEach(header => {
+                    const key = header.dataset.key;
+                    if (appState.massOrgHeaders[key]) {
+                        header.textContent = appState.massOrgHeaders[key];
+                    }
+                });
+            };
+
+            // NUEVA FUNCIÓN: Guarda los encabezados de las tablas de misas
+            const handleSaveMassOrgHeaders = async () => {
+                showSpinner();
+                try {
+                    const headers = document.querySelectorAll('#ministros-print-area .editable-header'); // Solo necesitamos leer un set de encabezados
+                    const updatedHeaders = {};
+                    headers.forEach(header => {
+                        const key = header.dataset.key;
+                        updatedHeaders[key] = header.textContent.trim();
+                    });
+
+                    const headersDocRef = doc(db, 'parroquia/shared-data/configuracion', 'massOrganizationHeaders');
+                    await setDoc(headersDocRef, updatedHeaders);
+                    showToast('Encabezados guardados con éxito');
+                } catch (error) {
+                    console.error("Error saving mass headers:", error);
+                    showToast('Error al guardar los encabezados.', 'error');
+                } finally {
+                    hideSpinner();
+                }
             };
 
             document.body.addEventListener('click', (e) => {
@@ -1722,6 +1806,7 @@
                     case 'close-modal': closeModal(modalId); break;
                     case 'close-custom-location-modal': closeCustomLocationModal(); break;
                     case 'save-horarios': handleSaveHorarios(); break;
+                    case 'save-mass-org-headers': handleSaveMassOrgHeaders(); break; // NUEVO
                     case 'add-row':
                         const newId = Date.now().toString();
                         let newRowData;
