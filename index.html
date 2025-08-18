@@ -1585,14 +1585,111 @@
                     hideSpinner();
                     return;
                 }
+                
+                // Special handling for combined Grupos y Adoracion PDF
+                if (targetId === 'grupos-adoracion-print-area') {
+                    const printClone = document.createElement('div');
+                    printClone.style.position = 'absolute';
+                    printClone.style.left = '-9999px';
+                    printClone.style.width = '297mm'; // Landscape width
+                    printClone.style.backgroundColor = '#ffffff';
+                    printClone.style.color = '#1a202c';
+                    printClone.style.padding = '10mm'; // Narrow margins
+                    printClone.style.boxSizing = 'border-box';
+                    printClone.style.fontFamily = "'Inter', sans-serif";
 
+                    const pdfStyles = `
+                        <style>
+                            .pdf-container { background-color: #ffffff !important; font-family: 'Inter', sans-serif; display: flex; flex-direction: column; height: 190mm; }
+                            .pdf-container * { color: #1a202c !important; background-color: transparent !important; }
+                            .pdf-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 16px; }
+                            .pdf-header img { height: 20mm; width: auto; }
+                            .pdf-header .titles { text-align: center; flex-grow: 1; }
+                            .pdf-header h1 { font-size: 18pt; font-weight: 700; margin: 0; }
+                            .pdf-header h2 { font-size: 11pt; font-weight: 500; color: #718096 !important; margin: 4px 0 0 0; }
+                            .main-table-container { margin-bottom: 8mm; }
+                            .adoracion-container { display: flex; gap: 8mm; flex-grow: 1; }
+                            .adoracion-column { flex: 1; display: flex; flex-direction: column; }
+                            .adoracion-column > div { flex-grow: 1; }
+                            h3 { font-size: 14pt; font-weight: 600; margin-bottom: 8px; }
+                            h4 { font-size: 11pt; font-weight: 600; margin-top: 12px; margin-bottom: 8px; }
+                            table { width: 100%; border-collapse: collapse; font-size: 8pt; }
+                            th, td { border: 1px solid #e2e8f0; padding: 6px 8px; text-align: left; }
+                            thead th { background-color: #f1f5f9 !important; font-weight: 600; font-size: 9pt; }
+                            tbody tr:nth-child(even) { background-color: #f8fafc !important; }
+                            .horarios-container { background-color: #f1f5f9 !important; border-radius: 6px; padding: 8px; margin-top: 10px; font-size: 7pt; }
+                            .horarios-container h5 { font-weight: bold; margin-bottom: 4px; }
+                        </style>
+                    `;
+
+                    const gruposClone = sourceElement.children[0].cloneNode(true);
+                    const adoracionClone = sourceElement.children[1].cloneNode(true);
+                    const adoracionJuevesClone = adoracionClone.querySelector('.grid > div:first-child').cloneNode(true);
+                    const adoracionSemanalClone = adoracionClone.querySelector('.grid > div:last-child').cloneNode(true);
+
+
+                    [gruposClone, adoracionJuevesClone, adoracionSemanalClone].forEach(clone => {
+                         clone.querySelectorAll('.no-print, [data-action="download-pdf"]').forEach(el => el.remove());
+                         clone.querySelectorAll('*').forEach(el => {
+                            el.removeAttribute('class');
+                            el.style.fontSize = ''; 
+                        });
+                    });
+
+                    printClone.innerHTML = `
+                        ${pdfStyles}
+                        <div class="pdf-container">
+                            <div class="pdf-header">
+                                <img src="https://i.postimg.cc/vTQjffhK/NUEVO-LOGO.png" alt="Logo"/>
+                                <div class="titles">
+                                    <h1>${title}</h1>
+                                    <h2>${subtitle}</h2>
+                                </div>
+                                <div style="width: 20mm;"></div> <!-- Spacer -->
+                            </div>
+                            <div class="main-table-container">
+                                ${gruposClone.innerHTML}
+                            </div>
+                            <div class="adoracion-container">
+                                <div class="adoracion-column">${adoracionJuevesClone.innerHTML}</div>
+                                <div class="adoracion-column">${adoracionSemanalClone.innerHTML}</div>
+                            </div>
+                        </div>
+                    `;
+
+                    document.body.appendChild(printClone);
+                    
+                    try {
+                        const canvas = await html2canvas(printClone.querySelector('.pdf-container'), { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
+                        const imgData = canvas.toDataURL('image/png');
+                        const pdf = new jsPDF({ orientation: 'l', unit: 'mm', format: 'a4' });
+                        const pdfWidth = pdf.internal.pageSize.getWidth();
+                        const pdfHeight = pdf.internal.pageSize.getHeight();
+                        const imgProps = pdf.getImageProperties(imgData);
+                        const imgHeight = (imgProps.height * pdfWidth) / imgProps.width;
+                        
+                        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, imgHeight > pdfHeight ? pdfHeight : imgHeight);
+                        
+                        pdf.save(filename);
+                        showToast('PDF descargado con éxito.');
+                    } catch (error) {
+                        console.error('Error al generar el PDF combinado:', error);
+                        showToast('Hubo un error al generar el PDF.', 'error');
+                    } finally {
+                        document.body.removeChild(printClone);
+                        hideSpinner();
+                    }
+                    return; // End special handling
+                }
+
+                // Default PDF generation for other sections
                 const printClone = document.createElement('div');
                 printClone.style.position = 'absolute';
                 printClone.style.left = '-9999px';
-                printClone.style.width = '210mm';
+                printClone.style.width = '297mm'; // Landscape width
                 printClone.style.backgroundColor = '#ffffff';
                 printClone.style.color = '#1a202c';
-                printClone.style.padding = '15mm';
+                printClone.style.padding = '10mm'; // Narrow margins
                 printClone.style.boxSizing = 'border-box';
                 printClone.style.fontFamily = "'Inter', sans-serif";
 
@@ -1600,27 +1697,36 @@
                     <style>
                         .pdf-container { background-color: #ffffff !important; font-family: 'Inter', sans-serif; }
                         .pdf-container * { color: #1a202c !important; background-color: transparent !important; }
-                        .pdf-container h1 { font-size: 22pt; font-weight: 700; margin: 0; }
-                        .pdf-container h2 { font-size: 14pt; font-weight: 500; color: #718096 !important; margin: 4px 0 24px 0; }
-                        .pdf-container h3 { font-size: 16pt; font-weight: 600; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; margin-bottom: 16px; margin-top: 24px; }
-                        .pdf-container h4 { font-size: 13pt; font-weight: 600; margin-top: 20px; margin-bottom: 12px; }
-                        .pdf-container table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 10pt; }
-                        .pdf-container th, .pdf-container td { border: 1px solid #e2e8f0; padding: 10px 12px; text-align: left; }
-                        .pdf-container thead th { background-color: #4299e1 !important; color: white !important; font-weight: 600; font-size: 11pt; }
-                        .pdf-container tbody tr:nth-child(even) { background-color: #f7fafc !important; }
-                        .pdf-container .horarios-container { background-color: #edf2f7 !important; border-radius: 8px; padding: 12px; margin-top: 16px; font-size: 9pt; }
-                        .pdf-container .horarios-container h5 { font-weight: bold; margin-bottom: 8px; }
+                        .pdf-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 16px; }
+                        .pdf-header img { height: 20mm; width: auto; }
+                        .pdf-header .titles { text-align: center; flex-grow: 1; }
+                        .pdf-header h1 { font-size: 20pt; font-weight: 700; margin: 0; }
+                        .pdf-header h2 { font-size: 12pt; font-weight: 500; color: #718096 !important; margin: 4px 0 0 0; }
+                        table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 9pt; }
+                        th, td { border: 1px solid #e2e8f0; padding: 8px 10px; text-align: left; }
+                        thead th { background-color: #f1f5f9 !important; font-weight: 600; font-size: 10pt; }
+                        tbody tr:nth-child(even) { background-color: #f8fafc !important; }
                     </style>
                 `;
                 
                 const contentClone = sourceElement.cloneNode(true);
                 contentClone.querySelectorAll('.no-print').forEach(el => el.remove());
-                contentClone.querySelectorAll('*').forEach(el => el.removeAttribute('class'));
+                contentClone.querySelectorAll('*').forEach(el => {
+                    el.removeAttribute('class');
+                    el.style.fontSize = '';
+                });
 
                 printClone.innerHTML = `
                     ${pdfStyles}
                     <div class="pdf-container">
-                        <div style="text-align: center;"><h1>${title}</h1><h2>${subtitle}</h2></div>
+                         <div class="pdf-header">
+                            <img src="https://i.postimg.cc/vTQjffhK/NUEVO-LOGO.png" alt="Logo"/>
+                            <div class="titles">
+                                <h1>${title}</h1>
+                                <h2>${subtitle}</h2>
+                            </div>
+                            <div style="width: 20mm;"></div> <!-- Spacer -->
+                        </div>
                         ${contentClone.innerHTML}
                     </div>
                 `;
@@ -1629,30 +1735,28 @@
                 
                 try {
                     const canvas = await html2canvas(printClone.querySelector('.pdf-container'), {
-                        scale: 3,
+                        scale: 2,
                         useCORS: true,
                         backgroundColor: '#ffffff',
                     });
                     
                     const imgData = canvas.toDataURL('image/png');
-                    const pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
-
-                    const imgProps = pdf.getImageProperties(imgData);
+                    const pdf = new jsPDF({ orientation: 'l', unit: 'mm', format: 'a4' });
                     const pdfWidth = pdf.internal.pageSize.getWidth();
-                    const pageHeight = pdf.internal.pageSize.getHeight();
-                    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-
-                    let heightLeft = pdfHeight;
+                    const pdfHeight = pdf.internal.pageSize.getHeight();
+                    const imgProps = pdf.getImageProperties(imgData);
+                    const imgHeight = (imgProps.height * pdfWidth) / imgProps.width;
+                    let heightLeft = imgHeight;
                     let position = 0;
                     
-                    pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
-                    heightLeft -= pageHeight;
+                    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, imgHeight);
+                    heightLeft -= pdfHeight;
 
                     while (heightLeft > 0) {
-                        position -= pageHeight;
+                        position = heightLeft - imgHeight;
                         pdf.addPage();
-                        pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
-                        heightLeft -= pageHeight;
+                        pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, imgHeight);
+                        heightLeft -= pdfHeight;
                     }
 
                     pdf.save(filename);
