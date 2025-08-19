@@ -350,7 +350,7 @@
             <div class="container mx-auto px-6 py-12">
                 <div class="flex justify-between items-center mb-12">
                     <h2 class="text-3xl font-bold">Seleccionar Tipo de Certificado</h2>
-                    <button data-action="show-view" data-view-id="secretaria-dashboard" class="bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105">Inicio</button>
+                    <button data-action="show-view" data-view-id="secretaria-dashboard" class="bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105">Volver a Elegir</button>
                 </div>
                 <div class="flex justify-center">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-10 w-full max-w-4xl">
@@ -512,12 +512,12 @@
                                 </tbody>
                             </table>
                         </div>
-                         <div class="mt-4 text-right no-print"><button data-action="add-row" data-table="ministros" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105">Agregar Fila</button></div>
+                           <div class="mt-4 text-right no-print"><button data-action="add-row" data-table="ministros" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105">Agregar Fila</button></div>
                     </div>
 
                     <div id="grupos-adoracion-print-area">
                         <div class="bg-white rounded-2xl shadow-lg p-8">
-                             <div class="flex justify-between items-center mb-4">
+                               <div class="flex justify-between items-center mb-4">
                                 <h3 class="text-2xl font-bold">Organización de las Misas (Grupos)</h3>
                                 <button data-action="download-pdf" data-target="grupos-adoracion-print-area" data-title="Parroquia San José" data-subtitle="Organización de Misas, Grupos y Adoración" data-filename="Organizacion_Grupos_y_Adoracion.pdf" class="no-print bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-2 px-4 rounded-lg flex items-center space-x-2">
                                     <i data-feather="download" class="h-4 w-4"></i>
@@ -627,8 +627,8 @@
                         </div>
                     </div>
                     <div class="md:col-span-2">
-                         <h3 class="text-xl font-bold mb-4">Registro de Notificaciones</h3>
-                        <div id="notifications-list" class="space-y-4"></div>
+                           <h3 class="text-xl font-bold mb-4">Registro de Notificaciones</h3>
+                         <div id="notifications-list" class="space-y-4"></div>
                     </div>
                 </div>
            </div>
@@ -1177,7 +1177,7 @@
             const renderAdoracionTable = (tableKey, tbodyElement) => {
                 if (!tbodyElement) return;
                 tbodyElement.innerHTML = appState[tableKey].map(row => `
-                                <tr data-id="${row.id}">
+                                <tr>
                                     <td class="px-6 py-4">${row.col1 || ''}</td>
                                     <td class="px-6 py-4">${row.col2 || ''}</td>
                                     <td class="px-6 py-4 text-center no-print">
@@ -1719,14 +1719,14 @@
                 printClone.innerHTML = `
                     ${pdfStyles}
                     <div class="pdf-container">
-                         <div class="pdf-header">
-                            <img src="https://i.postimg.cc/vTQjffhK/NUEVO-LOGO.png" alt="Logo"/>
-                            <div class="titles">
-                                <h1>${title}</h1>
-                                <h2>${subtitle}</h2>
+                             <div class="pdf-header">
+                                <img src="https://i.postimg.cc/vTQjffhK/NUEVO-LOGO.png" alt="Logo"/>
+                                <div class="titles">
+                                    <h1>${title}</h1>
+                                    <h2>${subtitle}</h2>
+                                </div>
+                                <div style="width: 20mm;"></div> <!-- Spacer -->
                             </div>
-                            <div style="width: 20mm;"></div> <!-- Spacer -->
-                        </div>
                         ${contentClone.innerHTML}
                     </div>
                 `;
@@ -1918,9 +1918,9 @@
                         const newId = Date.now().toString();
                         let newRowData;
                         if (table === 'adoracionJueves' || table === 'adoracionSemanal') {
-                           newRowData = { id: newId, col1: 'Nuevo', col2: '' };
+                            newRowData = { id: newId, col1: 'Nuevo', col2: '' };
                         } else {
-                           newRowData = { id: newId, semana: 'Nueva', sabado: '', dom08: '', dom10: '', dom20: '' };
+                            newRowData = { id: newId, semana: 'Nueva', sabado: '', dom08: '', dom10: '', dom20: '' };
                         }
                         setDoc(doc(db, `parroquia/shared-data/${table}`, newId), newRowData);
                         break;
@@ -2260,9 +2260,13 @@
                 return `
                     <div class="receipt-pdf-container" style="min-height: 0;">
                         <div style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px;">
-                            <div style="text-align: center; border-bottom: 1px solid #dee2e6; padding-bottom: 10px; margin-bottom: 10mm;">
-                                <h3 style="font-size: 20pt; font-weight: 600; margin: 0; color: #343a40;">Recibo</h3>
-                                <p style="font-size: 9pt; margin: 4px 0 0 0; color: #6c757d;">Parroquia San José</p>
+                            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #dee2e6; padding-bottom: 10px; margin-bottom: 10mm;">
+                                <img src="https://i.postimg.cc/vTQjffhK/NUEVO-LOGO.png" alt="Logo Parroquia" style="width: 25mm; height: auto; object-fit: contain;">
+                                <div style="flex-grow: 1; text-align: center;">
+                                    <h3 style="font-size: 20pt; font-weight: 600; margin: 0; color: #343a40;">Recibo</h3>
+                                    <p style="font-size: 9pt; margin: 4px 0 0 0; color: #6c757d;">Parroquia San José</p>
+                                </div>
+                                <div style="width: 25mm;"></div> <!-- Spacer -->
                             </div>
                             <div style="font-size: 11pt; line-height: 2.2;">
                                 <p><strong>Fecha:</strong> ${formatDate(data.fecha, 'long')}</p>
@@ -2277,12 +2281,12 @@
                             </div>
                         </div>
                         <div style="border-top: 1px dashed #adb5bd; margin-top: 15mm; padding-top: 10mm; font-size: 10pt; color: #495057;">
-                             <p>Entregué la cantidad de <strong>$${formatCurrency(data.importe)}</strong> a Secretaría Parroquial.</p>
+                               <p>Entregué la cantidad de <strong>$${formatCurrency(data.importe)}</strong> a Secretaría Parroquial.</p>
                              <div style="padding-top: 20mm; text-align: center;">
                                  <div style="border-top: 1px solid #555; width: 70mm; margin: 0 auto; padding-top: 5px; font-size: 10pt;">
                                      Firma
                                  </div>
-                            </div>
+                             </div>
                         </div>
                     </div>
                 `;
@@ -2527,11 +2531,16 @@
 
                 const pdfHTML = `
                     <div class="pdf-page-container" style="min-height: 0; font-family: 'Inter', sans-serif;">
-                        <div style="text-align: center; border-bottom: 1px solid #dee2e6; padding-bottom: 12px; margin-bottom: 12px;">
-                            <h3 style="font-size: 20pt; font-weight: 600; margin: 0; color: #343a40;">Rendición de Secretaría</h3>
-                            <p style="font-size: 10pt; margin: 4px 0 0 0; color: #6c757d;">Parroquia San José</p>
-                            <p style="font-size: 10pt; font-weight: 500; margin: 2px 0 0 0; color: #495057;">Fecha: ${formatDate(rendicion.fecha, 'long')}</p>
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #dee2e6; padding-bottom: 12px; margin-bottom: 12px;">
+                            <img src="https://i.postimg.cc/vTQjffhK/NUEVO-LOGO.png" alt="Logo Parroquia" style="width: 25mm; height: auto; object-fit: contain;">
+                            <div style="flex-grow: 1; text-align: center;">
+                                <h3 style="font-size: 20pt; font-weight: 600; margin: 0; color: #343a40;">Rendición de Secretaría</h3>
+                                <p style="font-size: 10pt; margin: 4px 0 0 0; color: #6c757d;">Parroquia San José</p>
+                            </div>
+                            <div style="width: 25mm;"></div> <!-- Spacer -->
                         </div>
+
+                        <p style="font-size: 10pt; font-weight: 500; margin: 2px 0 0 0; color: #495057; text-align: center;">Fecha: ${formatDate(rendicion.fecha, 'long')}</p>
 
                         <div style="background-color: #f8f9fa; border-radius: 8px; padding: 12px; margin-top: 8mm;">
                             <h4 style="font-size: 12pt; margin: 0 0 8px 0; color: #495057; border-bottom: 1px solid #e9ecef; padding-bottom: 6px;">Ingresos en Efectivo</h4>
