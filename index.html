@@ -27,7 +27,7 @@
         .pdf-page-container {
             width: 210mm;
             min-height: 297mm;
-            padding: 15mm;
+            padding: 10mm; /* Narrow margins for better use of space */
             box-sizing: border-box;
             background-color: #fff;
             display: flex;
@@ -224,6 +224,32 @@
                 display: none !important;
             }
         }
+
+        .pdf-header-centered {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .pdf-header-centered h1 {
+            font-size: 24pt;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        .pdf-header-centered h2 {
+            font-size: 16pt;
+            margin: 0;
+            color: #555;
+        }
+        .pdf-header-centered p {
+            font-size: 12pt;
+            margin: 2px 0 0 0;
+        }
+        .pdf-logo {
+            display: block;
+            margin: 0 auto 10px auto;
+            width: 80px;
+            height: 80px;
+        }
     </style>
 </head>
 <body class="bg-gray-200 text-gray-800">
@@ -299,10 +325,67 @@
                         <h3 class="text-2xl font-bold mb-2">Organización de Misas</h3>
                         <p class="text-gray-600">Gestionar horarios de misas y ministros.</p>
                     </div>
+                    <div data-action="show-view" data-view-id="intenciones-misa-content" class="card-hover-effect bg-white rounded-2xl shadow-lg p-8 flex flex-col items-center text-center cursor-pointer">
+                        <div class="bg-purple-100 p-4 rounded-full mb-6"><i data-feather="plus-square" class="h-10 w-10 text-purple-600"></i></div>
+                        <h3 class="text-2xl font-bold mb-2">Intenciones de Misa</h3>
+                        <p class="text-gray-600">Registrar y generar listados de intenciones.</p>
+                    </div>
                     <div data-action="show-view" data-view-id="notifications-content" class="card-hover-effect bg-white rounded-2xl shadow-lg p-8 flex flex-col items-center text-center cursor-pointer">
                         <div class="bg-amber-100 p-4 rounded-full mb-6"><i data-feather="bell" class="h-10 w-10 text-amber-600"></i></div>
                         <h3 class="text-2xl font-bold mb-2">Notificaciones</h3>
                         <p class="text-gray-600">Crear y ver recordatorios y anuncios internos.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: Intenciones de Misa -->
+        <section id="intenciones-misa-content" data-view="intenciones-misa-content" class="hidden min-h-screen">
+            <div class="container mx-auto px-6 py-12">
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="text-3xl font-bold">Gestión de Intenciones de Misa</h2>
+                    <button data-action="show-view" data-view-id="secretaria-dashboard" class="bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105">Inicio</button>
+                </div>
+                <div class="bg-white rounded-2xl shadow-lg p-8">
+                    <form id="intenciones-form" class="space-y-6">
+                        <input type="hidden" id="intenciones-id">
+                        <div>
+                            <label for="misa-select" class="block text-sm font-medium">Seleccionar Misa</label>
+                            <select id="misa-select" class="mt-1 block w-full rounded-md p-2 border-gray-300 bg-gray-50">
+                                <option value="Semanal">Semanal</option>
+                                <option value="Sábado 19:30h">Sábado 19:30h</option>
+                                <option value="Domingo 08:00h">Domingo 08:00h</option>
+                                <option value="Domingo 10:30h">Domingo 10:30h</option>
+                                <option value="Domingo 19:30h">Domingo 19:30h</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="difuntos" class="block text-sm font-medium">Difuntos</label>
+                            <textarea id="difuntos" name="difuntos" rows="3" class="mt-1 block w-full rounded-md p-2 border-gray-300 bg-gray-50" placeholder="Ej: Juan Pérez, María Gómez"></textarea>
+                        </div>
+                        <div>
+                            <label for="intenciones-particulares" class="block text-sm font-medium">Intenciones Particulares</label>
+                            <textarea id="intenciones-particulares" name="intencionesParticulares" rows="3" class="mt-1 block w-full rounded-md p-2 border-gray-300 bg-gray-50" placeholder="Ej: Por la salud de la familia, en acción de gracias"></textarea>
+                        </div>
+                        <div>
+                            <label for="otras-intenciones" class="block text-sm font-medium">Otras Intenciones</label>
+                            <textarea id="otras-intenciones" name="otrasIntenciones" rows="3" class="mt-1 block w-full rounded-md p-2 border-gray-300 bg-gray-50" placeholder="Ej: Por la paz en el mundo, por los enfermos"></textarea>
+                        </div>
+                        <div class="flex justify-end space-x-4">
+                            <button type="submit" data-action="save-intencion" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-2 px-6 rounded-lg flex items-center space-x-2 transition-all duration-300 ease-in-out transform hover:scale-105">
+                                <i data-feather="save" class="h-4 w-4"></i>
+                                <span>Guardar Intenciones</span>
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="mt-8 border-t pt-6">
+                        <h3 class="text-xl font-bold mb-4">Registros Guardados</h3>
+                        <div id="intenciones-records-container" class="space-y-3"></div>
+                        <div id="intenciones-pagination-container" class="mt-4 flex justify-center">
+                            <button data-action="show-all-intenciones" class="hidden bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-lg">Ver todos los registros</button>
+                            <button data-action="hide-all-intenciones" class="hidden bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-lg">Ver menos</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -512,17 +595,17 @@
                                 </tbody>
                             </table>
                         </div>
-                           <div class="mt-4 text-right no-print"><button data-action="add-row" data-table="ministros" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105">Agregar Fila</button></div>
+                            <div class="mt-4 text-right no-print"><button data-action="add-row" data-table="ministros" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105">Agregar Fila</button></div>
                     </div>
 
                     <div id="grupos-adoracion-print-area">
                         <div class="bg-white rounded-2xl shadow-lg p-8">
                                <div class="flex justify-between items-center mb-4">
-                                <h3 class="text-2xl font-bold">Organización de las Misas (Grupos)</h3>
-                                <button data-action="download-pdf" data-target="grupos-adoracion-print-area" data-title="Parroquia San José" data-subtitle="Organización de Misas, Grupos y Adoración" data-filename="Organizacion_Grupos_y_Adoracion.pdf" class="no-print bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-2 px-4 rounded-lg flex items-center space-x-2">
-                                    <i data-feather="download" class="h-4 w-4"></i>
-                                    <span>Descargar PDF</span>
-                                </button>
+                               <h3 class="text-2xl font-bold">Organización de las Misas (Grupos)</h3>
+                               <button data-action="download-pdf" data-target="grupos-adoracion-print-area" data-title="Parroquia San José" data-subtitle="Organización de Misas, Grupos y Adoración" data-filename="Organizacion_Grupos_y_Adoracion.pdf" class="no-print bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-2 px-4 rounded-lg flex items-center space-x-2">
+                                   <i data-feather="download" class="h-4 w-4"></i>
+                                   <span>Descargar PDF</span>
+                               </button>
                             </div>
                             <div class="overflow-x-auto">
                                 <table class="min-w-full divide-y divide-gray-200">
@@ -627,8 +710,8 @@
                         </div>
                     </div>
                     <div class="md:col-span-2">
-                           <h3 class="text-xl font-bold mb-4">Registro de Notificaciones</h3>
-                         <div id="notifications-list" class="space-y-4"></div>
+                            <h3 class="text-xl font-bold mb-4">Registro de Notificaciones</h3>
+                           <div id="notifications-list" class="space-y-4"></div>
                     </div>
                 </div>
            </div>
@@ -896,6 +979,7 @@
             let unsubscribeListeners = [];
             let tempDate = null; // To hold date between modals
             let alertTickerInterval = null; // To manage the alert ticker animation
+            let showAllIntenciones = false;
 
             const appState = {
                 notifications: [],
@@ -916,6 +1000,7 @@
                 recibos: [],
                 rendiciones: [],
                 socios: [],
+                intencionesMisa: [], // NUEVO: Estado para intenciones
                 bautismosSearchTerm: '',
                 bautismosCurrentPage: 1,
                 confirmacionesSearchTerm: '',
@@ -958,8 +1043,6 @@
                 confirmacionSearchInput: document.getElementById('confirmacion-search'),
                 bautismoFormRecordsContainer: document.getElementById('bautismo-form-records-container'),
                 bautismoFormPaginationContainer: document.getElementById('bautismo-form-pagination-container'),
-                confirmacionFormRecordsContainer: document.getElementById('confirmacion-form-records-container'),
-                confirmacionFormPaginationContainer: document.getElementById('confirmacion-form-pagination-container'),
                 deleteConfirmModal: document.getElementById('delete-confirm-modal'),
                 notificationBadge: document.getElementById('notification-badge'),
                 notificationWrapper: document.getElementById('notification-wrapper'),
@@ -986,6 +1069,10 @@
                 sociosListContainer: document.getElementById('socios-list-container'),
                 editSocioModal: document.getElementById('edit-socio-modal'),
                 editSocioForm: document.getElementById('edit-socio-form'),
+                // NUEVOS: Intenciones de Misa
+                intencionesForm: document.getElementById('intenciones-form'),
+                intencionesRecordsContainer: document.getElementById('intenciones-records-container'),
+                intencionesPaginationContainer: document.getElementById('intenciones-pagination-container'),
             };
 
             const showSpinner = () => dom.loadingSpinner.classList.remove('hidden');
@@ -1275,6 +1362,11 @@
                     renderRecords('confirmacion', dom.confirmacionRecordsContainer, dom.confirmacionPaginationContainer, appState.confirmacionesSearchTerm, 'confirmacionesCurrentPage');
                     renderRecords('bautismo', dom.bautismoFormRecordsContainer, dom.bautismoFormPaginationContainer, '', 'bautismosCurrentPage');
                     renderRecords('confirmacion', dom.confirmacionFormRecordsContainer, dom.confirmacionFormPaginationContainer, '', 'confirmacionesCurrentPage');
+                }
+                if (viewId === 'intenciones-misa-content' && !isEdit) {
+                    dom.intencionesForm.reset();
+                    showAllIntenciones = false;
+                    renderIntenciones();
                 }
                 feather.replace();
             };
@@ -1719,14 +1811,14 @@
                 printClone.innerHTML = `
                     ${pdfStyles}
                     <div class="pdf-container">
-                             <div class="pdf-header">
-                                <img src="https://i.postimg.cc/vTQjffhK/NUEVO-LOGO.png" alt="Logo"/>
-                                <div class="titles">
-                                    <h1>${title}</h1>
-                                    <h2>${subtitle}</h2>
-                                </div>
-                                <div style="width: 20mm;"></div> <!-- Spacer -->
-                            </div>
+                                 <div class="pdf-header">
+                                 <img src="https://i.postimg.cc/vTQjffhK/NUEVO-LOGO.png" alt="Logo"/>
+                                 <div class="titles">
+                                     <h1>${title}</h1>
+                                     <h2>${subtitle}</h2>
+                                 </div>
+                                 <div style="width: 20mm;"></div> <!-- Spacer -->
+                             </div>
                         ${contentClone.innerHTML}
                     </div>
                 `;
@@ -1772,7 +1864,7 @@
             };
 
             const setupDataListeners = () => {
-                const collections = ['bautismos', 'confirmaciones', 'notifications', 'ministros', 'grupos', 'adoracionJueves', 'adoracionSemanal', 'recibos', 'rendiciones', 'socios'];
+                const collections = ['bautismos', 'confirmaciones', 'notifications', 'ministros', 'grupos', 'adoracionJueves', 'adoracionSemanal', 'recibos', 'rendiciones', 'socios', 'intencionesMisa'];
                 const weekOrder = { 'Primero': 1, 'Primera': 1, 'Segundo': 2, 'Segunda': 2, 'Tercero': 3, 'Tercera': 3, 'Cuarto': 4, 'Cuarta': 4, 'Quinto': 5, 'Quinta': 5 };
                 const dayOrder = { 'Martes': 1, 'Miércoles': 2, 'Jueves': 3, 'Viernes': 4 };
 
@@ -1794,8 +1886,8 @@
                             data.sort((a, b) => (weekOrder[a.col1] || 99) - (weekOrder[b.col1] || 99));
                         } else if (coll === 'adoracionSemanal') {
                             data.sort((a, b) => (dayOrder[a.col1] || 99) - (dayOrder[b.col1] || 99));
-                        } else if (['recibos', 'rendiciones'].includes(coll)) {
-                            data.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+                        } else if (['recibos', 'rendiciones', 'intencionesMisa'].includes(coll)) {
+                            data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                         } else if (coll === 'socios') {
                             data.sort((a, b) => a.nombre.localeCompare(b.nombre));
                         }
@@ -1819,6 +1911,7 @@
                             case 'recibos': renderReceipts(); break;
                             case 'rendiciones': renderRendiciones(); break;
                             case 'socios': renderSociosManagementList(); break;
+                            case 'intencionesMisa': renderIntenciones(); break; // NUEVO
                         }
 
                     }, (error) => {
@@ -1834,7 +1927,7 @@
                         appState.horariosAdoracion = docSnap.data();
                     } else {
                         console.log("Horarios config not found. Creating default...");
-                        setupInitialHorarios();
+                        setDoc(horariosDocRef, initialHorarios);
                     }
                     renderHorariosAdoracion();
                 }, (error) => {
@@ -1963,6 +2056,8 @@
                             let collectionName = '';
                             if (recordToDelete.type === 'rendicion') {
                                 collectionName = 'rendiciones';
+                            } else if (recordToDelete.type === 'intencion') {
+                                collectionName = 'intencionesMisa';
                             } else if (['recibo', 'socio'].includes(recordToDelete.type)) {
                                 collectionName = `${recordToDelete.type}s`;
                             } else {
@@ -2007,6 +2102,20 @@
                         dom.editSocioForm.querySelector('#edit-socio-id').value = id;
                         dom.editSocioForm.querySelector('#edit-socio-name').value = name;
                         showModal('edit-socio-modal');
+                        break;
+                    // NUEVOS: Intenciones de Misa
+                    case 'edit-intencion': populateIntencionesForm(id); break;
+                    case 'download-intencion-pdf':
+                        const intencionData = appState.intencionesMisa.find(i => i.id === id);
+                        if (intencionData) generateIntencionesPDF(intencionData);
+                        break;
+                    case 'show-all-intenciones':
+                        showAllIntenciones = true;
+                        renderIntenciones();
+                        break;
+                    case 'hide-all-intenciones':
+                        showAllIntenciones = false;
+                        renderIntenciones();
                         break;
                 }
             });
@@ -2685,6 +2794,214 @@
                 } finally {
                     hideSpinner();
                 }
+            });
+
+            // NUEVAS FUNCIONES: Módulo Intenciones de Misa
+
+            const renderIntenciones = () => {
+                if (!dom.intencionesRecordsContainer) return;
+                
+                const records = appState.intencionesMisa;
+                const recordsToShow = showAllIntenciones ? records : records.slice(0, 3);
+                
+                if (records.length === 0) {
+                    dom.intencionesRecordsContainer.innerHTML = `<p class="text-gray-500 italic">No hay intenciones registradas.</p>`;
+                    dom.intencionesPaginationContainer.classList.add('hidden');
+                    return;
+                }
+
+                dom.intencionesRecordsContainer.innerHTML = recordsToShow.map(i => `
+                    <div class="bg-white rounded-lg p-3 shadow flex justify-between items-start">
+                        <div class="flex-grow pr-4">
+                            <p class="font-bold">Registro del ${formatDate(i.createdAt)} - ${i.misa || 'N/A'}</p>
+                            <p class="text-sm text-gray-600 mt-2"><strong>Difuntos:</strong> ${i.difuntos || 'N/A'}</p>
+                            <p class="text-sm text-gray-600"><strong>Intenciones Particulares:</strong> ${i.intencionesParticulares || 'N/A'}</p>
+                            <p class="text-sm text-gray-600"><strong>Otras Intenciones:</strong> ${i.otrasIntenciones || 'N/A'}</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button data-action="edit-intencion" data-id="${i.id}" class="text-blue-500 hover:text-blue-700 p-1" title="Modificar"><i data-feather="edit" class="h-4 w-4"></i></button>
+                            <button data-action="download-intencion-pdf" data-id="${i.id}" class="text-green-500 hover:text-green-700 p-1" title="Descargar PDF"><i data-feather="download" class="h-4 w-4"></i></button>
+                            <button data-action="delete-record" data-type="intencion" data-id="${i.id}" class="text-red-500 hover:text-red-700 p-1" title="Eliminar"><i data-feather="trash-2" class="h-4 w-4"></i></button>
+                        </div>
+                    </div>
+                `).join('');
+                
+                // Show/hide pagination buttons
+                const showAllBtn = dom.intencionesPaginationContainer.querySelector('[data-action="show-all-intenciones"]');
+                const hideAllBtn = dom.intencionesPaginationContainer.querySelector('[data-action="hide-all-intenciones"]');
+
+                if (records.length > 3) {
+                    dom.intencionesPaginationContainer.classList.remove('hidden');
+                    if (showAllIntenciones) {
+                        showAllBtn.classList.add('hidden');
+                        hideAllBtn.classList.remove('hidden');
+                    } else {
+                        showAllBtn.classList.remove('hidden');
+                        hideAllBtn.classList.add('hidden');
+                    }
+                } else {
+                    dom.intencionesPaginationContainer.classList.add('hidden');
+                }
+                
+                feather.replace();
+            };
+
+            const saveIntencion = async () => {
+                const id = dom.intencionesForm.querySelector('#intenciones-id').value;
+                const misa = dom.intencionesForm.querySelector('#misa-select').value;
+                const difuntos = dom.intencionesForm.querySelector('#difuntos').value.trim();
+                const intencionesParticulares = dom.intencionesForm.querySelector('#intenciones-particulares').value.trim();
+                const otrasIntenciones = dom.intencionesForm.querySelector('#otras-intenciones').value.trim();
+
+                if (!difuntos && !intencionesParticulares && !otrasIntenciones) {
+                    showToast('Debes ingresar al menos una intención o difunto.', 'error');
+                    return;
+                }
+
+                const intencionData = {
+                    misa: misa,
+                    difuntos: difuntos,
+                    intencionesParticulares: intencionesParticulares,
+                    otrasIntenciones: otrasIntenciones,
+                };
+                
+                showSpinner();
+                try {
+                    const collectionPath = 'parroquia/shared-data/intencionesMisa';
+                    if (id) {
+                        await setDoc(doc(db, collectionPath, id), { ...intencionData, updatedAt: new Date().toISOString() }, { merge: true });
+                        showToast('Intención actualizada con éxito');
+                    } else {
+                        await addDoc(collection(db, collectionPath), { ...intencionData, createdAt: new Date().toISOString() });
+                        showToast('Intención guardada con éxito');
+                    }
+                    dom.intencionesForm.reset();
+                } catch (error) {
+                    console.error("Error saving intencion:", error);
+                    showToast('Error al guardar la intención.', 'error');
+                } finally {
+                    hideSpinner();
+                }
+            };
+            
+            const populateIntencionesForm = (id) => {
+                const intencion = appState.intencionesMisa.find(i => i.id === id);
+                if (!intencion) return;
+
+                dom.intencionesForm.querySelector('#intenciones-id').value = id;
+                dom.intencionesForm.querySelector('#misa-select').value = intencion.misa || 'Semanal';
+                dom.intencionesForm.querySelector('#difuntos').value = intencion.difuntos || '';
+                dom.intencionesForm.querySelector('#intenciones-particulares').value = intencion.intencionesParticulares || '';
+                dom.intencionesForm.querySelector('#otras-intenciones').value = intencion.otrasIntenciones || '';
+            };
+
+            const generateIntencionesPDF = async (data) => {
+                showSpinner();
+                
+                const difuntosArray = data.difuntos ? data.difuntos.split(/[,\n]/).map(d => d.trim()).filter(d => d) : [];
+                const intencionesParticularesArray = data.intencionesParticulares ? data.intencionesParticulares.split(/\n/).map(i => i.trim()).filter(i => i) : [];
+                const otrasIntencionesArray = data.otrasIntenciones ? data.otrasIntenciones.split(/\n/).map(i => i.trim()).filter(i => i) : [];
+
+                const today = formatDate(new Date().toISOString(), 'long');
+                const misaText = data.misa || 'Intenciones para la semana';
+
+                const pdfHTML = `
+                    <div class="pdf-page-container" style="font-family: 'Noto Serif', serif; color: #333; line-height: 1.5; padding: 10mm; font-size: 11pt; position: relative;">
+                        <div class="pdf-header-centered">
+                            <img src="https://i.postimg.cc/vTQjffhK/NUEVO-LOGO.png" alt="Logo Parroquia" class="pdf-logo">
+                            <h1 style="font-size: 24pt; margin-bottom: 5px;">Parroquia San José</h1>
+                            <p style="font-size: 12pt;">Paso de los Libres - Corrientes</p>
+                            <h2 style="font-size: 16pt; margin-top: 10px;">Intenciones de Misa</h2>
+                            <p style="font-size: 11pt; font-style: italic; margin-top: 5px;">${misaText}</p>
+                            <p style="font-size: 11pt; margin-top: 2px;">Fecha: ${today}</p>
+                        </div>
+                        <div style="margin-top: 15mm; page-break-after: avoid;">
+                            ${difuntosArray.length > 0 ? `
+                                <h3 style="font-weight: bold; margin-bottom: 5px; font-size: 14pt;">Por los Difuntos:</h3>
+                                <p style="font-size: 12pt;">${difuntosArray.map(d => `† ${d}`).join(', ')}</p>
+                            ` : ''}
+                        </div>
+                        <div style="margin-top: 15mm; page-break-after: avoid;">
+                            ${intencionesParticularesArray.length > 0 ? `
+                                <h3 style="font-weight: bold; margin-bottom: 5px; font-size: 14pt;">Intenciones Particulares:</h3>
+                                <ul style="margin: 0; padding-left: 20px;">
+                                    ${intencionesParticularesArray.map(i => `<li style="font-size: 12pt;">* ${i}</li>`).join('')}
+                                </ul>
+                            ` : ''}
+                        </div>
+                        <div style="margin-top: 15mm; page-break-after: auto;">
+                            ${otrasIntencionesArray.length > 0 ? `
+                                <h3 style="font-weight: bold; margin-bottom: 5px; font-size: 14pt;">Otras Intenciones:</h3>
+                                <ul style="margin: 0; padding-left: 20px;">
+                                    ${otrasIntencionesArray.map(i => `<li style="font-size: 12pt;">• ${i}</li>`).join('')}
+                                </ul>
+                            ` : ''}
+                        </div>
+                        <div id="pdf-page-number" style="position: absolute; bottom: 10mm; right: 10mm; font-size: 10pt; font-family: 'Inter', sans-serif;"></div>
+                    </div>
+                `;
+                
+                const elementToRender = document.createElement('div');
+                elementToRender.style.position = 'absolute';
+                elementToRender.style.left = '-9999px';
+                elementToRender.style.width = '210mm';
+                elementToRender.style.backgroundColor = '#ffffff';
+                elementToRender.innerHTML = pdfHTML;
+                document.body.appendChild(elementToRender);
+
+                try {
+                    const { jsPDF } = window.jspdf;
+                    const contentToCapture = elementToRender.querySelector('.pdf-page-container');
+                    
+                    const canvas = await html2canvas(contentToCapture, { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
+                    const imgData = canvas.toDataURL('image/png');
+                    const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+                    
+                    const pdfWidth = pdf.internal.pageSize.getWidth();
+                    const pdfHeight = pdf.internal.pageSize.getHeight();
+                    
+                    // Add the image to the PDF
+                    let imgProps = pdf.getImageProperties(imgData);
+                    let imgHeight = (imgProps.height * pdfWidth) / imgProps.width;
+                    let heightLeft = imgHeight;
+                    let position = 0;
+                    let pageNumber = 1;
+
+                    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, imgHeight);
+
+                    // Add page number to the first page
+                    pdf.setFontSize(10);
+                    pdf.text(`Página ${pageNumber}`, pdfWidth - 20, pdfHeight - 10);
+                    pageNumber++;
+                    
+                    heightLeft -= pdfHeight;
+
+                    while (heightLeft > 0) {
+                        position = heightLeft - imgHeight;
+                        pdf.addPage();
+                        pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, imgHeight);
+                        // Add page number to subsequent pages
+                        pdf.text(`Página ${pageNumber}`, pdfWidth - 20, pdfHeight - 10);
+                        pageNumber++;
+                        heightLeft -= pdfHeight;
+                    }
+
+                    pdf.save(`Intenciones_Misa_${formatDate(data.createdAt)}.pdf`);
+                    showToast('PDF de intenciones generado con éxito');
+                } catch (error) {
+                    console.error("Error generating intenciones PDF:", error);
+                    showToast('Error al generar el PDF.', 'error');
+                } finally {
+                    hideSpinner();
+                    if (elementToRender) {
+                        document.body.removeChild(elementToRender);
+                    }
+                }
+            };
+            
+            dom.intencionesForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                saveIntencion();
             });
 
         });
