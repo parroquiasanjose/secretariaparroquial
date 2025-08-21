@@ -617,12 +617,12 @@
 
                     <div id="grupos-adoracion-print-area">
                         <div class="bg-white rounded-2xl shadow-lg p-8">
-                               <div class="flex justify-between items-center mb-4">
-                               <h3 class="text-2xl font-bold">Organización de las Misas (Grupos)</h3>
-                               <button data-action="download-pdf" data-target="grupos-adoracion-print-area" data-title="Parroquia San José" data-subtitle="Organización de Misas, Grupos y Adoración" data-filename="Organizacion_Grupos_y_Adoracion.pdf" class="no-print bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-2 px-4 rounded-lg flex items-center space-x-2">
+                              <div class="flex justify-between items-center mb-4">
+                              <h3 class="text-2xl font-bold">Organización de las Misas (Grupos)</h3>
+                              <button data-action="download-pdf" data-target="grupos-adoracion-print-area" data-title="Parroquia San José" data-subtitle="Organización de Misas, Grupos y Adoración" data-filename="Organizacion_Grupos_y_Adoracion.pdf" class="no-print bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-2 px-4 rounded-lg flex items-center space-x-2">
                                     <i data-feather="download" class="h-4 w-4"></i>
                                     <span>Descargar PDF</span>
-                               </button>
+                              </button>
                             </div>
                             <div class="overflow-x-auto">
                                 <table class="min-w-full divide-y divide-gray-200">
@@ -1060,6 +1060,8 @@
                 confirmacionSearchInput: document.getElementById('confirmacion-search'),
                 bautismoFormRecordsContainer: document.getElementById('bautismo-form-records-container'),
                 bautismoFormPaginationContainer: document.getElementById('bautismo-form-pagination-container'),
+                confirmacionFormRecordsContainer: document.getElementById('confirmacion-form-records-container'),
+                confirmacionFormPaginationContainer: document.getElementById('confirmacion-form-pagination-container'),
                 deleteConfirmModal: document.getElementById('delete-confirm-modal'),
                 notificationBadge: document.getElementById('notification-badge'),
                 notificationWrapper: document.getElementById('notification-wrapper'),
@@ -2213,9 +2215,9 @@
                         <div style="border-top: 1px dashed #adb5bd; margin-top: 15mm; padding-top: 10mm; font-size: 10pt; color: #495057;">
                                 <p>Entregué la cantidad de <strong>$${formatCurrency(data.importe)}</strong> a Secretaría Parroquial.</p>
                              <div style="padding-top: 20mm; text-align: center;">
-                                 <div style="border-top: 1px solid #555; width: 70mm; margin: 0 auto; padding-top: 5px; font-size: 10pt;">
-                                     Firma
-                                 </div>
+                                  <div style="border-top: 1px solid #555; width: 70mm; margin: 0 auto; padding-top: 5px; font-size: 10pt;">
+                                       Firma
+                                  </div>
                              </div>
                         </div>
                     </div>
