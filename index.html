@@ -564,7 +564,6 @@
                             <input type="hidden" name="lugarExpedicion" id="c-lugar-expedicion-hidden" value="Paso de los Libres, Corrientes">
                         </div>
                         <div><label for="c-fecha-expedicion" class="block text-sm font-medium">Fecha de expedición</label><input name="fechaExpedicion" type="date" id="c-fecha-expedicion" class="mt-1 block w-full rounded-md p-2 border-gray-300 bg-gray-50" required></div>
-                        <div class="md:col-span-2"><label for="c-parroco" class="block text-sm font-medium">Párroco/Ministro</label><input name="parroco" type="text" id="c-parroco" class="mt-1 block w-full rounded-md p-2 border-gray-300 bg-gray-50" required></div>
 
                         <div class="md:col-span-2 flex justify-end space-x-4 mt-6">
                             <button type="submit" data-action="save-certificate" data-type="confirmacion" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-2 px-6 rounded-lg flex items-center space-x-2 transition-all duration-300 ease-in-out transform hover:scale-105">
@@ -1511,6 +1510,11 @@
                 const formData = Object.fromEntries(new FormData(form).entries());
                 const recordId = formData.id;
                 
+                // Remove dots from DNI before saving
+                if (type === 'bautismo' && formData.dni) {
+                    formData.dni = formData.dni.replace(/\./g, '');
+                }
+
                 const collectionName = type === 'confirmacion' ? 'confirmaciones' : `${type}s`;
                 const collectionPath = `parroquia/shared-data/${collectionName}`;
 
@@ -1554,6 +1558,14 @@
                 return date.toLocaleDateString('es-AR', options);
             };
 
+            const formatDNI = (dni) => {
+                if (!dni) return '';
+                const cleanDNI = String(dni).replace(/\D/g, '');
+                const reversedDNI = cleanDNI.split('').reverse().join('');
+                const formattedReversedDNI = reversedDNI.match(/.{1,3}/g)?.join('.') || '';
+                return formattedReversedDNI.split('').reverse().join('');
+            };
+
             const getCertificateHTML = (type, data) => {
                 // Usamos la misma clase para ambos para que el contenedor se ajuste al contenido
                 const containerClass = "pdf-certificate-container"; 
@@ -1561,7 +1573,7 @@
                 const header = `<div class="certificate-modern-header"><h3>CERTIFICADO DE ${type.toUpperCase()}</h3><p>Diócesis de Santo Tomé - Paso de los Libres – Corrientes<br>Dirección: Bartolomé Mitre 940<br>WhatsApp (3772) 651931</p></div>`;
                 
                 if (type === 'bautismo') {
-                    const body = `<div class="certificate-modern-body"><p>Se certifica que en el libro N° <span class="field">${data.libro || ''}</span>, Folio N° <span class="field">${data.folio || ''}</span>, se encuentra la partida de Bautismo de: <strong>${(data.nombre || '').toUpperCase()}</strong>, nacido/a en <span class="field">${data.lugarNac || ''}</span> el <span class="field">${formatDate(data.fechaNac)}</span>, hijo/a de <span class="field">${data.padre || ''}</span> y de <span class="field">${data.madre || ''}</span>. Fue bautizado/a el día <span class="field">${formatDate(data.fechaBautismo)}</span>, siendo sus padrinos <span class="field">${data.padrino || ''}</span> y <span class="field">${data.madrina || ''}</span>.</p><p><strong>Notas:</strong> ${data.notas || 'Ninguna'}</p></div>`;
+                    const body = `<div class="certificate-modern-body"><p>Se certifica que en el libro N° <span class="field">${data.libro || ''}</span>, Folio N° <span class="field">${data.folio || ''}</span>, se encuentra la partida de Bautismo de: <strong>${(data.nombre || '').toUpperCase()}</strong>, DNI N° <span class="field">${formatDNI(data.dni) || ''}</span>, nacido/a en <span class="field">${data.lugarNac || ''}</span> el <span class="field">${formatDate(data.fechaNac)}</span>, hijo/a de <span class="field">${data.padre || ''}</span> y de <span class="field">${data.madre || ''}</span>. Fue bautizado/a el día <span class="field">${formatDate(data.fechaBautismo)}</span>, siendo sus padrinos <span class="field">${data.padrino || ''}</span> y <span class="field">${data.madrina || ''}</span>.</p><p><strong>Notas:</strong> ${data.notas || 'Ninguna'}</p></div>`;
                     const footer = `<div class="certificate-modern-footer"><div class="signature-line">Sello Parroquial</div><img src="https://i.postimg.cc/vTQjffhK/NUEVO-LOGO.png" alt="Logo Parroquia" style="width: 80px; height: 80px; object-fit: contain;"><div class="signature-line">Firma del Presbítero</div></div>`;
                     return `<div class="${containerClass}"><div class="certificate-modern">${header}${body}${footer}</div></div>`;
                 }
@@ -1576,7 +1588,7 @@
                             <p>Padrino/Madrina: <span class="field">${data.padrino || ''}</span>.</p>
                             <p>En <span class="field">${data.lugarExpedicion || ''}</span>, ${formatDate(data.fechaExpedicion, 'long_parts')}.</p>
                         </div>`;
-                    const confirmationFooter = `<div class="certificate-modern-footer"><div class="signature-line">Sello parroquial</div><img src="https://i.postimg.cc/vTQjffhK/NUEVO-LOGO.png" alt="Logo Parroquia" style="width: 80px; height: 80px; object-fit: contain;"><div class="signature-line">Pbro. ${data.parroco || ''} <br> Párroco</div></div>`;
+                    const confirmationFooter = `<div class="certificate-modern-footer"><div class="signature-line">Sello parroquial</div><img src="https://i.postimg.cc/vTQjffhK/NUEVO-LOGO.png" alt="Logo Parroquia" style="width: 80px; height: 80px; object-fit: contain;"><div class="signature-line">&nbsp;</div></div>`;
                     return `<div class="${containerClass}"><div class="certificate-modern">${header}${body}${confirmationFooter}</div></div>`;
                 }
                 return '';
@@ -1592,7 +1604,11 @@
                 Object.keys(record).forEach(key => {
                     const input = form.querySelector(`[name="${key}"]`);
                     if (input) {
-                        input.value = record[key];
+                        if (key === 'dni') {
+                            input.value = formatDNI(record[key]);
+                        } else {
+                            input.value = record[key];
+                        }
                     }
                 });
                 showView(isBautismo ? 'bautismo-content' : 'confirmacion-content', true);
@@ -1954,6 +1970,17 @@
             dom.baptismForm.addEventListener('submit', (e) => {
                 e.preventDefault();
                 saveCertificate('bautismo');
+            });
+            
+            // Auto-format DNI input
+            dom.baptismForm.querySelector('#b-dni').addEventListener('input', (e) => {
+                const input = e.target;
+                let value = input.value.replace(/\D/g, '');
+                if (value) {
+                    const reversedValue = value.split('').reverse().join('');
+                    const formattedReversedValue = reversedValue.match(/.{1,3}/g).join('.');
+                    input.value = formattedReversedValue.split('').reverse().join('');
+                }
             });
 
             dom.confirmationForm.addEventListener('submit', (e) => {
